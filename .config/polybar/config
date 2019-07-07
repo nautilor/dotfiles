@@ -1,0 +1,245 @@
+;
+; ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗        ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
+; ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗      ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
+; ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝█████╗██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+; ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗╚════╝██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+; ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║      ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+; ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝       ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+;
+
+[colors]
+seven =  ${xrdb:color7:#222}
+one =   ${xrdb:color1:#222}
+two =   ${xrdb:color2:#222}
+three = ${xrdb:color3:#222}
+four =  ${xrdb:color4:#222}
+five =  ${xrdb:color5:#222}
+six =   ${xrdb:color6:#222}
+zero = ${xrdb:color0:#222}
+eight = ${xrdb:color8:#222}
+nine = ${xrdb:color9:#222}
+ten = ${xrdb:color10:#222}
+eleven = ${xrdb:color11:#222}
+twelve = ${xrdb:color12:#222}
+thirteen = ${xrdb:color13:#222}
+fourteen = ${xrdb:color14:#222}
+fifhteen = ${xrdb:color15:#222}
+background = '#AAFFFFFF'
+full-trans = #00000000
+
+
+[module/mem]
+type = custom/script
+interval = 2
+format = <label>
+format-prefix = "  "
+format-prefix-foreground = ${colors.zero}
+format-prefix-background = ${colors.four}
+format-background = ${colors.seven}
+exec = polyhelp memory
+
+[module/date]
+type = custom/script
+interval = 2
+format = <label>
+format-padding = 1
+format-prefix = " "
+format-prefix-foreground = ${colors.zero}
+format-prefix-background = ${colors.six}
+format-background = ${colors.six}
+format-foreground = ${colors.zero}
+exec = polyhelp date
+
+
+[module/vol]
+type = custom/script
+interval = 2
+format = <label>
+format-padding = 1
+format-prefix = " "
+format-prefix-foreground = ${colors.zero}
+format-prefix-background = ${colors.two}
+format-background = ${colors.two}
+format-foreground = ${colors.zero}
+exec = polyhelp volume
+
+;THIS IS MY MODULE FOR SPOTIFY
+[module/sn]
+format-padding = 1
+type = custom/text
+content = ""
+tail = true
+format = <label>
+content-background = ${colors.zero}
+content-foreground = ${colors.seven}
+click-left = spotify-cli --next 
+
+[module/spotify]
+type = custom/script
+interval = 2
+format-padding = 1
+format = <label>
+format-prefix = " "
+click-left = xdotool key super+0
+format-prefix-foreground = ${colors.zero}
+format-prefix-background = ${colors.five}
+;format-background = ${colors.zero}
+format-background = ${colors.five}
+format-foreground = ${colors.zero}
+exec = polyhelp spotify
+tail = true
+
+[bar/example]
+module-margin = 2
+bottom = false 
+width = 100%
+height = 30
+override-redirect = false
+fixed-center = true
+background = "#10FFFFFF"
+border-size = 5
+font-0 = xft:Noto Mono:size=8:antialias=true:hinting=true:style=bold;0
+font-1 = FontAwesome:pixelsize=11;1
+modules-left = power date
+modules-center = i3
+modules-right =  vol xkeyboard spotify
+tray-position = right
+tray-padding = 2
+tray-background = ${colors.zero}
+wm-restack = i3
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+cursor-click = pointer
+
+[module/xkeyboard]
+type = internal/xkeyboard
+blacklist-0 = num lock
+
+format-prefix = " "
+format-prefix-foreground = ${colors.zero}
+format-prefix-background = ${colors.one}
+format-background = ${colors.one}
+format-foreground = ${colors.zero}
+
+format-padding = 1
+
+label-layout = %layout%
+
+label-indicator-padding = 2
+label-indicator-margin = 1
+label-indicator-foreground = ${colors.zero}
+label-indicator-background = ${colors.one}
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+ws-icon-0 = 1;○
+ws-icon-1 = 2;○
+ws-icon-2 = 3;○ 
+ws-icon-3 = 4;○
+ws-icon-4 = 5;○
+ws-icon-5 = 6;○
+ws-icon-6 = 7;○
+ws-icon-7 = 8;○
+ws-icon-8 = 9;○
+ws-icon-9 = 10;○
+ws-icon-default = ○
+
+label-mode-padding = 2
+label-mode-foreground = ${colors.seven}
+label-mode-background = ${colors.one}
+
+label-background = ${colors.zero}
+label-focused = ●
+label-focused-background = ${colors.five}
+label-focused-padding = ${module/bspwm.label-focused-padding}
+
+label-unfocused =  %icon% 
+label-unfocused-foreground = ${colors.seven}
+label-unfocused-background = ${colors.zero}
+label-unfocused-padding = ${module/bspwm.label-occupied-padding}
+
+label-visible = %icon%
+label-visible-padding = ${self.label-focused-padding}
+
+label-urgent = %icon%
+label-urgent-background = ${colors.eight}
+label-urgent-padding = ${module/bspwm.label-urgent-padding}
+
+[module/eth]
+type = internal/network
+interface = enp2s0
+interval = 3.0
+
+format-connected-underline = ${colors.two}
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.foreground-alt}
+label-connected = %local_ip%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+[module/power]
+type = custom/menu
+label-separator = -
+label-separator-margin = 1
+label-open = "POWER"
+label-close = "CLOSE"
+
+format = <label-toggle> <menu>
+format-padding = 1
+menu-0-0 = "  shutdown"
+menu-0-0-exec = poweroff
+menu-0-1 = "  restart"
+menu-0-1-exec = reboot
+format-prefix = " " 
+format-prefix-foreground = ${colors.zero}
+format-prefix-background = ${colors.three}
+format-background = ${colors.three}
+format-foreground = ${colors.zero}
+
+[module/powermenu]
+type = custom/menu
+
+expand-right = true
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = ${colors.two}
+label-close =  cancel
+label-close-foreground = ${colors.two}
+label-separator = |
+label-separator-foreground = ${colors.foreground-alt}
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5

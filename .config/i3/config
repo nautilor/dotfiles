@@ -1,0 +1,192 @@
+	
+#
+# ██╗██████╗        ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
+# ██║╚════██╗      ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
+# ██║ █████╔╝█████╗██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+# ██║ ╚═══██╗╚════╝██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+# ██║██████╔╝      ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+# ╚═╝╚═════╝        ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
+#
+
+set $mod Mod4
+set_from_resource $border color0 #000000 
+
+for_window [class="^.*"] border pixel 3
+client.background $border
+font pango:Terminus 8
+floating_modifier $mod
+
+# WORKSPACES NAMES
+# set $w1 "1: "
+# set $w2 "2: "
+# set $w3 "3: "
+# set $w4 "4: "
+# set $w5 "5: "
+# set $w6 "6: "
+# set $w7 "7: "
+# set $w8 "8: "
+# set $w9 "9: "
+# set $w10 "10: "
+
+# COLORS
+set $content-inactive #2D2D2D
+set $content-active #aaaaaa
+set $content-text #DCDCDC
+set $content-urgent #D64937
+set $content-indicator #BAA69B
+set $content-bactive #aaaaaa
+set $content-binactive #232B38
+set $content-binactive-old #f3E9D5
+
+
+# WORKSPACES
+set $w1 1
+set $w2 2
+set $w3 3
+set $w4 4
+set $w5 5
+set $w6 6
+set $w7 7
+set $w8 8
+set $w9 9
+set $w10 10
+
+# RESIZE
+mode "resize" {
+        bindsym h resize shrink width 10 px or 10 ppt
+        bindsym j resize grow height 10 px or 10 ppt
+        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Return mode "default"
+        bindsym Escape mode "default" 
+}
+
+bindsym $mod+r mode "resize"
+
+# WINDOW COLORS
+client.focused          	$content-bactive	$content-bactive	$content-text		$content-indicator
+client.focused_inactive		$content-binactive	$content-binactive	$content-text		$content-indicator
+client.unfocused		$content-binactive	$content-binactive	$content-text		$content-indicator
+client.urgent			$content-urgent		$content-urgent		$content-text		$content-indicator
+hide_edge_borders both
+
+
+# START OF I3
+exec xautolock -time 5 -locker lock
+
+# KEYCODE
+set $ESC 	  009
+set $OSB 	  034
+set $CSB 	  035
+set $PRTSC	  107
+set $END	  115
+set $PGUP         117
+
+# CUSTOM SCRIPTS
+bindsym   $mod+shift+x exec lock
+
+# WINDOW SETTINGS
+for_window [instance="youtube"] floating enable
+for_window [instance="center_terminal"] floating enable
+for_window [instance="center_terminal"] resize set 640 400
+for_window [instance="center_terminal"] move window position center
+for_window [class="feh"] floating enable
+for_window [class="MPlayer"] floating enable
+for_window [class="Spotify"] move container to workspace $w10
+
+
+# WINDOW ASSIGN
+assign [class="Spotify"]     $w10
+assign [instance="Spotify"]  $w10
+
+# FOCUS
+bindsym $mod+Left 		focus left
+bindsym $mod+Down 		focus down
+bindsym $mod+Up 		focus up
+bindsym $mod+Right 		focus right
+
+	
+bindsym $mod+space 		focus mode_toggle
+bindsym $mod+a 			focus parent
+
+# MOVE
+bindsym $mod+Shift+h 		move left
+bindsym $mod+Shift+j 		move down
+bindsym $mod+Shift+k 		move up
+bindsym $mod+Shift+l 		move right
+bindsym $mod+Shift+Left 	move left
+bindsym $mod+Shift+Down 	move down
+bindsym $mod+Shift+Up 		move up
+bindsym $mod+Shift+Right 	move right
+bindsym $mod+Shift+1 		move container to workspace $w1
+bindsym $mod+Shift+2 		move container to workspace $w2
+bindsym $mod+Shift+3 		move container to workspace $w3
+bindsym $mod+Shift+4 		move container to workspace $w4
+bindsym $mod+Shift+5 		move container to workspace $w5
+bindsym $mod+Shift+6 		move container to workspace $w6
+bindsym $mod+Shift+7 		move container to workspace $w7
+bindsym $mod+Shift+8 		move container to workspace $w8
+bindsym $mod+Shift+9 		move container to workspace $w9
+bindsym $mod+Shift+0 		move container to workspace $w10
+
+# SPLIT
+bindsym $mod+h 			split h
+bindsym $mod+v 			split v
+
+# LAYOUT
+bindsym $mod+f 			fullscreen toggle
+bindsym $mod+q 			layout stacking
+bindsym $mod+w 			layout tabbed
+bindsym $mod+e 			layout toggle split
+bindsym $mod+Shift+space 	floating toggle
+
+# I3
+bindsym $mod+Shift+q 		kill
+bindsym $mod+1 			workspace $w1
+bindsym $mod+2 			workspace $w2
+bindsym $mod+3 			workspace $w3
+bindsym $mod+4 			workspace $w4
+bindsym $mod+5 			workspace $w5
+bindsym $mod+6 			workspace $w6
+bindsym $mod+7 			workspace $w7
+bindsym $mod+8 			workspace $w8
+bindsym $mod+9 			workspace $w9
+bindsym $mod+0 			workspace $w10
+bindsym $mod+Shift+c 		reload
+bindsym $mod+Shift+r 		restart
+bindsym $mod+Shift+e 		exec "i3-nagbar -t warning -f Terminus -m 'End your X session ?' -b 'Yessa' 'i3-msg exit'"
+
+# AUDIO - MUSIC
+bindsym $mod+P 		        exec spotifhelp --playpause
+bindcode $mod+34 	        exec spotifhelp --prev
+bindcode $mod+35 		exec spotifhelp --next
+bindcode $mod+shift+$OSB 	exec amixer set Master 5%-
+bindcode $mod+shift+$CSB	exec amixer set Master 5%+
+bindsym $mod+shift+A 		exec amixer set Master 5%-
+bindsym $mod+shift+S 		exec amixer set Master 5%+
+
+
+# SCREENSHOT
+bindcode $PRTSC 		exec scrot
+
+# ROFI MENUs
+bindsym $mod+D 		    	exec dmenu_run -fn Terminus
+
+# CUSTOM PROGRAMS
+bindsym $mod+Return 		    exec urxvt
+bindsym $mod+c 			    exec firefox
+bindsym $mod+t 			    exec urxvt -name "center_terminal"
+bindsym $mod+shift+t    exec ts
+bindsym $mod+shift+m exec lk
+
+
+
+# OTHER SETTINGS
+gaps inner 5
+gaps outer 3
+focus_follows_mouse no
+
