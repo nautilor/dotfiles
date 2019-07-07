@@ -1,0 +1,23 @@
+#!/bin/bash
+
+RED="%{F#f92672}"
+GREEN="%{F#a6e22e}"
+YELLOW="%{F#f4bf75}"
+BLUE="%{F#66d9ef}"
+PURPLE="%{F#ae81ff}"
+CYAN="%{F#a1efe4}"
+WHITE="%{F#f8f8f2}"
+BG="%{B#272822}"
+
+
+d=`date "+%y/%m/%d"`
+t=`date "+%H:%M:%S"`
+mf=`free -hb | awk '{print $3}' | xargs | awk '{print $2}'`
+mt=`free -hb | awk '{print $2}' | xargs | awk '{print $2}'`
+ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+while true
+  do
+    echo "%{l} $BG[$GREEN$d$WHITE] [$CYAN$t$WHITE] %{r}[$PURPLE$mf$WHITE/$RED$mt$WHITE] [$BLUE$ip$WHITE] " | lemonbar -p
+    sleep 1
+  done

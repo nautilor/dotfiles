@@ -1,0 +1,1 @@
+set PATH /home/freedom/.local/bin/ $PATH

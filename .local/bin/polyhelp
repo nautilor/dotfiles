@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [[ "$1" == "date" ]]
+  then
+    output="$(date "+%D %H:%M")"
+fi
+
+if [[ "$1" == "volume" ]]
+  then
+    output="$(amixer get Master | grep Mono: | xargs | cut -f3 -d' ')"
+    output="$output $(amixer get Master | grep Mono: | xargs | cut -f6 -d' ')"   
+fi
+
+if [[ "$1" == "memory" ]]
+  then
+    output=`free | grep Mem | awk '{ printf("%.0f%\n", $3/$2 * 100.0) }'`
+fi
+
+if [[ "$1" == "spotify" ]]
+  then
+    spotifhelp --status
+    exit
+fi
+
+echo "$output"
