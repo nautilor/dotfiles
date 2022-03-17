@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function spawn_it() {
-  trayer --align right --SetDockType true --height 45 --width 10 --monitor 1 --edge left --distancefrom left --distance 55 --margin 5 --tint "#2E3440" --padding 22 &
+  trayer --align right --SetDockType true --height 45 --width 10 --monitor 1 --edge left --distancefrom left --distance 60 --margin 5 --tint "#2E3440" --padding 22 &
 }
 
 function kill_it() {
