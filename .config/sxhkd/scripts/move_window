@@ -1,0 +1,10 @@
+#!/bin/bash
+
+workspace=`xprop -root _NET_CURRENT_DESKTOP | awk '{print $3+1}'`
+if ((workspace >= 1 && workspace <= 3)); then
+    goto=`echo $1 | sed -E "s/q/1/g" | sed -E "s/w/2/g" | sed -E "s/e/3/g"`
+    bspc node -d $goto
+else
+    goto=`echo $1 | sed -E "s/q/4/g" | sed -E "s/w/5/g" | sed -E "s/e/6/g"`
+    bspc node -d $goto
+fi

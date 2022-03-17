@@ -1,0 +1,44 @@
+! ------------------------------------------------------------------------------
+! URxvt configs
+! ------------------------------------------------------------------------------
+! font spacing
+!URxvt*letterSpace:	   0
+URxvt.lineSpace:	     0
+
+! general settings
+URxvt*saveline:			15000
+URxvt*termName:			rxvt-256color
+URxvt*iso14755:			false
+URxvt*urgentOnBell:		false
+
+! appearance
+URxvt*scrollBar:		     false
+URxvt*scrollBar_right:   false
+URxvt*internalBorder:	   16
+URxvt*externalBorder:	   0
+URxvt.geometry:		       85x25
+
+
+! scroll one line
+URxvt.keysym.Shift-Up:		command:\033]720;1\007
+URxvt.keysym.Shift-Down:	command:\033]721;1\007
+
+
+URxvt.keysym.C-A-Up:     font-size:increase
+URxvt.keysym.C-A-Down:   font-size:decrease
+URxvt.keysym.C-S-Up:     font-size:incglobal
+URxvt.keysym.C-S-Down:   font-size:decglobal
+URxvt.keysym.C-equal:    font-size:reset
+URxvt.keysym.C-slash:    font-size:show
+
+! paste/copy
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+
+Urxvt.perl-ext-common: default,font-size
+
+
+
+!URxvt.shading:       20
+!URxvt.transparent:   true
+!URxvt*depth:         5

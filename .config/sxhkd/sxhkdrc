@@ -1,0 +1,274 @@
+# * * * * * * * CUSTOM KEYBINDINGS * * * * * * *
+
+#region * * * * * * * bspc * * * * * * *
+# change monitor focus
+super + BackSpace
+	bspc monitor --focus prev
+
+# rotate focused desktop part 90 degrees
+super + {_,shift }a
+  bspc node -f @parent; bspc node -R {90, -90}; bspc node -f last.local;
+
+# focus the node in the given direction and monitor
+super + shift + {Left,Down,Up,Right}
+	dir={west,south,north,east}; \
+	bspc node -s "$dir.local" --follow \
+	|| bspc node -m "$dir" --follow
+
+# decrease windows gap size
+super + ctrl + y
+	bspc config window_gap $((`bspc config window_gap` - 10))
+
+# reset windows gap size
+super + ctrl + u
+	bspc config window_gap 5
+
+# increase windows gap size
+super + ctrl + i
+	bspc config window_gap $((`bspc config window_gap` + 10))
+
+# focus in a specific desktop
+super + {q,w,e}
+	~/.config/sxhkd/scripts/workspace_focus {q,w,e}
+
+# move window to desktop
+super + ctrl + {q,w,e}
+	~/.config/sxhkd/scripts/move_window {q,w,e}
+
+#endregion
+
+#region * * * * * * * Misc * * * * * * *
+
+# toggle the trayer visibility
+super + ctrl + t
+	~/.config/sxhkd/scripts/toggle_trayer
+
+# toggle dropdown terminal
+super + ctrl + z
+	~/.config/sxhkd/scripts/drop_terminal toggle
+
+# change keyboard layour
+super + ctrl + space
+    ~/.config/sxhkd/scripts/change_keyboard_layout
+
+# launch eww
+super + ctrl + a
+	~/.config/eww/launch_widgets.sh
+
+# volume control
+super + shift + p
+	pactl set-sink-volume 1 +5%
+
+# volume control
+super + shift + o
+	pactl set-sink-volume 1 -5%
+
+# lock the screen
+super + shift + l
+	~/.config/sxhkd/scripts/lockscreen -f "/usr/share/fonts/adobe-source-han-sans/SourceHanSansJP-Normal.otf"
+
+# toggle microphone
+super + ctrl + s
+	~/.config/sxhkd/scripts/toggle_mic
+
+# add window to scratch
+super + h
+	~/.config/sxhkd/scripts/scratch push
+
+# remove window from scratch
+super + ctrl + h
+	~/.config/sxhkd/scripts/scratch pop
+
+# show sxhkd shortcuts
+super + shift + h
+    kitty --class bspwm_helper ~/.config/sxhkd/scripts/sxhkd_help
+
+# take a screenshot
+super + shift + m
+	flameshot gui
+
+#endregion
+
+#region * * * * * * * Tabbed * * * * * * *
+# add to tabbed container
+super + ctrl + alt + {Left,Down,Up,Right}
+    ~/.config/sxhkd/scripts/tabc attach $(bspc query -N -n) {$(bspc query -N -n west),$(bspc query -N -n south),$(bspc query -N -n north),$(bspc query -N -n east)}
+
+# create/remove from tabbed container
+super + z 
+    id=$(bspc query -N -n); \
+    [[ "$(~/.config/sxhkd/scripts/tabc printclass $id)" == "tabbed" ]] \
+    && ~/.config/sxhkd/scripts/tabc detach $id \
+    || ~/.config/sxhkd/scripts/tabc create $id 
+
+# toggle autoattach in tabbed container
+super + shift + z 
+    ~/.config/sxhkd/scripts/tabc autoattach $(bspc query -N -n) 
+
+#endregion
+
+#region * * * * * * * Music with ncmpcpp * * * * * * *
+# show playlist selector
+super + shift + k
+    ~/.config/sxhkd/scripts/mpdplaylist
+
+# show song selector for current playlist
+super + ctrl + k
+    ~/.config/sxhkd/scripts/mpdsong
+
+# open ncmpcpp
+super + ctrl + l
+    kitty --class music_player ~/.config/sxhkd/scripts/ncmpcpp_art
+
+# toggle music play/pause
+super + p
+	mpc toggle
+
+# go to previous song
+super + ctrl + o
+	mpc prev
+
+# go to next song
+super + ctrl + p
+	mpc next
+
+# music controls
+super + ctrl + j
+	~/.config/sxhkd/scripts/musicontrol
+
+#endregion
+
+#region * * * * * * * Other Rofi Menus * * * * * * *
+
+# powermenu
+super + shift + x
+    ~/.config/sxhkd/scripts/powermenu
+
+# dock
+super + ctrl + x
+    ~/.config/sxhkd/scripts/dock
+
+# show application launcher
+super + d
+	rofi -show drun -theme applications -show-icons -monitor -1
+
+# show run launcher
+super + shift + d
+	rofi -show run -theme generic -monitor -1
+
+# open rofi file manager
+super + ctrl + d
+    ~/.config/sxhkd/scripts/rofile
+
+# show todo list
+super + ctrl + m
+	~/.config/sxhkd/scripts/todo
+
+#endregion
+
+#region * * * * * * * Terminal * * * * * * *
+
+# open a terminal
+super + Return
+	kitty
+
+# open a floating terminal
+super + ctrl + Return
+    kitty --class floating_terminal
+
+#endregion
+
+# make sxhkd reload its configuration files
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# quit/restart bspwm
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+# close and kill
+super + {_,shift + }q
+	bspc node -{k,c}
+
+# alternate between the tiled and monocle layout
+super + m
+	bspc desktop -l next
+
+super + y
+	bspc node newest.marked.local -n newest.!automatic.local
+
+# swap the current node and the biggest window
+super + g
+	bspc node -s biggest.window
+
+#
+# state/flags
+super + s
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+super + t; r
+    tabc $(bspc query -N -n focused) remove
+
+super + t; {Left,Down,Up,Right}
+        tabc $(bspc query -N -n {west,south,north,east}) add $(bspc query -N -n focused)
+
+# set the node flags
+super + ctrl + {m,x,y,z}
+	bspc node -g {marked,locked,sticky,private}
+
+
+## focus/swap
+#super + alt + {Left,Right}
+#	bspc node -m {prev, next} --follow;
+	
+# focus/swap
+super + {Left,Down,Up,Right}
+	bspc node -f {west,south,north,east}
+
+
+# focus the node for the given path jump
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+# focus the next/previous window in the current desktop
+super + {_,shift + }c
+	bspc node -f {next,prev}.local.!hidden.window
+
+# focus the last node/desktop
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# focus the older or newer node in the focus history
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+# focus or send to the given desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# preselect the direction
+super + ctrl + {Left,Down,Up,Right}
+	bspc node -p {west,south,north,east}
+
+# preselect the ratio
+super + ctrl + {1-9} 
+	bspc node -o 0.{1-9}
+
+# cancel the preselection for the focused node
+super + shift + space
+	bspc node -p cancel
+
+
+# expand a window by moving one of its side outward
+super + alt + {Left,Down,Up,Right}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# contract a window by moving one of its side inward
+super + alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# move a floating window
+super + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}

@@ -1,0 +1,17 @@
+! ------------------------------------------------------------------------------
+! Fonts
+! ------------------------------------------------------------------------------
+
+!URxvt.font: xft:Ubuntu Mono derivative Powerline:style=Regular:size=10
+!URxvt.font: xft: Roboto Mono for Powerline:style=Regular:size=10
+!URxvt.font: xft: DejaVu Sans Mono for Powerline:style=Medium:size=10
+!URxvt.font: xft: Fantasque Sans Mono:style=Medium:size=10
+!URxvt.font: xft: Dank Mono:size=12:antialias=True
+!URxvt.font: xft: Hurmit Nerd Font Mono:style=Medium:size=10
+!URxvt.font: xft: FiraFlott:style=Medium:size=10
+!URxvt.font: xft: Fira Code:style=Bold:size=10
+!URxvt.font: xft: Terminus:style=Bold:size=9
+!URxvt.font: xft: JetBrainsMono Nerd Font:style=Medium:size=9
+URxvt.font: xft:JetBrainsMono Nerd Font Mono:size=9:antialias=true:autohint=true
+!URxvt.font: xft: Iosevka:style=Medium:size=9, xft:Noto Color Emoji:size=10
+!URxvt.font: xft: JetBrainsMono Nerd Font:style=Medium:pixelsize=12:antialias=true:autohint=true

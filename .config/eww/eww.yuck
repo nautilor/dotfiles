@@ -1,0 +1,178 @@
+(defwidget volume []
+    (box :orientation "v" :space-evenly "false" :class "main-box" 
+        (box :orientation "h" :class "slider-vol-side" :space-evenly "false" 
+          (box :class "label-vol-side" "")
+          (scale :min 0 :max 101 :value {speaker_volume} :onchange "amixer -D pulse sset Master {}%"))
+          (box :orientation "h" :class "slider-mic-side" :space-evenly "false" 
+          (box :class "label-mic-side" "")
+          (scale :min 0 :max 101 :value {microphone_volume} :onchange "amixer -D pulse set Capture {}%"))
+        ))
+
+(defwidget poweroff []
+    (button :onclick "systemctl poweroff"
+    (box :orientation "v" :space-evenly "false" :class "square-button"
+          (box :class "poweroff" "")
+        )))
+
+(defwidget reboot []
+    (button :onclick "systemctl reboot"
+    (box :orientation "v" :space-evenly "false" :class "square-button"
+          (box :class "reboot" "")
+        )))
+
+(defwidget logout []
+    (button :onclick "bspc quit"
+    (box :orientation "v" :space-evenly "false" :class "square-button"
+          (box :class "logout" "")
+        )))
+
+(defwidget lock []
+    (button :onclick "lock"
+    (box :orientation "v" :space-evenly "false" :class "square-button"
+          (box :class "lock" "")
+        )))
+
+(defwidget music []
+    (box :orientation "h" :space-evenly "false" :class "music-box"
+          (button :onclick "urxvt -name 'music_player' -e ncmpcpp_art"
+            (image :path {album} :image-width 100 :image-height 100 :class "music-album")
+          )
+            (box :orientation "v" :space-evenly "false" :class ""
+              (box :orientation "height" :space-evenly "false" :class ""
+                (label :text {song} :class "music-info" :limit-width 20)
+              )
+              (box :orientation "h" :space-evenly "false" :class "music-control-box"
+                (button :onclick "mpc prev"
+                  (label :text "玲" :class "music-control" :limit-width 24)
+                )
+                (button :onclick "mpc toggle"
+                  (label :text {mcontrol} :class "music-control" :limit-width 24)
+                )
+                (button :onclick "mpc next"
+                  (label :text "怜" :class "music-control" :limit-width 24)
+                )
+              )
+            )
+    ))
+
+  (defwidget profile []
+    (box :orientation "v" :space-evenly "false" :class "profile-box"
+      (image :path "images/profile.png" :image-width 120 :image-height 120 :class "profile-picture")
+      (box :orientation "v" :space-evenly "false" :class "profile-info"
+        (label :text "Edoardo Zerbo" :class "profile-name" :limit-width 20)
+        (label :text "@nautilor" :class "profile-username" :limit-width 20)
+     )
+    )
+  )
+
+  (defwidget time []
+    (box :orientation "v" :space-evenly "false" :class "hour-box"
+        (label :text {hour} :class "hour-text" :limit-width 20)
+        (label :text {minute} :class "minute-text" :limit-width 20)
+    )
+  )
+
+  (defwidget date []
+    (box :orientation "v" :space-evenly "false" :class "date-box"
+        (label :text {date} :class "date-text" :limit-width 20)
+    )
+  )
+
+(defwidget workspaces []
+  (literal :content workspaces_listen))
+
+(defwidget layout []
+  (literal :content workspaces_layout))
+
+(defwidget tabbed []
+  (literal :content workspaces_tabbed))
+
+(defwidget menu []
+    (button :class "application-menu" :onclick "rofi -show drun -theme applications -show-icons & disown" ""))
+
+(defwidget bar []
+    (box :orientation "v"
+      (box :orientation "v" :space-evenly "false" :class "workspaces" :valign "start"
+        (menu)
+        (layout)
+        (label :class "separator" :text "--")
+        (workspaces)
+        (label :class "separator" :text "--")
+        (tabbed)
+      )
+      (box :orientation "v" :space-evenly "false" :class "" :valign "end"
+        (box :orientation "v" :space-evenly "false" :class "bar-box"
+          (label :class "bar-updates-icon" :text "")
+          (label :class "bar-updates-text" :text {updates})
+          (label :class "separator" :text "--")
+        )
+        (box :orientation "v" :space-evenly "false" :class "bar-box"
+          (label :class "bar-mic-icon" :text {mic_check})
+        )
+        (box :orientation "v" :space-evenly "false" :class "bar-box"
+          (label :class "bar-caps-icon" :text {capslock})
+          (label :class "separator" :text "--")
+        )
+        (box :orientation "v" :space-evenly "false" :class "bar-box"
+          (label :text {hour} :class "hour" :limit-width 20)
+          (label :text {minute} :class "minute" :limit-width 20)
+        )
+      )
+    )
+  )
+
+; vars
+(deflisten workspaces_listen "./scripts/workspaces.sh")
+(defpoll workspaces_layout :interval "500ms" "./scripts/bspc_layout.sh")
+(defpoll workspaces_tabbed :interval "500ms" "./scripts/bspc_tabbed.sh")
+(defpoll speaker_volume :interval "1s"  "./scripts/speaker_volume.sh")
+(defpoll microphone_volume :interval "1s"  "./scripts/microphone_volume.sh")
+(defpoll updates :interval "20m" "./scripts/check_updates.sh")
+(defpoll capslock :interval "100ms"  "./scripts/capslock_icon.sh")
+(defpoll mic_check :interval "100ms"  "./scripts/microphone_icon.sh")
+(defpoll song :interval "500ms"  "./scripts/music_info.sh")
+(defpoll mcontrol :interval "250ms"  "./scripts/play_pause_control.sh")
+(defpoll album :interval "1s"  "./scripts/album_art.py")
+(defpoll hour :interval "1s"  "date '+%H'")
+(defpoll minute :interval "1s"  "date '+%M'")
+(defpoll date :interval "1s"  "date '+%d/%m/%Y'")
+
+(defwindow volume 
+			    :geometry (geometry :x "60px" :y "555px" :width "250px" :height "50px")
+			     				(volume))
+
+(defwindow poweroff 
+			    :geometry (geometry :x "420px" :y "555px" :width "50px" :height "50px")
+			     				(poweroff))
+
+
+(defwindow reboot 
+			    :geometry (geometry :x "350px" :y "620px" :width "50px" :height "50px")
+			     				(reboot))
+
+(defwindow logout 
+			    :geometry (geometry :x "350px" :y "555px" :width "50px" :height "50px")
+			     				(logout))
+
+(defwindow lock 
+			    :geometry (geometry :x "420px" :y "620px" :width "50px" :height "50px")
+			     				(lock))
+
+(defwindow music 
+			    :geometry (geometry :x "60px" :y "690px" :width "420px" :height "100px")
+			     				(music))
+(defwindow profile 
+			    :geometry (geometry :x "60px" :y "825px" :width "210px" :height "120px")
+			     				(profile))
+
+(defwindow time 
+			    :geometry (geometry :x "290px" :y "825px" :width "190px" :height "120px")
+			     				(time))
+
+(defwindow date 
+			    :geometry (geometry :x "290px" :y "990px" :width "190px" :height "86px")
+			     				(date))
+
+(defwindow bar 
+			    :geometry (geometry :x "5px" :y "5px" :width "26px" :height "1070px")
+			     				(bar))

@@ -1,0 +1,3 @@
+#!/bin/bash
+layout=`setxkbmap -query | grep layout  | sed -E 's/.*:\s+//g'`
+[ "$layout" == "us" ] && setxkbmap it || setxkbmap us

@@ -1,0 +1,2 @@
+#!/bin/bash
+mopidytermart -w 24 & ncmpcpp

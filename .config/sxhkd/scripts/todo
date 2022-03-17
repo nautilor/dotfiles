@@ -1,0 +1,18 @@
+#!/bin/bash
+# A simple todo list using dmenu
+TODO_FILE="$HOME/.todo"
+
+# Create the file if does not exists
+[ ! -f $TODO_FILE ] && touch $TODO_FILE
+
+# Remove all empty lines from it
+sed -ri '/^\s*$/d' $TODO_FILE
+
+# Open the lines on dmenu and get the result from it
+RESULT=`cat $TODO_FILE | rofi -dmenu -p "Todo" -theme generic -monitor -1`
+
+# If nothing has been selected (user pressed ESC) just quit
+[ -z "$RESULT" ] && exit
+
+# Add to the list if it's a new todo, delete it otherwhise thisVallue
+[ -z "`grep "$RESULT" $TODO_FILE`" ] && echo "$RESULT" >> $TODO_FILE || sed -i "/$RESULT/d" $TODO_FILE

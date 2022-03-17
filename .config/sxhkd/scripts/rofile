@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while :
+do
+	RES=`echo -e "..\n$(ls)" |  rofi -dmenu -theme generic -monitor -1`
+	[ -z "$RES" ] && exit
+	[ -f "$RES" ] && xdg-open "$RES" && exit
+	[ -d "$RES" ] && cd "$RES"
+done
+

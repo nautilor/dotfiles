@@ -1,0 +1,44 @@
+# for urxvt
+xrdb ~/.Xresources
+
+# gnome keyring for ssh password/etc...
+eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+export SSH_AUTH_SOCK
+source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
+
+# polkit for mounting stuff
+pgrep -x polkit-gnome-authentication-agent-1 > /dev/null || /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+# do not mess java applications
+wmname LG3D
+_JAVA_AWT_WM_NONREPARENTING=1
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# eww daemon
+pgrep -x eww > /dev/null || eww &
+
+# flameshot
+pgrep -x flameshot > /dev/null || flameshot &
+
+# sxhkd for keyboard shortcuts
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+# music player daemon
+pgrep -x mopidy > /dev/null || mopidy &
+
+# launch eww bar
+if [[ "`eww windows | grep bar`" != "*bar" ]];then
+    ~/.config/eww/launch_bar.sh &
+fi
+
+# notification daemon
+pgrep -x dunst > /dev/null || dunst &
+
+# compositor
+pgrep -x picom > /dev/null || picom &
+
+# change cursor
+xsetroot -cursor_name left_ptr &
+
+# set wallpaper
+feh --bg-scale ~/.wall.png &

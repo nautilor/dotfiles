@@ -1,0 +1,319 @@
+;     ___      _       _
+;    / _ \___ | |_   _| |__   __ _ _ __ 
+;   / /_)/ _ \| | | | | '_ \ / _` | '__|
+;  / ___/ (_) | | |_| | |_) | (_| | |   
+;  \/    \___/|_|\__, |_.__/ \__,_|_|   
+;                |___/          
+
+[colors]
+red        = #BF616A
+darkred    = #BF616A
+green      = #A3BE8C
+darkgreen  = #A3BE8C
+yellow     = #EBCB8B
+darkyellow = #cfb072
+blue_1     = #9eb3cd
+blue_2     = #8ea6c4
+blue_3     = #7e9abc
+blue_4     = #6e8db4
+blue_5     = #5e81ac
+blue_6     = #384d67
+purple     = #B48EAD
+darkpurple = #9f6f96
+cyan       = #88C0D0
+darkcyan   = #88C0D0
+foreground = #D8DEE9
+background = #2E3440
+alt        = #434C5E
+
+[module/sep]
+type = custom/text
+content = " "
+content-background = ${colors.background}
+content-foreground = ${colors.background}
+
+; ==== APPLICATION MENU ====
+[module/apps]
+type = custom/text
+content = "%{T6} %{T-}"
+content-background = ${colors.background}
+content-foreground = ${colors.blue_5}
+click-left="rofi -show drun -theme applications -show-icons"
+
+; ==== RUNNING APP ====
+[module/running_program]
+type = custom/script
+format = "<label>"
+format-background = ${colors.background}
+format-foreground = ${colors.darkpurple}
+exec = "~/.config/polybar/scripts/running_program.sh"
+interval = 0
+
+[module/layout]
+type = custom/script
+format = "<label>"
+format-background = ${colors.background}
+format-foreground = ${colors.darkpurple}
+exec = "~/.config/polybar/scripts/bspc_layout.sh"
+interval = 0
+
+[module/tabbed]
+type = custom/script
+format = "<label>"
+format-background = ${colors.background}
+format-foreground = ${colors.darkpurple}
+exec = "~/.config/polybar/scripts/bspc_tabbed.sh"
+interval = 0
+
+; ==== CHECK FOR UPDATES ====
+[module/updates]
+type = custom/script
+format = "<label>"
+format-prefix = "%{T6} %{T-}%{T1} %{T-}"
+format-prefix-background = ${colors.background}
+format-prefix-foreground = ${colors.yellow}
+format-background = ${colors.background}
+format-foreground = ${colors.yellow}
+exec = "~/.config/polybar/scripts/checkupdates.sh"
+
+; ==== MIC ========================================================================
+[module/mic]
+type = custom/script
+format = <label>
+#format-prefix = " "
+format-prefix-foreground = ${colors.blue_5}
+format-prefix-background = ${colors.background}
+format-foreground = ${colors.blue_5}
+format-background = ${colors.background}
+label-font = 5
+interval = 0
+exec = "~/.config/polybar/scripts/microphone_icon.sh"
+tail = true
+
+; ==== MPC SONG ====================================================================
+[module/mpc]
+type = custom/script
+interval = 1
+format = <label>
+format-prefix = "%{T7} %{T-}"
+format-prefix-background = ${colors.background}
+format-prefix-foreground = ${colors.blue_5}
+format-foreground = ${colors.blue_5}
+format-background = ${colors.background}
+label = %output:0:27:…%
+exec = "~/.config/polybar/scripts/music_information.sh 2>/dev/null"
+tail = true
+
+; ==== WORKSPACES ==================================================================
+
+[module/bspwm]
+type = internal/bspwm
+
+; Only show workspaces defined on the same output as the bar
+; NOTE: The bspwm and XRandR monitor names must match, which they do by default.
+; But if you rename your bspwm monitors with bspc -n this option will no longer
+; behave correctly.
+; Default: true
+pin-workspaces = false
+inline-mode = false
+enable-click = true
+
+enable-scroll = false
+reverse-scroll = false
+fuzzy-match = false
+occupied-scroll = false
+ws-icon-0 = 1;%{T7}%{T-}
+ws-icon-1 = 2;%{T7}%{T-}
+ws-icon-2 = 3;%{T7}%{T-}
+ws-icon-3 = 4;%{T7}%{T-}
+ws-icon-4 = 5;%{T7}%{T-}
+ws-icon-5 = 6;%{T7}%{T-}
+icon-default = 
+format = <label-state>
+
+label-focused = "%{T4}%{T-}"
+label-occupied = %icon%
+label-urgent = %icon%
+label-empty = %icon%
+
+label-dimmed-focused-foreground = ${colors.blue_4}
+
+label-focused-foreground   = ${colors.blue_2}
+label-urgent-foreground    = ${colors.blue_6}
+label-empty-foreground     = ${colors.blue_6}
+label-occupied-foreground  = ${colors.blue_4}
+
+label-focused-background = ${colors.background}
+label-urgent-background  = ${colors.background}
+label-empty-background   = ${colors.background}
+
+
+label-occupied-padding = 2
+label-empty-padding = 2
+label-urgent-padding = 2
+label-focused-padding = 2
+
+; ==== WORKSPACES ==================================================================
+[module/workspaces]
+type = internal/xworkspaces
+pin-workspaces = false
+enable-click = true
+enable-scroll = true
+
+icon-0 = 1;%{T7}%{T-}
+icon-1 = 2;%{T7}%{T-}
+icon-2 = 3;%{T7}%{T-}
+icon-3 = 4;%{T7}%{T-}
+icon-4 = 5;%{T7}%{T-}
+icon-5 = 6;%{T7}%{T-}
+icon-default = 
+label-active-underline = ${colors.alt}
+
+format = <label-state>
+label-active = "%{T7}%{T-}"
+label-occupied = %{T7}%{F#5e81ac}%{F-}%{T-}
+label-urgent = %{T7}%{F#5e81ac}%{F-}%{T-}
+label-empty = %{T7}%{F#5e81ac}%{F-}%{T-}
+
+label-occupied-padding = 2
+label-empty-padding = 2
+label-urgent-padding = 2
+label-active-padding = 2
+
+icon-0-foreground = ${colors.background}
+
+label-active-foreground =   ${colors.blue_2}
+label-urgent-foreground =   ${colors.blue_7}
+label-empty-foreground =    ${colors.blue_7}
+label-occupied-foreground = ${colors.blue_7}
+
+label-active-background =   ${colors.background}
+label-urgent-background =   ${colors.background}
+label-empty-background =    ${colors.background}
+label-occupied-background = ${colors.background}
+
+; ==== VOLUME ======================================================================
+[module/volume]
+type = custom/script
+interval = 0
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.yellow}
+format-prefix-background = ${colors.alt}
+format-foreground = ${colors.yellow}
+format-background = ${colors.alt}
+exec = bar volume
+
+; ==== KEYBOARD LAYOUT =============================================================
+[module/xkeyboard]
+type = internal/xkeyboard
+blacklist-0 = num lock
+format-prefix = ""
+format-prefix-foreground = ${colors.blue_5}
+format-prefix-background = ${colors.background}
+format-foreground = ${colors.blue_5}
+format-background = ${colors.background}
+label-layout = ""
+label-indicator-padding = 1
+label-indicator-on-capslock =  "%{T7}%{T-}"
+label-indicator-off-capslock = "%{T7}%{T-}"
+label-indicator-on-capslock-foreground = ${colors.green}
+label-indicator-on-capslock-background = ${colors.background}
+label-indicator-off-capslock-foreground = ${colors.green}
+label-indicator-off-capslock-background = ${colors.background}
+label-indicator-on-foreground = ${colors.blue_5}
+label-indicator-on-background = ${colors.background}
+
+; ==== DATE AND TIME ===============================================================
+[module/date]
+type = internal/date
+interval = 1.0
+date = %H:%M
+date-alt = %d/%m/%Y
+;format-prefix = " %{T7}%{T-} "
+format-prefix-foreground = ${colors.green}
+format-prefix-background = ${colors.background}
+format-foreground = ${colors.green}
+format-background = ${colors.background}
+
+; ==== POWER MENU ================================================================
+
+[module/power]
+type = custom/menu
+label-separator = |
+label-separator-margin = 1
+label-open = ""
+label-close = ""
+
+format = <label-toggle> <menu>
+menu-0-0 = ""
+menu-0-0-exec = poweroff
+menu-0-1 = ""
+menu-0-1-exec = reboot
+#format-prefix = " " 
+format-prefix-foreground = ${colors.purple}
+format-prefix-background = ${colors.alt}
+format-foreground = ${colors.purple}
+format-background = ${colors.alt}
+
+; ==== POWER BUTTON ====
+[module/powerbutton]
+type = custom/text
+content = ""
+content-background = ${colors.background}
+content-foreground = ${colors.purple}
+click-left="powermenu"
+
+; ==== PULSE ====
+[module/headphone]
+type = internal/pulseaudio
+sink = alsa_output.pci-0000_12_00.3.analog-stereo
+use-ui-max = true
+interval = 5
+format-muted = "  <label-muted>"
+label-muted = "%percentage%"
+format-muted-foreground = ${colors.red}
+format-muted-background = ${colors.background}
+
+format-volume = "  <label-volume>"
+label-volume = "%percentage%"
+format-volume-foreground = ${colors.yellow}
+format-volume-background = ${colors.background}
+
+; ==== SETTINGS ====================================================================
+
+[settings]
+screenchange-reload = true
+
+; ==== BAR =========================================================================
+
+[bar/bar]
+bottom = false
+offset-y = 5
+offset-x = 5
+width = 99.5%
+height = 26
+override-redirect = true
+fixed-center = true
+border-size = 5
+background = ${colors.background}
+border-color = ${colors.background}
+tray-position = right
+tray-padding = 2
+tray-background = ${colors.background}
+wm-restack = bspwm
+cursor-click = pointer
+padding = 1
+
+font-0 = JetBrainsMono Nerd Font:antialias=true:hinting=true:style=Medium:pixelsize=10;3
+font-1 = Material Icons:size=15:antialias=true:hinting:true;5
+font-2 = Source Han Sans JP,源ノ角ゴシック JP,Source Han Sans JP Medium,源ノ角ゴシック JP Medium:pixelsize=9;3
+font-3 = JetBrainsMono Nerd Font:antialias=true:hinting=true:style=Medium:pixelsize=17;4
+font-4 = JetBrainsMono Nerd Font:antialias=true:hinting=true:style=Medium:pixelsize=50;2
+font-5 = JetBrainsMono Nerd Font:antialias=true:hinting=true:style=Medium:pixelsize=15;4
+font-6 = JetBrainsMono Nerd Font:antialias=true:hinting=true:style=Medium:pixelsize=13;3
+font-7 = JetBrainsMono Nerd Font:antialias=true:hinting=true:style=Medium:pixelsize=8;2
+
+modules-left = apps sep sep running_program
+modules-center = layout sep bspwm tabbed
+modules-right = mpc sep sep updates sep sep mic sep xkeyboard sep sep date sep powerbutton
