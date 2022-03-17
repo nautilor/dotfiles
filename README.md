@@ -1,3 +1,7 @@
+# Dotfiles
+
+![dots](assets/username.png)
+
 
 # Configurations
 - [bspwm README](.config/bspwm/README.md)
