@@ -30,3 +30,10 @@ fi
 if [[ ! -d "$HOME/.obsidian/Notes" ]]; then
 	mkdir -p "$HOME/.obsidian/Notes"
 fi
+
+# ==============================================================================
+# Reload fonts configurations
+# ==============================================================================
+if command -v fc-cache &> /dev/null; then
+	fc-cache -f -v
+fi
