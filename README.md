@@ -149,42 +149,48 @@ Config namespace: `shadow`.
 
 ### `zsh` — Zsh shell
 
-Oh My Zsh setup with the `fluzz` theme.
+[zinit](https://github.com/zdharma-continuum/zinit)-managed setup with the **Powerlevel10k** theme.
+Config is split into modular files under `~/.zsh/`.
 
-**Plugins:** `git`, `zsh-sdkman`, `ssh-agent`, `zsh-syntax-highlighting`
+**Plugins (via zinit):** `zsh-autosuggestions`, `zsh-syntax-highlighting`, `zsh-completions`, `fzf-tab`, `powerlevel10k`
 
-**Environment setup:**
+**OMZ snippets (via zinit):** `git`, `sudo`, `archlinux`, `command-not-found`
+
+**Environment setup** (`~/.zsh/enviroments.zsh`, `~/.zsh/paths.zsh`):
 - `EDITOR=nvim`
 - Android SDK, Go, Flutter paths
 - JDTLS Lombok agent for Java LSP
 - tmux `bin/` on `$PATH`
 - Spicetify on `$PATH`
 
-**FZF integration:**
+**History** (`~/.zsh/zsh.zsh`): 10 000 entries, deduplication, shared across sessions.
+
+**FZF integration** (`~/.zsh/fzf.zsh`):
 - `Ctrl+T` previews directories with `eza --tree`
 - Tokyo Night colors applied globally
 - `_fzf_comprun` for context-aware previews
+
+**Completions** (`~/.zsh/zsh.zsh`): fzf-tab for menu-style completion with directory previews; case-insensitive matching.
+
+**nmtui theming** (`~/.zsh/nmtui.zsh`): Tokyo Night `NEWT_COLORS` for `nmtui`.
 
 **Aliases:**
 
 | Alias | Command |
 |---|---|
 | `v` / `vim` | nvim |
-| `l` / `ls` / `lr` | eza |
-| `ff` | fuzzy `cd` via `fd` |
+| `l` / `ls` / `lr` / `la` / `ll` / `lt` | eza |
+| `ff` | fuzzy `cd` via `fd` (directories under `~` and `~/.config`) |
 | `lg` | lazygit |
 | `y` | yazi |
 | `ta` | `tmux attach` |
-| `t` | attach/create `main` session |
 
 **Functions:**
 
 | Function | Purpose |
 |---|---|
-| `ff` | Fuzzy jump to any directory under `~` or `~/.config` |
-| `mm` / `mf` / `mr` | Bookmark (`~/.marks`): mark / jump to / remove |
-| `t` / `ms` | Tmux: smart attach / fuzzy session picker |
-| `nd` / `nb` / `ns` | Run `dev` / `build` / `start` with auto-detected package manager |
+| `t` | Tmux: attach to `main` session or create it |
+| `nd` / `nb` / `ns` | Run `dev` / `build` / `start` with auto-detected package manager (npm, pnpm, yarn, bun, expo, deno) |
 | `ssh` | Wrapper that forces `TERM=xterm-256color` for compatibility |
 
 **Key bindings:**
@@ -193,6 +199,8 @@ Oh My Zsh setup with the `fluzz` theme.
 |---|---|
 | `Alt+F` | `switch-session.sh` (tmux session picker) |
 | `Alt+O` | `ff` (fuzzy directory jump) |
+| `Ctrl+P` | History search backward |
+| `Ctrl+N` | History search forward |
 
 ---
 
@@ -201,6 +209,8 @@ Oh My Zsh setup with the `fluzz` theme.
 Prefix: `Ctrl+A` (changed from default).
 
 **Plugins:** `tpm`, `tmux-mighty-scroll`
+
+`xterm-keys on` is set for correct zsh key binding propagation.
 
 **Key bindings:**
 
@@ -385,7 +395,7 @@ nm-applet playerctl brightnessctl
 polkit-gnome spotify-launcher
 
 # Shell / CLI
-zsh oh-my-zsh zsh-syntax-highlighting
+zsh zinit zsh-autosuggestions zsh-syntax-highlighting zsh-completions fzf-tab powerlevel10k
 tmux tpm fzf fd bat eza lazygit yazi zathura
 
 # Editors
