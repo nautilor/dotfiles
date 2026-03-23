@@ -171,17 +171,14 @@ ${BOLD}Manual steps still required:${RESET}
        :MasonInstall pyright ts_ls eslint clangd lua_ls \\
          rust_analyzer jdtls dartls qmlls black prettierd
 
-  ${CYAN}3. Zinit + Powerlevel10k${RESET}
-     Auto-installed on first zsh launch. Run  p10k configure  to set up prompt.
-
-  ${CYAN}4. Flutter / Android SDK${RESET}
+  ${CYAN}3. Flutter / Android SDK${RESET}
      Install Flutter manually to ~/.local/flutter/
      https://docs.flutter.dev/get-started/install/linux
 
-  ${CYAN}5. Spicetify${RESET}
+  ${CYAN}4. Spicetify${RESET}
      curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh
 
-  ${CYAN}8. Enable system services${RESET}
+  ${CYAN}5. Enable system services${RESET}
      sudo systemctl enable --now NetworkManager
      sudo systemctl enable --now bluetooth
 "
