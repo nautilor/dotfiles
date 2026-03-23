@@ -1,268 +1,36 @@
-# ─────────────────────────────────────────────
-#  OH-MY-ZSH
-# ─────────────────────────────────────────────
-
-export ZSH="/home/edoardo/.oh-my-zsh"
-ZSH_THEME="fluzz"
-plugins=(git zsh-sdkman ssh-agent zsh-autosuggestions)
-
-source $ZSH/oh-my-zsh.sh
-source $HOME/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=blue,bold'
-ZSH_HIGHLIGHT_STYLES[path]='fg=blue,bold'
-
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # ─────────────────────────────────────────────
-#  ENVIRONMENT
+# ZINITIALIZATION
 # ─────────────────────────────────────────────
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+if [ ! -d $ZINIT_HOME ]; then
+	mkdir -p "$(dirname $ZINIT_HOME)"
+	git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
 
-export EDITOR=nvim
+source "${ZINIT_HOME}/zinit.zsh"
 
-# Android
-export ANDROID_HOME=/opt/android-sdk
-export ANDROID_SDK_ROOT=/opt/android-sdk
+source ~/.zsh/plugins.zsh
+source ~/.zsh/snippets.zsh
 
-# Go
-export GOPATH=$HOME/.go
-
-# jdtls / Lombok
-export JDTLS_JVM_ARGS="-javaagent:$HOME/.local/share/java/lombok.jar"
-
-
-# ─────────────────────────────────────────────
-#  PATH
-# ─────────────────────────────────────────────
-
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-export PATH=$PATH:$HOME/.local/flutter/bin
-export PATH=$PATH:$HOME/.local/bin:$HOME/.cargo/bin
-export PATH=$PATH:$HOME/.config/tmux/bin
-export PATH=$PATH:/home/edoardo/.spicetify
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
-# ─────────────────────────────────────────────
-#  FZF
-# ─────────────────────────────────────────────
-
-export FZF_CTRL_T_OPTS="--preview 'eza --tree --color=always {} | head -200'"
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
-  --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7
-  --color=fg+:#c0caf5,bg+:#1a1b26,hl+:#7dcfff
-  --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff
-  --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a'
+source ~/.zsh/enviroments.zsh
+source ~/.zsh/paths.zsh
+source ~/.zsh/fzf.zsh
+source ~/.zsh/zsh.zsh
+source ~/.zsh/nmtui.zsh
+source ~/.zsh/aliases.zsh
+source ~/.zsh/tmux.zsh
+source ~/.zsh/node.zsh
+source ~/.zsh/ssh.zsh
 
 eval "$(fzf --zsh)"
-
-_fzf_comprun() {
-  local command=$1
-  shift
-
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo \$' {}" "$@" ;;
-    *)            fzf --preview 'bat -n --color=always --line-range :500 {}' "$@" ;;
-  esac
-}
-
-
-# ─────────────────────────────────────────────
-# HISTORY
-# ─────────────────────────────────────────────	
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=$HISTSIZE
-HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
-
-# ─────────────────────────────────────────────
-#  NMTUI COLORS
-# ─────────────────────────────────────────────
-
-export NEWT_COLORS='
-root=#c0caf5,#1a1b26
-roottext=#c0caf5
-helpline=#7dcfff
-border=#7aa2f7,#1a1b26
-window=#c0caf5,#1a1b26
-shadow=#c0caf5,#1a1b26
-title=#bb9af7,#1a1b26
-button=#1a1b26,#7aa2f7
-actbutton=#1a1b26,#bb9af7
-compactbutton=#c0caf5,#1a1b26
-checkbox=#c0caf5,#1a1b26
-actcheckbox=#1a1b26,#7dcfff
-entry=#c0caf5,#1a1b26
-label=#c0caf5,#1a1b26
-listbox=#c0caf5,#1a1b26
-actlistbox=#7aa2f7,#1a1b26
-actsellistbox=#bb9af7,#1a1b26
-'
-
-
-# ─────────────────────────────────────────────
-#  KEY BINDINGS
-# ─────────────────────────────────────────────
-
-bindkey -s '\ef' "switch-session.sh\n"
-bindkey -s '\eo' "ff\n"
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
-
-
-# ─────────────────────────────────────────────
-#  ALIASES
-# ─────────────────────────────────────────────
-
-# Editors
-alias vim=nvim
-alias v=nvim
-
-# Navigation
-alias ff='cd $(fd -t d . ~ ~/.config | fzf --prompt="directory: ")'
-
-# File listing
-alias ls=eza
-alias l=eza
-alias lr="ls -R"
-
-# Git
-alias lg=lazygit
-
-# Tmux
-alias ta='tmux a'
-alias tmux='tmux'
-
-# Yazi
-alias y=yazi
-
-
-# ─────────────────────────────────────────────
-#  FUNCTIONS — MARKS
-# ─────────────────────────────────────────────
-
-alias mfzf='cat ~/.marks | fzf --preview "eza -l --color=always {} | head -200"'
-
-# Navigate to a marked directory
-function mf() {
-  dir=$(mfzf) || return
-  cd "${dir/#\~/$HOME}"
-}
-
-# Unmark a directory
-function mr() {
-  dir=$(mfzf) || return
-  sed -i "\|^${dir}$|d" ~/.marks
-  echo "Unmarked $dir"
-}
-
-# Mark the current directory
-function mm() {
-  local current_dir=$(pwd)
-  if [[ -f ~/.marks ]]; then
-    if ! grep -Fxq "$current_dir" ~/.marks; then
-      echo "$current_dir" >> ~/.marks
-      echo "Marked $current_dir"
-    else
-      echo "Directory already marked" >&2
-    fi
-  else
-    echo "$current_dir" > ~/.marks
-    echo "Marked $current_dir"
-  fi
-}
-
-
-# ─────────────────────────────────────────────
-#  FUNCTIONS — TMUX
-# ─────────────────────────────────────────────
-
-# Attach to or create the main tmux session
-function t() {
-  [[ $(tmux ls 2>/dev/null | grep -E "^main:.*") ]] && tmux || tmux new -s main
-}
-
-# Fuzzy-attach to an existing tmux session
-function ms() {
-  local sessions session
-  sessions=$(tmux ls 2>/dev/null | cut -d: -f1)
-  session=$(echo "$sessions" | fzf) || return
-  tmux attach-session -t "$session"
-}
-
-
-# ─────────────────────────────────────────────
-#  FUNCTIONS — NODE / PACKAGE MANAGER DETECTION
-# ─────────────────────────────────────────────
-
-_detect_pm() {
-  if   [[ -f pnpm-lock.yaml ]];  then echo pnpm
-  elif [[ -f yarn.lock ]];       then echo yarn
-  elif [[ -f bun.lockb ]];       then echo bun
-  elif [[ -f expo.json ]];       then echo expo
-  elif [[ -f deno.json ]];       then echo deno
-  elif [[ -f package-lock.json ]]; then echo npm
-  else echo npm
-  fi
-}
-
-function nd() {
-  [[ ! -f package.json ]] && echo "No package.json found" && return 1
-  local pm=$(_detect_pm)
-  case $pm in
-    deno) deno run --allow-net --allow-read dev.ts ;;
-    *)    $pm run dev ;;
-  esac
-}
-
-function nb() {
-  [[ ! -f package.json ]] && echo "No package.json found" && return 1
-  local pm=$(_detect_pm)
-  case $pm in
-    deno) deno run --allow-net --allow-read build.ts ;;
-    *)    $pm run build ;;
-  esac
-}
-
-function ns() {
-  [[ ! -f package.json ]] && echo "No package.json found" && return 1
-  local pm=$(_detect_pm)
-  case $pm in
-    deno) deno run --allow-net --allow-read start.ts ;;
-    *)    $pm run start ;;
-  esac
-}
-
-
-# ─────────────────────────────────────────────
-#  FUNCTIONS — SSH
-# ─────────────────────────────────────────────
-
-# Fall back to xterm-256color for servers without kitty terminfo
-function ssh() {
-  TERM=xterm-256color /usr/bin/ssh "$@"
-}
-
-
-# ─────────────────────────────────────────────
-#  SDKMAN  (must stay last)
-# ─────────────────────────────────────────────
-
-export SDKMAN_DIR="$HOME/.sdkman"
-local old_sdkman_offline_mode=${SDKMAN_OFFLINE_MODE:-}
-export SDKMAN_OFFLINE_MODE=true
-source "$SDKMAN_DIR/bin/sdkman-init.sh"
-
-if [[ -n $old_sdkman_offline_mode ]]; then
-  export SDKMAN_OFFLINE_MODE=$old_sdkman_offline_mode
-else
-  unset SDKMAN_OFFLINE_MODE
-fi
-unset old_sdkman_offline_mode
