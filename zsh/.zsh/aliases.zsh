@@ -9,6 +9,9 @@ alias ff='cd $(fd -t d . ~ ~/.config | fzf --prompt="directory: ")'
 alias ls=eza
 alias l=eza
 alias lr="ls -R"
+alias la="ls -a"
+alias ll="ls -l"
+alias lt="ls -lt"
 
 # Git
 alias lg=lazygit
