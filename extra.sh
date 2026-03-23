@@ -31,6 +31,15 @@ if [[ ! -d "$HOME/.obsidian/Notes" ]]; then
 	mkdir -p "$HOME/.obsidian/Notes"
 fi
 
+
+# ==============================================================================
+# Enable NetworkManager and Bluetooth services
+# ==============================================================================
+if command -v systemctl &> /dev/null; then
+	sudo systemctl enable --now NetworkManager
+	sudo systemctl enable --now Bluetooth
+fi
+
 # ==============================================================================
 # Reload fonts configurations
 # ==============================================================================

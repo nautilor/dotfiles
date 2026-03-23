@@ -177,10 +177,6 @@ ${BOLD}Manual steps still required:${RESET}
 
   ${CYAN}4. Spicetify${RESET}
      curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh
-
-  ${CYAN}5. Enable system services${RESET}
-     sudo systemctl enable --now NetworkManager
-     sudo systemctl enable --now bluetooth
 "
 }
 
