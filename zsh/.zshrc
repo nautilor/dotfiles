@@ -5,6 +5,16 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# add blank line on top of the prompt
+autoload -U add-zsh-hook
+function add_blank_line() {
+	if [[ -z $PREV_WD ]]; then
+		echo
+	fi
+	PREV_WD="$PWD"
+}
+add-zsh-hook precmd add_blank_line
+
 # ─────────────────────────────────────────────
 # ZINITIALIZATION
 # ─────────────────────────────────────────────
