@@ -1,0 +1,103 @@
+/**
+ * Material 3 Slate/Neutral - Simple Menu Theme for Rofi
+ * No input bar - just clean option selection 
+ */
+
+ 
+* {
+bg-primary:        #16161F;  /* main background */
+
+primary-container: #323750;  /* darker container for primary elements */
+
+/* Secondary colors */
+secondary:         #c0c0c0;  /* secondary text / less prominent elements */
+secondary-container:#242424; /* darker secondary surfaces */
+
+/* Surface layers (Adwaita-style elevation) */
+surface-1:         #121212;  /* subtle elevation */
+surface-2:         #202020;  /* intermediate elevation */
+surface-3:         #242424;  /* hover / panels / overlays */
+
+/* Text colors */
+text-primary:      #a9b1d6;  /* main text */
+text-secondary:    #c0c0c0;  /* muted secondary text */
+text-disabled:     #8a8a8a;  /* disabled / low emphasis text */
+
+/* Borders */
+border-color:      #3d3d3d;  /* subtle border color for dividers / outlines */
+    /* General UI */
+    background-color: transparent;
+    text-color:       @text-primary;
+}
+
+window {
+    background-color: @bg-primary;
+    border: 0px;
+		boorder-color: @border-color;
+    border-radius: 24px;
+    padding: 20px;
+    width: 400px;
+    location: center;
+    transparency: "real";
+}
+
+mainbox {
+    spacing: 0px;
+    children: [ listview ];
+}
+
+listview {
+    columns: 1;
+    lines: 8;
+    spacing: 6px;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    fixed-height: false;
+}
+
+element {
+    background-color: @bg-background;
+    text-color: @text-primary;
+    border-radius: 16px;
+    padding: 14px 20px;
+    cursor: pointer;
+}
+
+element-text {
+    font: "Roboto 11";
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+    text-color: inherit;
+}
+
+/* Normal state */
+element normal.normal {
+    background-color: @bg-background;
+    text-color: @text-primary;
+}
+
+/* Selected/Hover state */
+element selected.normal {
+    background-color: @primary-container;
+    text-color: @text-primary;
+}
+
+element selected.normal element-text {
+    font: "Roboto Medium 11";
+}
+
+/* Alternate rows (same as normal for consistency) */
+element alternate.normal {
+    background-color: @bg-background;
+    text-color: @text-primary;
+}
+
+/* Scrollbar (if needed for many items) */
+scrollbar {
+    handle-width: 6px;
+    handle-color: @border-color;
+    background-color: @bg-surface;
+    border-radius: 8px;
+    margin: 0px 0px 0px 8px;
+}

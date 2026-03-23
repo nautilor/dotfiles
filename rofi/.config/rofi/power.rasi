@@ -1,0 +1,61 @@
+* {
+	bg-primary:        #16161F;  
+	bg-secondary:      #16161F;  
+	bg-container:      #16161F;
+	primary:					 #3B4261;  
+	on-primary:        #A9B1D6;	
+	text-primary:      #A9B1D6;  
+	text-secondary:    #C8D3F5;  
+	text-disabled:     #C8D3F5;  
+	background-color: transparent;
+	text-color:       @text-primary;
+}
+
+window {
+	background-color: @bg-primary;
+	border: 0px;
+	border-color: @border-color;
+	border-radius: 16px;
+	padding: 10px;
+	margin: 10px;
+	width: 100px;
+	location: east;
+	transparency: "real";
+}
+
+mainbox {
+	spacing: 0px;
+	children: [ listview ];
+}
+
+listview {
+	columns: 1;
+	lines: 4;
+	spacing: 8px;
+	cycle: false;
+	dynamic: false;
+	layout: vertical;
+}
+
+element {
+	background-color: @bg-primary;
+	border-radius: 20px;
+	orientation: vertical;
+	padding: 18px;
+	cursor: pointer;
+	spacing: 0px;
+}
+
+element-text {
+	font: "JetBrainsMono Nerd Font Propo 16";
+	horizontal-align: 0.5;
+	vertical-align: 0.5;
+	text-color: inherit;
+}
+
+element selected normal {
+	background-color: @primary;
+	text-color: @on-primary;
+}
+
+

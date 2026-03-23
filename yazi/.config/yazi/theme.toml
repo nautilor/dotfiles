@@ -1,0 +1,154 @@
+[mgr]
+cwd = { fg = "#cdd6f4" }
+
+hovered         = { fg = "#1e1e2e", bg = "#585b70" }
+preview_hovered = { fg = "#1e1e2e", bg = "#45475a" }
+
+find_keyword  = { fg = "#f9f9f9", italic = true }
+find_position = { fg = "#89b4fa", italic = true }
+
+marker_copied   = { fg = "#a6e3a1", bg = "#a6e3a1" }
+marker_cut      = { fg = "#f38ba8", bg = "#f38ba8" }
+marker_marked   = { fg = "#f5c2e7", bg = "#f5c2e7" }
+marker_selected = { fg = "#89b4fa", bg = "#89b4fa" }
+
+count_copied   = { fg = "#1e1e2e", bg = "#a6e3a1" }
+count_cut      = { fg = "#1e1e2e", bg = "#f38ba8" }
+count_selected = { fg = "#1e1e2e", bg = "#89b4fa" }
+
+border_symbol = "│"
+border_style  = { fg = "#7f849c" }
+
+syntect_theme = "~/.config/yazi/Dark.tmTheme"
+
+[tabs]
+active   = { fg = "#1e1e2e", bg = "#89b4fa", bold = true }
+inactive = { fg = "#cdd6f4", bg = "#313244" }
+
+[mode]
+normal_main = { fg = "#1e1e2e", bg = "#89b4fa", bold = true }
+normal_alt  = { fg = "#89b4fa", bg = "#313244" }
+
+select_main = { fg = "#1e1e2e", bg = "#a6e3a1", bold = true }
+select_alt  = { fg = "#a6e3a1", bg = "#313244" }
+
+unset_main  = { fg = "#1e1e2e", bg = "#f38ba8", bold = true }
+unset_alt   = { fg = "#f38ba8", bg = "#313244" }
+
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+progress_label  = { fg = "#ffffff", bold = true }
+progress_normal = { fg = "#89b4fa", bg = "#313244" }
+progress_error  = { fg = "#f38ba8", bg = "#313244" }
+
+perm_type  = { fg = "#89b4fa" }
+perm_read  = { fg = "#f5c2e7" }
+perm_write = { fg = "#f38ba8" }
+perm_exec  = { fg = "#a6e3a1" }
+perm_sep   = { fg = "#7f849c" }
+
+[input]
+border   = { fg = "#89b4fa" }
+selected = { reversed = true }
+
+[pick]
+border   = { fg = "#89b4fa" }
+active   = { fg = "#89b4fa" }
+
+[confirm]
+border     = { fg = "#89b4fa" }
+title      = { fg = "#89b4fa" }
+btn_yes    = { reversed = true }
+
+[cmp]
+border = { fg = "#89b4fa" }
+
+[tasks]
+border  = { fg = "#89b4fa" }
+hovered = { underline = true }
+
+[which]
+mask            = { bg = "#313244" }
+cand            = { fg = "#cdd6f4" }
+rest            = { fg = "#7f849c" }
+desc            = { fg = "#f5c2e7" }
+separator_style = { fg = "#585b70" }
+
+[help]
+on      = { fg = "#cdd6f4" }
+run     = { fg = "#89b4fa" }
+desc    = { fg = "#7f849c" }
+hovered = { bg = "#585b70", bold = true }
+footer  = { fg = "#cdd6f4", bg = "#313244" }
+
+[notify]
+title_info  = { fg = "#89b4fa" }
+title_warn  = { fg = "#f5c2e7" }
+title_error = { fg = "#f38ba8" }
+
+[filetype]
+rules = [
+	{ name = "*", fg = "#cdd6f4" },
+	{ name = "*/", fg = "#89b4fa" },
+]
+
+[spot]
+border = { fg = "#89b4fa" }
+title  = { fg = "#89b4fa" }
+tbl_cell = { fg = "#89b4fa", reversed = true }
+tbl_col  = { bold = true }
+
+[icon]
+files = [
+  { name = "kritadisplayrc", text = "", fg = "#cba6f7" },
+  { name = ".gtkrc-2.0", text = "", fg = "#f5e0dc" },
+  { name = "bspwmrc", text = "", fg = "#74c7ec" },
+  { name = "webpack", text = "󰜫", fg = "#89b4fa" },
+  { name = "tsconfig.json", text = "", fg = "#89b4fa" },
+  { name = ".vimrc", text = "", fg = "#a6e3a1" },
+  { name = ".git-blame-ignore-revs", text = "", fg = "#fab387" },
+  { name = ".prettierignore", text = "", fg = "#89b4fa" },
+  { name = "dockerfile", text = "󰡨", fg = "#89b4fa" },
+  { name = "README.md", text = "󰂺", fg = "#f5e0dc" },
+  { name = "package.json", text = "", fg = "#f38ba8" },
+  { name = "ts", text = "", fg = "#74c7ec" },
+  { name = "js", text = "", fg = "#f9e2af" },
+  { name = "json", text = "", fg = "#f9e2af" },
+  { name = "html", text = "", fg = "#fab387" },
+  { name = "css", text = "", fg = "#89b4fa" },
+  { name = "md", text = "", fg = "#cdd6f4" },
+  { name = "py", text = "", fg = "#f9e2af" },
+  { name = "sh", text = "", fg = "#585b70" },
+  { name = "zsh", text = "", fg = "#a6e3a1" },
+  { name = "yml", text = "", fg = "#7f849c" },
+  { name = "yaml", text = "", fg = "#7f849c" },
+]
+
+[exts]
+exts = [
+  { name = "otf", text = "", fg = "#f5e0dc" },
+  { name = "ttf", text = "", fg = "#f5e0dc" },
+  { name = "zip", text = "", fg = "#fab387" },
+  { name = "tar", text = "", fg = "#fab387" },
+  { name = "7z", text = "", fg = "#fab387" },
+  { name = "rar", text = "", fg = "#fab387" },
+  { name = "mp3", text = "", fg = "#f9e2af" },
+  { name = "wav", text = "", fg = "#74c7ec" },
+  { name = "flac", text = "", fg = "#6c7086" },
+  { name = "mp4", text = "", fg = "#f9e2af" },
+  { name = "mkv", text = "", fg = "#f9e2af" },
+  { name = "pdf", text = "", fg = "#a6e3a1" },
+  { name = "doc", text = "", fg = "#a6e3a1" },
+  { name = "xls", text = "󰈛", fg = "#585b70" },
+  { name = "ppt", text = "󰈚", fg = "#fab387" },
+  { name = "png", text = "", fg = "#7f849c" },
+  { name = "jpg", text = "", fg = "#7f849c" },
+  { name = "jpeg", text = "", fg = "#7f849c" },
+  { name = "gif", text = "", fg = "#7f849c" },
+  { name = "svg", text = "", fg = "#f38ba8" },
+  { name = "mpg", text = "", fg = "#f9e2af" },
+  { name = "mov", text = "", fg = "#f9e2af" },
+]
+

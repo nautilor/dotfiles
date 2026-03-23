@@ -1,0 +1,57 @@
+/* === Core === */
+@define-color background             #1a1b26;
+@define-color surface                #1a1b26;
+@define-color surface_variant        #414868;
+@define-color surface_container      #24283b;
+@define-color surface_container_high #2f334d;
+@define-color outline                #414868;
+
+/* === Primary (Blue) === */
+@define-color primary               #7aa2f7;
+@define-color on_primary            #1a1b26;
+@define-color primary_container     #2f3b63;
+@define-color on_primary_container  #c0caf5;
+
+/* === Secondary (Magenta) === */
+@define-color secondary              #bb9af7;
+@define-color on_secondary           #1a1b26;
+@define-color secondary_container    #3b315c;
+@define-color on_secondary_container #e6dcff;
+
+/* === Tertiary (Cyan) === */
+@define-color tertiary               #7dcfff;
+@define-color on_tertiary            #1a1b26;
+@define-color tertiary_container     #2a4f63;
+@define-color on_tertiary_container  #d6f3ff;
+
+/* === Error (Red) === */
+@define-color error                  #f7768e;
+@define-color on_error               #1a1b26;
+@define-color error_container        #4a2a34;
+@define-color on_error_container     #ffd9df;
+
+/* === Success (Green – custom extension) === */
+@define-color success                #73daca;
+@define-color on_success             #1a1b26;
+@define-color success_container      #244c46;
+@define-color on_success_container   #cafff6;
+
+/* === Warning (Yellow – custom extension) === */
+@define-color warning                #e0af68;
+@define-color on_warning             #1a1b26;
+@define-color warning_container      #4a3b1f;
+@define-color on_warning_container   #fff1d6;
+
+/* === Text === */
+@define-color on_background          #a9b1d6;
+@define-color on_surface             #a9b1d6;
+@define-color on_surface_variant     #c0caf5;
+
+/* === Inverse === */
+@define-color inverse_surface        #c0caf5;
+@define-color inverse_on_surface     #1a1b26;
+@define-color inverse_primary        #7aa2f7;
+
+/* === Terminal-specific extras === */
+@define-color cursor                 #c0caf5;
+@define-color cursor_text            #1a1b26;

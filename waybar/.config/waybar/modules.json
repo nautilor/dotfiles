@@ -1,0 +1,172 @@
+{
+  "hyprland/window": {
+    "format": "<span font='9' rise='-4444'>{}</span>"
+  },
+  "custom/pomodoro": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "~/.config/waybar/bin/pomodoro --no-icons --no-work-icons",
+    "on-click": "~/.config/waybar/bin/pomodoro toggle",
+    "on-click-right": "~/.config/waybar/bin/pomodoro reset"
+  },
+  "custom/workspace-layout": {
+    "exec": "~/.config/waybar/bin/workspace_layout.sh",
+    "format": "{}",
+    "interval": 1,
+    "signal": 2,
+    "return-type": "json"
+  },
+  "custom/caffeine": {
+    "exec": "~/.config/waybar/bin/caffeine.sh icon",
+    "format": "{}",
+    "interval": 1,
+    "signal": 1,
+    "return-type": "json",
+    "on-click": "~/.config/waybar/bin/caffeine.sh toggle"
+  },
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "default": "",
+      "performance": "",
+      "balanced": "",
+      "power-saver": ""
+    }
+  },
+  "group/extras": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 400,
+      "children-class": "extras",
+      "transition-left-to-right": false
+    },
+    "modules": ["custom/menu", "tray"]
+  },
+  "hyprland/workspaces": {
+    "all-outputs": true,
+    "show-special": false,
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "special": "<span size='13pt'></span>"
+    },
+    "persistent-workspaces": {
+      "*": [1, 2, 3]
+    }
+  },
+  "clock": {
+    "interval": 1,
+    "format": "{:%H:%M}",
+    "format-alt": "{:%H:%M %d/%m/%Y}",
+    "tooltip": true,
+    "tooltip-format": "<span>{calendar}</span>",
+    "calendar": {
+      "mode": "month",
+      "format": {
+        "months": "<span color='#F38BA8'>{}</span>",
+        "days": "<span color='#CDD6F4'>{}</span>",
+        "weekdays": "<span color='#A6E3A1'>{}</span>",
+        "today": "<span color='#F9E2AF'><b>{}</b></span>"
+      }
+    }
+  },
+  "custom/menu": {
+    "format": "<span size='10pt'></span>",
+    "tooltip": false
+  },
+  "tray": {
+    "spacing": 16,
+    "reverse-direction": true,
+    "icon-size": 16,
+    "show-passive-items": false
+  },
+  "privacy": {
+    "icon-size": 14,
+    "transition-duration": 250,
+    "modules": [
+      {
+        "type": "screenshare",
+        "tooltip": false
+      }
+    ],
+    "ignore": [
+      {
+        "type": "screenshare",
+        "name": "obs"
+      }
+    ]
+  },
+  "network": {
+    "format-icons": {
+      "wifi": [
+        "<span size='12pt'></span>",
+        "<span size='12pt'></span>",
+        "<span size='12pt'></span>",
+        "<span size='12pt'></span>",
+        "<span size='12pt'></span>"
+      ],
+      "ethernet": "<span size='12pt'></span>",
+      "disabled": "<span size='12pt'></span>",
+      "disconnected": "<span size='12pt'></span>"
+    },
+    "format-wifi": "{icon}",
+    "format-ethernet": "{icon}",
+    "format-disconnected": "{icon}",
+    "format-disabled": "{icon}",
+    "interval": 5,
+    "tooltip-format": "{essid}\t{gwaddr}",
+    "on-click": "rfkill toggle wifi",
+    "on-click-right": "nm-connection-editor",
+    "tooltip": true,
+    "max-length": 20
+  },
+  "bluetooth": {
+    "interval": 5,
+    "format-on": "<span size='12pt'></span>",
+    "format-off": "<span size='12pt'></span>",
+    "format-disabled": "<span size='12pt'></span>",
+    "format-connected": "<span size='12pt'></span>",
+    "tooltip": true,
+    "tooltip-format": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_address} | Battery: {device_battery_percentage}%",
+    "on-click": "rfkill toggle bluetooth",
+    "on-click-right": "blueman-manager"
+  },
+  "pulseaudio#microphone": {
+    "format": "{format_source}",
+    "format-source": "",
+    "format-source-muted": "",
+    "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+    "tooltip-format": "Microphone disabled"
+  },
+  "battery": {
+    "interval": 5,
+    "states": {
+      "warning": 30,
+      "critical": 10
+    },
+    "format": "{icon}",
+    "format-alt": "{capacity}%",
+    "format-icons": [
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>",
+      "<span size='14pt'></span>"
+    ],
+    "format-charging": "<span size='14pt'></span>",
+    "format-plugged": "<span size='14pt'>󰚥</span>",
+    "format-critical": "<span size='14pt'></span>",
+    "tooltip": true,
+    "tooltip-format": "Charge: {capacity}%",
+    "tooltip-format-charging": "Charging: {capacity}%"
+  }
+}

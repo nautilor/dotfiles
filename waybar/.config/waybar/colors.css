@@ -1,0 +1,47 @@
+@define-color background  #16161f; /* main bg */
+@define-color foreground  #C8D3F5;
+
+@define-color color0  #3B4261; /* Normal black (borders, UI chrome) */
+@define-color color8  #545C7E; /* Bright black (disabled / comments) */
+
+/* Red */
+@define-color color1  #F7768E; /* Normal red */
+@define-color color9  #E06C75; /* Bright red */
+
+/* Green */
+@define-color color2  #9ECE6A; /* Normal green */
+@define-color color10 #7EC07C; /* Bright green */
+
+/* Yellow */
+@define-color color3  #E0AF68; /* Normal yellow */
+@define-color color11 #D19A66; /* Bright yellow */
+
+/* Blue */
+@define-color color4  #7AA2F7; /* Normal blue */
+@define-color color12 #82AAFF; /* Bright blue */
+
+/* Magenta / Purple */
+@define-color color5  #BB9AF7; /* Normal magenta */
+@define-color color13 #D55FDE; /* Bright magenta */
+
+/* Cyan */
+@define-color color6  #7DCFFF; /* Normal cyan */
+@define-color color14 #2BBAC5; /* Bright cyan */
+
+/* White */
+@define-color color7  #C8D3F5; /* Normal white (secondary text) */
+@define-color color15 #E6E6E6; /* Bright white (primary text) */
+
+@define-color surface1    #16161F;
+@define-color surface2    #1F2030;
+@define-color surface3    #25263A;
+
+@define-color secondary           #86E1FC;
+@define-color secondary-container #1F2030;
+
+@define-color text-primary    #a9b1d6;
+@define-color text-secondary  #C8D3F5;
+@define-color text-disabled   #545C7E;
+
+@define-color border-color    #3B4261;
+@define-color outline         #545C7E;

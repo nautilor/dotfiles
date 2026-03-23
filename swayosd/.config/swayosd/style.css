@@ -1,0 +1,48 @@
+window {
+  font-family: "JetBrainsMono Nerd Font", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+window#osd {
+  border-radius: 999px;
+  border: none;
+  background: #1e1e1e;
+}
+
+window#osd #container {
+}
+
+/* Icons & labels */
+window#osd image,
+window#osd label {
+  color: #ffffff; /* primary text */
+}
+
+window#osd progressbar:disabled,
+window#osd image:disabled {
+  opacity: 0.5;
+}
+
+/* Progress bar */
+window#osd progressbar {
+  min-height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+}
+
+window#osd trough {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: alpha(#ffffff, 0.35); /* muted track */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+window#osd progress {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: #3584e4; /* Adwaita blue */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}

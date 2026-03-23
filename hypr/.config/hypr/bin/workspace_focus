@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+CURRENT="$(hyprctl activeworkspace -j)"
+DEFAULT_MONITOR="eDP-1"
+CURRENT_MONITOR=$(jq -r '.monitor' <<< "$CURRENT")
+CURRENT_WORKSPACE=$(jq -r '.id' <<< "$CURRENT")
+
+if [[ "$DEFAULT_MONITOR" == "$CURRENT_MONITOR" ]] then
+		next_workspace=$(sed 'y/qwert/12345/' <<< "$1")
+		hyprctl dispatch workspace $next_workspace
+else
+		next_workspace=$(sed 'y/qwert/67899/' <<< "$1")
+		if (( CURRENT_WORKSPACE > 9 )); then
+			clients=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $CURRENT_WORKSPACE) | .address")
+			for client in $clients; do
+				hyprctl dispatch movetoworkspacesilent $next_workspace,address:$client
+			done
+		fi
+		hyprctl dispatch workspace $next_workspace
+fi

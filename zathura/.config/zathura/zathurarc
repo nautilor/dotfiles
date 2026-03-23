@@ -1,0 +1,45 @@
+# --- Default Colors ---
+set default-fg                rgba(192,202,245,1)  # #c0caf5
+set default-bg                rgba(26,27,38,1)     # #1a1b26
+
+# --- Completion Menu ---
+set completion-bg             rgba(36,40,59,1)     # #24283b
+set completion-fg             rgba(192,202,245,1)
+set completion-highlight-bg   rgba(122,162,247,1)  # #7aa2f7 (tokyo blue)
+set completion-highlight-fg   rgba(26,27,38,1)
+set completion-group-bg       rgba(31,35,53,1)     # #1f2335
+set completion-group-fg       rgba(169,177,214,1)  # #a9b1d6
+
+# --- Status / Input Bars ---
+set statusbar-fg              rgba(192,202,245,1)
+set statusbar-bg              rgba(22,22,30,1)     # slightly darker than bg
+set inputbar-fg               rgba(192,202,245,1)
+set inputbar-bg               rgba(26,27,38,1)
+
+# --- Notifications ---
+set notification-bg           rgba(26,27,38,1)
+set notification-fg           rgba(192,202,245,1)
+set notification-error-bg     rgba(31,35,53,1)
+set notification-error-fg     rgba(247,118,142,1)  # #f7768e (red)
+set notification-warning-bg   rgba(31,35,53,1)
+set notification-warning-fg   rgba(224,175,104,1)  # #e0af68 (yellow/orange)
+
+# --- Image/Icon Recoloring ---
+set recolor                   "true"
+set recolor-lightcolor        rgba(26,27,38,1)
+set recolor-darkcolor         rgba(192,202,245,1)
+
+# --- Index / Selection ---
+set index-fg                  rgba(192,202,245,1)
+set index-bg                  rgba(26,27,38,1)
+set index-active-fg           rgba(192,202,245,1)
+set index-active-bg           rgba(36,40,59,1)
+
+# --- Rendering Loading States ---
+set render-loading-bg         rgba(26,27,38,1)
+set render-loading-fg         rgba(192,202,245,1)
+
+# --- Highlights ---
+set highlight-color           rgba(122,162,247,0.15)  # soft blue overlay
+set highlight-fg              rgba(192,202,245,1)
+set highlight-active-color    rgba(122,162,247,0.3)

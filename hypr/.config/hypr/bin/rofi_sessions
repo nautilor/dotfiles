@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#make a rofi menu with the folders on ~/.config/rofi_sessions
+
+ls ~/.config/rofi_sessions | rofi -dmenu -p "Select a session" -theme menu | while read session; do
+		"$HOME/.config/rofi_sessions/$session/session.sh"
+
+done

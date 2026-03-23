@@ -1,0 +1,367 @@
+/* Material 3 You - Slate/Neutral Waybar Theme */
+@import "./colors.css";
+
+* {
+  font-family: "JetBrainsMono Nerd Font Propo";
+  min-height: 0;
+}
+
+/* Main window with M3 background */
+window#waybar {
+  background: @background;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px alpha(black, 0.1);
+}
+
+window#waybar > box {
+  padding: 5px 10px;
+}
+
+/* M3 State Layers - Hover effects with 8% opacity overlay */
+#custom-cachy:hover,
+#cpu:hover,
+#network:hover,
+#bluetooth:hover,
+#pulseaudio:hover,
+#pulseaudio.microphone:hover,
+#pulseaudio.sink-muted:hover,
+#custom-powermenu:hover,
+#backlight:hover,
+#battery:hover,
+#power-profiles-daemon:hover,
+#custom-caffeine:hover,
+#clock:hover,
+#mpris:hover,
+#custom-workspace-layout:hover,
+#custom-menu:hover,
+#custom-hjkl:hover,
+#window:hover,
+#custom-pomodoro:hover,
+#privacy:hover {
+  opacity: 0.5;
+  border-radius: 16px;
+  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Base module styling with M3 principles */
+#cpu,
+#clock,
+#mpris,
+#custom-menu,
+#tray,
+#privacy,
+#network,
+#bluetooth,
+#pulseaudio,
+#pulseaudio.microphone,
+#backlight,
+#battery,
+#power-profiles-daemon,
+#custom-caffeine,
+#custom-pomodoro,
+#custom-workspace-layout,
+#custom-hjkl,
+#window,
+#custom-pomodoro,
+#custom-powermenu {
+  opacity: 0.9;
+  color: @text-primary;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0px 10px;
+  border-radius: 14px;
+  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+#custom-cachy {
+  font-size: 16px;
+  color: @primary;
+  border-radius: 18px;
+}
+
+.modules-right {
+  background: transparent;
+  border-radius: 24px;
+  border: 0px solid @border-color;
+}
+
+.modules-left {
+  margin: 5px 0px;
+  background: alpha(@surface1, 0.5);
+  border-radius: 24px;
+}
+
+#workspaces {
+  padding: 0px;
+  margin: 0px 5px;
+  color: @text-secondary;
+}
+
+#workspaces button {
+  padding: 3px 8px;
+  margin: 0px 2px;
+  border-radius: 16px;
+  color: @text-secondary;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+  background: linear-gradient(
+    135deg,
+    @color1 0%,
+    @color2 25%,
+    @color3 50%,
+    @color4 75%,
+    @color5 100%
+  );
+  color: @background;
+  min-width: 40px;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button:hover {
+  opacity: 0.8;
+  color: @background;
+  background: linear-gradient(
+    135deg,
+    alpha(@color1, 0.8) 0%,
+    alpha(@color2, 0.8) 25%,
+    alpha(@color3, 0.8) 50%,
+    alpha(@color4, 0.8) 75%,
+    alpha(@color5, 0.8) 100%
+  );
+}
+
+#workspaces button.urgent {
+  background-color: @red;
+  color: @mantle;
+  border-radius: 16px;
+  background-size: 400% 400%;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.special {
+  color: @color2;
+}
+#workspaces button.special:hover {
+}
+
+@keyframes urgent-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#clock {
+  color: @text-secondary;
+  font-weight: bold;
+  padding: 0px 12px;
+  background: transparent;
+  border-radius: 18px;
+  border: 0px solid @border-color;
+}
+
+#clock:hover {
+  background: transparent;
+  color: @text-secondary;
+  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+#mpris {
+  color: @color2;
+}
+
+/* Network states with M3 colors */
+#network.disabled {
+  color: @text-disabled;
+}
+
+#network.wifi {
+  color: @text-secondary;
+}
+
+#network.ethernet {
+  color: @text-secondary;
+}
+
+#bluetooth {
+  color: @text-secondary;
+  background: transparent;
+}
+
+/* Bluetooth states */
+#bluetooth.disabled {
+  color: @text-disabled;
+}
+
+#bluetooth.connected {
+  color: @color4;
+}
+
+#pulseaudio {
+  color: @primary;
+  background: transparent;
+}
+
+/* Audio controls */
+#pulseaudio.sink-muted:not(.microphone) {
+  color: @text-disabled;
+}
+
+#pulseaudio.microphone {
+  color: @text-secondary;
+  background: transparent;
+  font-size: 0px;
+  padding: 0px;
+}
+
+#pulseaudio.microphone.source-muted {
+  color: @text-disabled;
+  font-size: 12pt;
+  padding: 5px 6px;
+}
+
+#battery {
+  color: @text-secondary;
+  background: transparent;
+}
+
+#battery.plugged {
+  color: @color4;
+}
+
+#battery.charging {
+  color: @color2;
+}
+
+#battery.warning {
+  color: @color3;
+}
+
+#battery.critical {
+  color: @color1;
+  animation: battery-blink 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes battery-blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+tooltip {
+  background: @background;
+  margin: 8px;
+  border-radius: 12px;
+  border: 0px solid alpha(@border-color, 0.5);
+  box-shadow: 0 4px 8px alpha(black, 0.2);
+}
+
+tooltip * {
+  color: @text-secondary;
+  margin: 4px;
+  padding: 2px;
+  background: transparent;
+  border-radius: 12px;
+}
+
+#power-profiles-daemon.performance {
+  color: @text-primary;
+}
+
+#power-profiles-daemon.balanced {
+  color: @text-primary;
+}
+
+#power-profiles-daemon.power-saver {
+  color: @text-primary;
+}
+
+#custom-caffeine.active {
+  color: @text-secondary;
+  padding: 0px 10px;
+}
+
+#custom-caffeine.inactive {
+  font-size: 0px;
+  padding: 0px;
+  color: transparent;
+  background: transparent;
+}
+
+#custom-pomodoro {
+  font-weight: bold;
+  margin: 7px 5px;
+  color: @text-primary;
+  background-color: @color0;
+}
+
+#custom-pomodoro.work {
+  color: @background;
+  background-color: @color2;
+}
+
+#custom-pomodoro.break {
+  color: @background;
+  background-color: @color4;
+}
+
+#custom-pomodoro.pause {
+  color: @background;
+  background-color: @color5;
+}
+
+#custom-workspace-layout {
+  background: alpha(@color0, 0.5);
+  border-radius: 8px;
+  padding: 0px 10px;
+  margin: 0px 5px 0px 0px;
+  color: @text-secondary;
+}
+
+#custom-workspace-layout.workspace_mode_fullscreen {
+  color: @text-secondary;
+}
+
+#custom-workspace-layout.workspace_mode_tiling {
+  color: @text-secondary;
+}
+
+#tray {
+  border-radius: 14px;
+  padding: 8px 4px;
+  border: 0px solid @border-color;
+}
+
+#tray > .passive {
+  color: @text-secondary;
+}
+
+#tray > .active {
+  color: @text-secondary;
+}
+
+#tray > .needs-attention {
+  color: @color1;
+  border-radius: 12px;
+}
+
+#custom-hjkl {
+  border-radius: 30px;
+  padding: 0px 10px;
+  margin: 5px 5px;
+  color: @color10;
+}

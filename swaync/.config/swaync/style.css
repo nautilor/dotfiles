@@ -1,0 +1,214 @@
+@import "colors.css";
+
+* {
+  all: unset;
+  font-size: 16px;
+  font-family: "JetBrainsMono Nerd Font";
+  transition: 200ms;
+  color: @on_surface;
+}
+
+trough highlight {
+  background: @primary;
+}
+
+scale {
+  margin: 0 7px;
+}
+
+scale trough {
+  margin: 0rem 1rem;
+  min-height: 8px;
+  min-width: 70px;
+  border-radius: 12.6px;
+  background-color: @surface_variant;
+}
+
+trough slider {
+  margin: -10px;
+  border-radius: 12.6px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  transition: all 0.2s ease;
+  background-color: @primary;
+}
+
+trough slider:hover {
+  box-shadow:
+    0 0 2px rgba(0, 0, 0, 0.8),
+    0 0 8px @primary;
+}
+
+trough {
+  background-color: @surface_container;
+}
+
+.notification-background {
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 12.6px;
+  margin: 18px;
+  background: @background;
+  /* border: 1px solid @outline; */
+  color: @on_surface;
+  padding: 0;
+}
+
+.notification-background:hover {
+  background: @surface;
+}
+
+.notification-background .notification {
+  padding: 7px;
+  border-radius: 12.6px;
+}
+
+.notification-background .critical {
+  background-color: alpha(@error, 0.15);
+  border-color: @error;
+}
+
+.notification .notification-content {
+  margin: 7px;
+}
+
+.notification .notification-content overlay {
+  margin: 4px;
+}
+
+.notification-content .summary {
+  color: @on_surface;
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.notification-content .time {
+  color: @on_surface_variant;
+  margin-left: 10px;
+}
+
+.notification-content .body {
+  color: @on_surface_variant;
+  margin-left: 10px;
+}
+
+.notification > *:last-child > * {
+  min-height: 3.4em;
+}
+
+.notification-background .close-button {
+  margin: 7px;
+  padding: 2px;
+  border-radius: 50px;
+  color: @on_error;
+  background-color: @error;
+}
+
+.notification-background .close-button:hover {
+  background-color: @error_container;
+}
+
+.notification-background .close-button:active {
+  background-color: @error;
+}
+
+.notification .notification-action {
+  border-radius: 7px;
+  color: @on_surface;
+  margin: 4px;
+  padding: 8px;
+  font-size: 0.2rem;
+  background-color: @surface_container;
+}
+
+.notification .notification-action:hover {
+  background-color: @surface_container_high;
+}
+
+.notification .notification-action:active {
+  background-color: @surface_variant;
+}
+
+.notification.critical progress {
+  background-color: @error;
+}
+
+.notification.low progress,
+.notification.normal progress {
+  background-color: @primary;
+}
+
+.notification progress,
+.notification trough,
+.notification progressbar {
+  border-radius: 12.6px;
+  padding: 3px 0;
+}
+
+.control-center {
+  box-shadow:
+    0 0 8px 0 rgba(0, 0, 0, 0.8),
+    inset 0 0 0 1px @outline;
+  border-radius: 12.6px;
+  background-color: @surface_container;
+  color: @on_surface;
+  padding: 14px;
+}
+
+.control-center .notification-background {
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 1px @outline;
+  margin: 4px 10px;
+}
+
+.control-center .notification-background .notification {
+  border-radius: 7px;
+}
+
+.control-center .notification-background .notification.low {
+  opacity: 0.8;
+}
+
+.control-center .widget-title > label {
+  color: @on_surface;
+  font-size: 1.3em;
+}
+
+.control-center .widget-title button {
+  border-radius: 7px;
+  color: @on_surface;
+  background-color: @surface_container;
+  box-shadow: inset 0 0 0 1px @outline;
+  padding: 8px;
+}
+
+.control-center .widget-title button:hover {
+  background-color: @surface_container_high;
+}
+
+.control-center .widget-title button:active {
+  background-color: @surface_variant;
+}
+
+.widget-volume label {
+  color: @primary;
+}
+
+.widget-volume trough highlight {
+  background: @primary;
+}
+
+.widget-backlight trough highlight {
+  background: @warning;
+}
+
+.widget-backlight label {
+  font-size: 1.5rem;
+  color: @warning;
+}
+
+.widget-mpris button:hover,
+.widget-mpris button:active,
+.powermode-buttons button:hover,
+.screenshot-buttons button:hover,
+.power-buttons button:hover {
+  background-color: @surface_container_high;
+}

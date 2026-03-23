@@ -1,0 +1,117 @@
+set scrolloff=5
+set incsearch
+map Q gq
+
+" Leader key
+let mapleader = " "
+let maplocalleader = "\\"
+
+" Move 3 lines at a time
+map <S-Down> 3j
+map <S-Up> 3k
+
+" Comment Line(s)
+nmap <C-/> :action CommentByLineComment<CR>
+vmap <C-/> :action CommentByLineComment<CR>
+
+" Navigate editor tabs
+nnoremap <Tab> :action NextTab<CR>
+nnoremap <S-Tab> :action PreviousTab<CR>
+
+" Close editor tab
+nnoremap bd :action CloseEditor<CR>
+
+" Esc from insert and terminal mode
+tnoremap <Esc> <C-\><C-n>
+
+" Close project and exit IDEA
+nnoremap <leader>q :action CloseProject<CR>
+nnoremap <leader>! :action Exit<CR>
+
+" Save all files
+nnoremap <C-s> :action SaveAll<CR>
+
+" Distraction Free Mode
+nnoremap <c-z> :action ToggleDistractionFreeMode<CR>
+xnoremap <c-z> :action ToggleDistractionFreeMode<CR>
+
+" Rename element
+nnoremap <F2> :action RenameElement<CR>
+nnoremap <leader>r :action RenameElement<CR>
+
+" Copy/Paste from system clipboard
+nnoremap <C-y> "+y
+vnoremap <C-y> "+y
+nnoremap <C-p> "+p
+vnoremap <C-p> _d"+P
+
+" Disable unused keys
+nnoremap q <Nop>
+inoremap <F1> <Nop>
+nnoremap <F1> <Nop>
+
+" Clear search highlighting
+nnoremap <leader>/ :nohlsearch<CR>
+
+" Move lines up/down and indent/outdent
+vnoremap <C-Down> :m '>+1<CR>gv=gv
+vnoremap <C-Up> :m '<-2<CR>gv=gv
+nnoremap <C-Down> :m .+1<CR>==
+nnoremap <C-Up> :m .-2<CR>==
+vnoremap <C-Left> <gv
+vnoremap <C-Right> >gv
+nnoremap <C-Left> <<
+nnoremap <C-Right> >>
+
+" Select all
+nnoremap <C-a> gg<S-v>G
+
+" Split window management
+nnoremap ss :action SplitVertically<CR>
+nnoremap sv :action SplitHorizontally<CR>
+nnoremap sg :action CloseEditor<CR>
+nnoremap sd :action UnsplitAll \| action CloseEditor<CR><Esc>
+nnoremap <C-w>q :action Unsplit<CR>
+nnoremap <C-w>d :action CloseEditor<CR>
+nnoremap <C-w>r :action MoveEditorToOppositeTabGroup<CR>
+
+nnoremap <C-w>h <C-w>h
+nnoremap <C-w>j <C-w>j
+nnoremap <C-w>k <C-w>k
+nnoremap <C-w>l <C-w>l
+
+" jump list navigation
+nnoremap <C-w>b <C-o>
+nnoremap <C-w>f <C-i>
+
+" Standard IDEA actions
+nnoremap <leader><Tab> :action SearchEverywhere<CR>
+nnoremap <leader>fg :action FindInPath<CR>
+nnoremap <leader>bb :action RecentFiles<CR>
+nnoremap gd :action GotoDeclaration<CR>
+nnoremap gf :action GotoDeclaration<CR>
+
+" Alternative mappings for IDEA actions
+nnoremap <C-o> :action SearchEverywhere<CR>
+inoremap <C-o> <Esc>:action SearchEverywhere<CR>i
+nnoremap <C-f> :action FindInPath<CR>
+inoremap <C-f> <Esc>:action FindInPath<CR>i
+nnoremap <C-g> :action GotoDeclaration<CR>
+inoremap <C-g> <Esc>:action GotoDeclaration<CR>i
+
+" Terminal Tool Window
+nnoremap <C-t> :action ActivateTerminalToolWindow<CR>
+inoremap <C-t> <Esc>:action ActivateTerminalToolWindow<CR>
+tnoremap <C-t> <C-\><C-n>:action ActivateTerminalToolWindow<CR>
+
+" NERDTree
+nnoremap <leader>e :NERDTreeToggle<CR>
+
+" --- Enable IdeaVim plugins https://jb.gg/ideavim-plugins
+" Highlight copied text
+Plug 'machakann/vim-highlightedyank'
+" Commentary plugin
+Plug 'tpope/vim-commentary'
+" NERDTree
+set NERDTree
+Plug 'preservim/nerdtree'

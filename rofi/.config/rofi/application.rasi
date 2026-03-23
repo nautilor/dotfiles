@@ -1,0 +1,170 @@
+/**
+ * Material 3 You - Dark Grid Theme for Rofi
+ */
+
+ configuration {
+		icon-theme: "oomox-TokyoNight-Moon";
+		font: "Roboto 11";
+}
+
+* {
+bg-primary:        #16161F;  /* main background */
+bg-surface:        #242424;  /* elevated panels / hover surfaces */
+bg-container:      #262626;  /* container backgrounds / modal panels */
+
+/* Primary colors */
+primary:           #3B4261;  /* active / highlight / buttons */
+primary-container: #1f2a3a;  /* darker container for primary elements */
+on-primary:        #A9B1D6;  /* text/icons on primary surfaces */
+
+/* Secondary colors */
+secondary:         #c0c0c0;  /* secondary text / less prominent elements */
+secondary-container:#242424; /* darker secondary surfaces */
+
+/* Surface layers (Adwaita-style elevation) */
+surface-1:         #16161F;  /* subtle elevation */
+surface-2:         #202020;  /* intermediate elevation */
+surface-3:         #242424;  /* hover / panels / overlays */
+
+/* Text colors */
+text-primary:      #A9B1D6;  /* main text */
+text-secondary:    #c0c0c0;  /* muted secondary text */
+text-disabled:     #54586b;  /* disabled text / placeholders */
+
+/* Borders */
+border-color:      #3d3d3d;  /* subtle border color for dividers / outlines */
+    /* General UI */
+    background-color: transparent;
+    text-color:       @text-primary;
+}
+
+
+
+window {
+    background-color: @bg-primary;
+		border: 0px;
+		border-color: @border-color;
+    border-radius: 28px;
+    padding: 24px;
+    width: 800px;
+    location: center;
+    transparency: "real";
+}
+
+mainbox {
+    spacing: 16px;
+    children: [ inputbar, message, listview ];
+}
+
+inputbar {
+    background-color: @surface-1;
+    border-radius: 28px;
+    padding: 12px 20px;
+    spacing: 12px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+		enabled: false;
+    text-color: @primary;
+    font: "Roboto Bold 11";
+    vertical-align: 0.5;
+}
+
+entry {
+    placeholder: "Search apps...";
+    placeholder-color: @text-disabled;
+    text-color: @text-primary;
+    font: "Roboto 11";
+    vertical-align: 0.5;
+}
+
+message {
+    background-color: @surface-1;
+    border-radius: 16px;
+    padding: 12px;
+    text-color: @text-secondary;
+}
+
+listview {
+    columns: 3;
+    lines: 4;
+    spacing: 12px;
+    cycle: false;
+    dynamic: true;
+    layout: vertical;
+    fixed-height: true;
+}
+
+element {
+    background-color: @surface-1;
+    text-color: @text-primary;
+    border-radius: 20px;
+    padding: 20px;
+    spacing: 12px;
+    orientation: horizontal;
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: @surface-1;
+    text-color: @text-primary;
+}
+
+element selected.normal {
+    background-color: @primary;
+    text-color: @text-primary;
+}
+
+element alternate.normal {
+    background-color: @surface-1;
+    text-color: @text-primary;
+}
+
+element-icon {
+    size: 32px;
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+}
+
+element-text {
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+    font: "Roboto Medium 10";
+    text-color: inherit;
+}
+
+element selected.normal element-text {
+    text-color: @text-primary;
+    font: "Roboto Bold 10";
+}
+
+/* Scrollbar */
+scrollbar {
+    handle-width: 8px;
+    handle-color: @border-color;
+    background-color: @surface-1;
+    border-radius: 4px;
+    margin: 0px 0px 0px 8px;
+}
+
+/* Mode switcher */
+mode-switcher {
+    spacing: 8px;
+    background-color: @surface-1;
+    border-radius: 16px;
+    padding: 8px;
+}
+
+button {
+    background-color: transparent;
+    text-color: @text-secondary;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font: "Roboto Medium 10";
+}
+
+button selected {
+    background-color: @secondary-container;
+    text-color: @text-primary;
+}
