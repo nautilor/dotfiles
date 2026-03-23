@@ -24,6 +24,14 @@ bindkey -s '\eo' "ff\n"
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 
+# Ctrl + Arrow navigation (word-wise)
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+
+# Home / End
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+
 
 # ─────────────────────────────────────────────
 # COMPLETIONS
