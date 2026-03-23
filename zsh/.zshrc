@@ -4,7 +4,7 @@
 
 export ZSH="/home/edoardo/.oh-my-zsh"
 ZSH_THEME="fluzz"
-plugins=(git zsh-sdkman ssh-agent)
+plugins=(git zsh-sdkman ssh-agent zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -68,6 +68,21 @@ _fzf_comprun() {
 
 
 # ─────────────────────────────────────────────
+# HISTORY
+# ─────────────────────────────────────────────	
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+# ─────────────────────────────────────────────
 #  NMTUI COLORS
 # ─────────────────────────────────────────────
 
@@ -98,6 +113,8 @@ actsellistbox=#bb9af7,#1a1b26
 
 bindkey -s '\ef' "switch-session.sh\n"
 bindkey -s '\eo' "ff\n"
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
 
 
 # ─────────────────────────────────────────────
