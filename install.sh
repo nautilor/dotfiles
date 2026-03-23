@@ -138,6 +138,12 @@ do_packages() {
     success "Package installation complete"
 }
 
+do_extra() {
+		# Run extra configuration steps that don't fit into stow or package installation
+		# (e.g. configuring tpm, adding hyprland plugins, etc.)
+		source "$DOTFILES_DIR/extra.sh"
+}
+
 do_stow() {
     local -a pacman_pkgs=() aur_pkgs=() stow_pkgs=()
     parse_packages pacman_pkgs aur_pkgs stow_pkgs
@@ -158,8 +164,7 @@ print_post_install_notes() {
 ${BOLD}Manual steps still required:${RESET}
 
   ${CYAN}1. Tmux Plugin Manager (tpm)${RESET}
-     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-     Then inside tmux: prefix + I  (to install plugins)
+     Inside tmux: prefix + I  (to install plugins)
 
   ${CYAN}2. Neovim LSPs & formatters${RESET}
      Open nvim and run:
@@ -176,15 +181,9 @@ ${BOLD}Manual steps still required:${RESET}
   ${CYAN}5. Spicetify${RESET}
      curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh
 
-  ${CYAN}6. SF Pro Rounded Bold (hyprlock clock font)${RESET}
-     yay -S apple-fonts   (or install manually)
-
-  ${CYAN}7. Enable system services${RESET}
+  ${CYAN}8. Enable system services${RESET}
      sudo systemctl enable --now NetworkManager
      sudo systemctl enable --now bluetooth
-
-  ${CYAN}8. Hyprland plugins${RESET}
-     Run  hyprpm update  after first Hyprland launch.
 "
 }
 
@@ -217,6 +216,7 @@ case "$MODE" in
     --all|-a|"")
         do_packages
         do_stow
+				do_extra
         print_post_install_notes
         ;;
     --help|-h)
