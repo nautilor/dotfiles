@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Arch Linux install script for edoardo's dotfiles
-# Usage: bash install.sh
+#
+# Usage:
+#   ./install.sh              # install packages + stow dotfiles (default)
+#   ./install.sh --packages   # only install packages (pacman + AUR)
+#   ./install.sh --stow       # only stow dotfiles
+#   ./install.sh --help       # show this help
+#
+# Package lists are defined in packages.conf (same directory as this script).
 # =============================================================================
 
 set -euo pipefail
@@ -16,34 +23,76 @@ RESET='\033[0m'
 info()    { echo -e "${CYAN}${BOLD}==> ${RESET}${BOLD}$*${RESET}"; }
 success() { echo -e "${GREEN}${BOLD}  ✓ ${RESET}$*"; }
 warn()    { echo -e "${YELLOW}${BOLD}  ! ${RESET}$*"; }
-section() { echo -e "\n${BOLD}${CYAN}────────────────────────────────────────${RESET}"; echo -e "${BOLD}$*${RESET}"; echo -e "${BOLD}${CYAN}────────────────────────────────────────${RESET}"; }
+section() { echo -e "\n${BOLD}${CYAN}────────────────────────────────────────${RESET}"; \
+            echo -e "${BOLD}$*${RESET}"; \
+            echo -e "${BOLD}${CYAN}────────────────────────────────────────${RESET}"; }
+die()     { echo -e "${RED}${BOLD}error: ${RESET}$*" >&2; exit 1; }
+
+# =============================================================================
+# Resolve dotfiles directory and packages.conf
+# =============================================================================
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES_CONF="$DOTFILES_DIR/packages.conf"
+
+[[ -f "$PACKAGES_CONF" ]] || die "packages.conf not found at $PACKAGES_CONF"
+
+# =============================================================================
+# Parse packages.conf
+# Supports multiple [pacman] / [aur] / [stow] sections and inline # comments.
+# =============================================================================
+
+parse_packages() {
+    local section=""
+    local -n _pacman=$1
+    local -n _aur=$2
+    local -n _stow=$3
+
+    while IFS= read -r raw_line; do
+        # Strip inline comments and leading/trailing whitespace
+        local line
+        line="${raw_line%%#*}"
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%"${line##*[![:space:]]}"}"
+
+        [[ -z "$line" ]] && continue
+
+        if [[ "$line" =~ ^\[([a-zA-Z]+)\]$ ]]; then
+            section="${BASH_REMATCH[1]}"
+            continue
+        fi
+
+        case "$section" in
+            pacman) _pacman+=("$line") ;;
+            aur)    _aur+=("$line")    ;;
+            stow)   _stow+=("$line")   ;;
+        esac
+    done < "$PACKAGES_CONF"
+}
 
 # =============================================================================
 # Helpers
 # =============================================================================
 
+cmd_exists() { command -v "$1" &>/dev/null; }
+
 pacman_install() {
-    info "pacman: $*"
+    [[ ${#@} -eq 0 ]] && return
+    info "pacman -S ${*}"
     sudo pacman -S --needed --noconfirm "$@"
 }
 
 yay_install() {
-    info "yay (AUR): $*"
+    [[ ${#@} -eq 0 ]] && return
+    info "yay -S ${*}"
     yay -S --needed --noconfirm "$@"
 }
 
-cmd_exists() { command -v "$1" &>/dev/null; }
-
-# =============================================================================
-# Ensure yay is available
-# =============================================================================
-
 ensure_yay() {
     if cmd_exists yay; then
-        success "yay is already installed"
+        success "yay already installed"
         return
     fi
-
     warn "yay not found — building from AUR..."
     pacman_install git base-devel
     local tmp
@@ -55,197 +104,57 @@ ensure_yay() {
 }
 
 # =============================================================================
-# Main
+# Modes
 # =============================================================================
 
-section "Hyprland dotfiles — Arch Linux package installer"
+do_packages() {
+    local -a pacman_pkgs=() aur_pkgs=() stow_pkgs=()
+    parse_packages pacman_pkgs aur_pkgs stow_pkgs
 
-ensure_yay
+    section "Installing packages from $PACKAGES_CONF"
+    info "${#pacman_pkgs[@]} pacman packages, ${#aur_pkgs[@]} AUR packages"
 
-# ── Wayland compositor & ecosystem ──────────────────────────────────────────
-section "Compositor & Hyprland ecosystem"
-pacman_install \
-    hyprland \
-    hyprlock \
-    hypridle \
-    hyprsunset \
-    hyprpicker \
-    xdg-desktop-portal-hyprland \
-    xdg-desktop-portal-gtk \
-    polkit-gnome
+    ensure_yay
 
-# ── Status bar, notifications & OSD ─────────────────────────────────────────
-section "Status bar, notifications & OSD"
-pacman_install \
-    waybar
+    section "pacman packages"
+    pacman_install "${pacman_pkgs[@]}"
 
-yay_install \
-    swaync \
-    swayosd
+    section "AUR packages"
+    yay_install "${aur_pkgs[@]}"
 
-# ── Wallpaper ────────────────────────────────────────────────────────────────
-section "Wallpaper daemon"
-yay_install swww
+    # Set zsh as default shell if not already
+    if [[ "$(basename "$SHELL")" != "zsh" ]]; then
+        info "Setting zsh as default shell..."
+        chsh -s "$(command -v zsh)"
+        success "Default shell set to zsh (takes effect on next login)"
+    fi
 
-# ── App launcher & desktop overlays ─────────────────────────────────────────
-section "App launcher & desktop overlays"
-pacman_install \
-    rofi-wayland
+    # Initialise rustup stable toolchain
+    if cmd_exists rustup && ! rustup toolchain list 2>/dev/null | grep -q stable; then
+        info "Installing stable Rust toolchain via rustup..."
+        rustup default stable
+    fi
 
-yay_install \
-    quickshell-git
+    success "Package installation complete"
+}
 
-# ── Screenshot, recording & color picker ────────────────────────────────────
-section "Screenshot, recording & color picker"
-pacman_install \
-    grim \
-    slurp \
-    wf-recorder \
-    imagemagick
+do_stow() {
+    local -a pacman_pkgs=() aur_pkgs=() stow_pkgs=()
+    parse_packages pacman_pkgs aur_pkgs stow_pkgs
 
-yay_install \
-    hyprshot \
-    satty
+    cmd_exists stow || die "'stow' is not installed. Run './install.sh --packages' first."
 
-# ── Clipboard ────────────────────────────────────────────────────────────────
-section "Clipboard"
-pacman_install \
-    wl-clipboard
+    section "Stowing dotfiles from $DOTFILES_DIR"
+    info "Packages: ${stow_pkgs[*]}"
 
-yay_install \
-    clipse \
-    wl-clip-persist
+    cd "$DOTFILES_DIR"
+    stow -v "${stow_pkgs[@]}"
+    success "Dotfiles stowed"
+}
 
-# ── Audio ────────────────────────────────────────────────────────────────────
-section "Audio (PipeWire)"
-pacman_install \
-    pipewire \
-    pipewire-pulse \
-    pipewire-alsa \
-    wireplumber
-
-yay_install \
-    wiremix
-
-# ── Networking & Bluetooth ───────────────────────────────────────────────────
-section "Networking & Bluetooth"
-pacman_install \
-    networkmanager \
-    network-manager-applet \
-    blueman \
-    bluez \
-    bluez-utils
-
-yay_install \
-    bluetui
-
-# ── System control ───────────────────────────────────────────────────────────
-section "System control (brightness, media, notifications)"
-pacman_install \
-    playerctl \
-    brightnessctl \
-    libnotify
-
-# ── Qt theming (required by environment.conf) ────────────────────────────────
-section "Qt theming"
-pacman_install \
-    qt5ct \
-    kvantum \
-    kvantum-qt5
-
-# ── Cursor theme (HYPRCURSOR_THEME = Catppuccin Mocha Dark) ──────────────────
-section "Cursor theme"
-yay_install \
-    hyprcursor-catppuccin-mocha-dark-git
-
-# ── Terminal & multiplexer ───────────────────────────────────────────────────
-section "Terminal & multiplexer"
-pacman_install \
-    kitty \
-    tmux
-
-# ── Shell ────────────────────────────────────────────────────────────────────
-section "Zsh shell"
-pacman_install zsh
-
-# Set zsh as default shell
-if [[ "$SHELL" != "$(which zsh)" ]]; then
-    info "Setting zsh as default shell..."
-    chsh -s "$(which zsh)"
-    success "Default shell changed to zsh (takes effect on next login)"
-fi
-
-# ── CLI utilities ────────────────────────────────────────────────────────────
-section "CLI utilities"
-pacman_install \
-    fzf \
-    fd \
-    bat \
-    eza \
-    lazygit \
-    yazi \
-    zathura \
-    zathura-pdf-mupdf \
-    git \
-    jq
-
-# ── Spotify ──────────────────────────────────────────────────────────────────
-section "Spotify"
-yay_install spotify-launcher
-
-# ── Neovim ───────────────────────────────────────────────────────────────────
-section "Neovim"
-pacman_install neovim
-
-# ── Development runtimes (for Neovim LSPs & formatters) ─────────────────────
-section "Development runtimes"
-pacman_install \
-    nodejs \
-    npm \
-    python \
-    python-pip \
-    rustup \
-    clang \
-    jdk21-openjdk \
-    go
-
-# Install a stable Rust toolchain (needed for rust-analyzer via Mason)
-if cmd_exists rustup; then
-    info "Initializing rustup default toolchain..."
-    rustup default stable || true
-fi
-
-# Qt6 tools — provides qmlls (QML language server)
-pacman_install qt6-tools
-
-# ── Fonts ────────────────────────────────────────────────────────────────────
-section "Fonts"
-pacman_install \
-    ttf-jetbrains-mono-nerd \
-    noto-fonts \
-    noto-fonts-emoji \
-    ttf-roboto
-
-# SF Pro (used in hyprlock clock) — Apple font, install manually or via AUR
-warn "SF Pro Rounded Bold (hyprlock clock font) must be installed manually."
-warn "  AUR option: yay -S apple-fonts"
-
-# ── Stow dotfiles ─────────────────────────────────────────────────────────────
-section "Stow dotfiles"
-pacman_install stow
-
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-info "Stowing all packages from $DOTFILES_DIR ..."
-cd "$DOTFILES_DIR"
-stow --no-folding -v hypr kitty nvim tmux zsh waybar swaync swayosd rofi \
-    lazygit yazi zathura ideavim fd fzutils quickshell
-
-success "All packages stowed."
-
-# ── Post-install notes ────────────────────────────────────────────────────────
-section "Post-install notes"
-
-echo -e "
+print_post_install_notes() {
+    section "Post-install notes"
+    echo -e "
 ${BOLD}Manual steps still required:${RESET}
 
   ${CYAN}1. Tmux Plugin Manager (tpm)${RESET}
@@ -253,28 +162,68 @@ ${BOLD}Manual steps still required:${RESET}
      Then inside tmux: prefix + I  (to install plugins)
 
   ${CYAN}2. Neovim LSPs & formatters${RESET}
-     Open nvim and run:  :MasonInstall pyright ts_ls eslint clangd lua_ls \\
-       rust_analyzer jdtls dartls qmlls black prettierd
+     Open nvim and run:
+       :MasonInstall pyright ts_ls eslint clangd lua_ls \\
+         rust_analyzer jdtls dartls qmlls black prettierd
 
-  ${CYAN}3. Zinit (Zsh plugin manager)${RESET}
-     Auto-installed on first zsh launch via .zshrc.
+  ${CYAN}3. Zinit + Powerlevel10k${RESET}
+     Auto-installed on first zsh launch. Run  p10k configure  to set up prompt.
 
-  ${CYAN}4. Powerlevel10k theme${RESET}
-     Installed automatically by zinit on first zsh launch.
-     Run  p10k configure  to set up the prompt.
-
-  ${CYAN}5. Flutter / Android SDK${RESET}
+  ${CYAN}4. Flutter / Android SDK${RESET}
      Install Flutter manually to ~/.local/flutter/
      https://docs.flutter.dev/get-started/install/linux
 
-  ${CYAN}6. Spicetify${RESET}
+  ${CYAN}5. Spicetify${RESET}
      curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh
 
-  ${CYAN}7. Enable services${RESET}
+  ${CYAN}6. SF Pro Rounded Bold (hyprlock clock font)${RESET}
+     yay -S apple-fonts   (or install manually)
+
+  ${CYAN}7. Enable system services${RESET}
      sudo systemctl enable --now NetworkManager
      sudo systemctl enable --now bluetooth
 
   ${CYAN}8. Hyprland plugins${RESET}
-     hyprpm update  (run after first Hyprland launch)
+     Run  hyprpm update  after first Hyprland launch.
 "
-success "Done! Log out and back in (or reboot) to start Hyprland."
+}
+
+print_help() {
+    echo -e "${BOLD}Usage:${RESET} $(basename "$0") [--packages | --stow | --all | --help]
+
+  ${CYAN}--packages${RESET}   Install pacman + AUR packages defined in packages.conf
+  ${CYAN}--stow${RESET}       Stow dotfiles only (symlink into \$HOME via GNU Stow)
+  ${CYAN}--all${RESET}        Packages + stow + post-install notes (default)
+  ${CYAN}--help${RESET}       Show this message
+
+Edit ${BOLD}packages.conf${RESET} to add/remove packages or change which
+directories get stowed without touching this script.
+"
+}
+
+# =============================================================================
+# Argument handling
+# =============================================================================
+
+MODE="${1:---all}"
+
+case "$MODE" in
+    --packages|-p)
+        do_packages
+        ;;
+    --stow|-s)
+        do_stow
+        ;;
+    --all|-a|"")
+        do_packages
+        do_stow
+        print_post_install_notes
+        ;;
+    --help|-h)
+        print_help
+        exit 0
+        ;;
+    *)
+        die "Unknown option '$MODE'. Run '$(basename "$0") --help' for usage."
+        ;;
+esac
