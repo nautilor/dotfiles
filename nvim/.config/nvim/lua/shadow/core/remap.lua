@@ -13,7 +13,7 @@ end
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-keymap.set({"x", "n", "i"}, "<C-k>", "<C-o>", nopts)
+keymap.set({ "x", "n", "i" }, "<C-k>", "<C-o>", nopts)
 
 -- center movement
 keymap.set("n", "j", "jzz", opts)
@@ -56,6 +56,7 @@ keymap.set({ "n", "v" }, "<S-Up>", "3k", opts)
 
 -- Comment code
 keymap.set("x", "<C-_>", "gc", opts)
+keymap.set("n", "<C-_>", "gcc", opts)
 keymap.set("n", "<C-/>", "gcc", opts)
 keymap.set("x", "<C-/>", "gc", opts)
 
