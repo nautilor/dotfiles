@@ -46,3 +46,31 @@ fi
 if command -v fc-cache &> /dev/null; then
 	fc-cache -f -v
 fi
+
+# =============================================================================
+# Download and install the GTK theme and icons
+# =============================================================================
+GTK_THEME_REPO="https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme"
+GTK_THEME_TEMP_DIR="/tmp/tokyonight-gtk-theme"
+GTK_ICON_LINK="https://github.com/ljmill/tokyo-night-icons/releases/download/v0.2.0/TokyoNight-SE.tar.bz2"
+GTK_ICON_TEMP_DIR="/tmp/tokyo-night-icons"
+GTK_ICON_EXTRACT_DIR="~/.local/share/icons/"
+
+# Download and install the GTK theme
+git clone "$GTK_THEME_REPO" "$GTK_THEME_TEMP_DIR"
+cd "$GTK_THEME_TEMP_DIR" || exit
+./install.sh -c=all --tweaks storm -d ~/.themes
+
+# Download and install the GTK icons
+mkdir -p "$GTK_ICON_TEMP_DIR"
+curl -L "$GTK_ICON_LINK" -o "$GTK_ICON_TEMP_DIR/TokyoNight-SE.tar.bz2"
+mkdir -p "$GTK_ICON_EXTRACT_DIR"
+tar -xjf "$GTK_ICON_TEMP_DIR/TokyoNight-SE.tar.bz2" -C "$GTK_ICON_EXTRACT_DIR"
+
+# Clean up temporary directories
+rm -rf "$GTK_THEME_TEMP_DIR"
+rm -rf "$GTK_ICON_TEMP_DIR"
+
+# Set the GTK theme and icons
+gsettings set org.gnome.desktop.interface gtk-theme "Tokyonight-Dark"
+gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-SE"
