@@ -9,7 +9,7 @@ return {
 			},
 			keymaps = {
 				close = "q",
-				toggle_explorer = "<leader>e",
+				toggle_explorer = "<leader>E",
 				switch_diff = "<tab>",
 				next_file = "]f",
 				prev_file = "[f",

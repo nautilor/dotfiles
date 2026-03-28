@@ -4,7 +4,7 @@ return {
 	lazy = false,
 	opts = {
 		ensure_installed = { "java", "python", "c", "lua", "vim", "vimdoc", "javascript", "typescript", "dockerfile", "bash", "markdown", "tsx" },
-		sync_install = true,
+		sync_install = false,
 		auto_install = true,
 		highlight = {
 			enable = true,

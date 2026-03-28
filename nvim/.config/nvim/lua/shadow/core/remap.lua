@@ -51,8 +51,8 @@ keymap.set("n", "<leader>1", ":q!<Return>", nopts)
 keymap.set("n", "<C-w>c", smart_close, nopts)
 
 -- Move X lines when using shift+down/up
-keymap.set({ "n", "v" }, "<S-Down>", "3j", opts)
-keymap.set({ "n", "v" }, "<S-Up>", "3k", opts)
+keymap.set({ "n", "v" }, "<S-Down>", "3j", nopts)
+keymap.set({ "n", "v" }, "<S-Up>", "3k", nopts)
 
 -- Comment code
 keymap.set("x", "<C-_>", "gc", opts)
@@ -99,11 +99,9 @@ keymap.set("n", "<C-z>", function() require("snacks").zen() end, nopts)
 
 -- File Explorer
 keymap.set("n", "<leader>e", function() require("snacks").picker.explorer() end, nopts)
-keymap.set("n", "<leader>w", ":Oil<CR>", nopts)
--- keymap.set({ "i", "n" }, "<C-b>", function() require("snacks").picker.explorer() end, nopts)
 
--- ToggleTerm
-keymap.set({ "n", "x", "t", "i" }, "<C-t>", "<cmd>ToggleTerm direction=float<Return>", nopts)
+-- Terminal
+keymap.set({ "n", "x", "t", "i" }, "<C-t>", function() require("snacks").terminal.toggle() end, nopts)
 
 
 -- Obsidian

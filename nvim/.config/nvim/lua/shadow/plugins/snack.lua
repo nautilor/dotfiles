@@ -5,7 +5,13 @@ return {
 	---@type table
 	opts = {
 		input = { enabled = false },
-		terminal = { enabled = false },
+		terminal = {
+			enabled = true,
+			win = {
+				position = "float",
+				border = "solid",
+			},
+		},
 		notifier = { enabled = false },
 		scope = { enabled = false },
 		-- <-----------------------> --
