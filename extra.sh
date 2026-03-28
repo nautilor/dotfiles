@@ -57,7 +57,7 @@ GTK_ICON_EXTRACT_DIR="$HOME/.local/share/icons/"
 # Download and install the GTK theme and icons
 git clone "$GTK_THEME_REPO" "$GTK_THEME_TEMP_DIR"
 cd "$GTK_THEME_TEMP_DIR/themes" || exit
-./install.sh --tweaks storm -l -d ~/.themes
+./install.sh --tweaks storm macos -l -d ~/.themes
 mkdir -p "$GTK_ICON_EXTRACT_DIR"
 cd "$GTK_THEME_TEMP_DIR/icons" || exit
 cp -R * "$GTK_ICON_EXTRACT_DIR"
