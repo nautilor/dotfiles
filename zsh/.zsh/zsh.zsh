@@ -34,8 +34,16 @@ bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
 # Home / End
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
+if [[ -n "$TMUX" ]]; then
+	bindkey '^[[1~' beginning-of-line
+	bindkey '^[[4~' end-of-line
+else
+	bindkey '^[[H' beginning-of-line
+	bindkey '^[[F' end-of-line
+fi
+
+# Delete key
+bindkey '^[[3~' delete-char
 
 
 # ─────────────────────────────────────────────
