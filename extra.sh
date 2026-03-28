@@ -67,4 +67,4 @@ rm -rf "$GTK_THEME_TEMP_DIR"
 
 # Set the GTK theme and icons
 gsettings set org.gnome.desktop.interface gtk-theme "Tokyonight-Dark"
-gsettings set org.gnome.desktop.interface icon-theme "TokyoNight-Dark"
+gsettings set org.gnome.desktop.interface icon-theme "Tokyonight-Dark"
