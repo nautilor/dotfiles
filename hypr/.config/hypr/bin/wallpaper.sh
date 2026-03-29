@@ -8,19 +8,19 @@ set_default_wallpaper() {
 }
 
 set_wallpaper() {
-	swww img "$1" --transition-type=fade --transition-duration=0.5
+	awww img "$1" --transition-type=fade --transition-duration=0.5
 }
 
 init() {
-	if ! pgrep -x "swww-daemon" > /dev/null
+	if ! pgrep -x "awww-daemon" > /dev/null
 	then
-			swww-daemon & disown
+			awww-daemon & disown
 	fi
 	set_default_wallpaper
 }
 
 toggle_focus_mode() {
-	current_wallpaper=$(swww  query | sed 's/.*image://g' | head -n 1 | sed 's/.*\///g')
+	current_wallpaper=$(awww  query | sed 's/.*image://g' | head -n 1 | sed 's/.*\///g')
 	if [[ "$WALLPAPER" =~ "$current_wallpaper" ]]; then
 		set_wallpaper "$FOCUS_MODE_WALLPAPER"
 	else
@@ -29,10 +29,10 @@ toggle_focus_mode() {
 }
 
 
-# check if swww is installed
-if ! command -v swww &> /dev/null
+# check if awww is installed
+if ! command -v awww &> /dev/null
 then
-		echo "swww could not be found, please install swww to use this script."
+		echo "awww could not be found, please install awww to use this script."
 		exit 1
 fi
 
