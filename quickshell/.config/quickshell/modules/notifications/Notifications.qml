@@ -46,14 +46,6 @@ Scope {
 
 		Item {
 			anchors.fill: parent
-			
-			RectangularShadow {
-				anchors.fill: cardRect
-				radius: cardRect.radius
-				blur: 5
-				spread: 0.2
-				color: Qt.darker(cardRect.color, 1.6)
-			}	
 
 			ColumnLayout {
 				id: notifColumn
@@ -130,12 +122,20 @@ Scope {
 							border.width: 0
 							border.color: notifWindow.mdOutlineVariant
 
+							RectangularShadow {
+								anchors.fill: cardRect
+								radius: cardRect.radius
+								blur: 5
+								spread: 0.2
+								color: Qt.darker(cardRect.color, 1.6)
+							}	
+
 							// State layer on hover
 							Rectangle {
 								anchors.fill: parent
 								radius: parent.radius
 								color: notifWindow.mdOnSurface
-								opacity: cardHover.containsMouse ? 0.02 : 0
+								opacity: cardHover.containsMouse ? 0.04 : 0
 								Behavior on opacity { NumberAnimation { duration: 150 } }
 							}
 
@@ -145,6 +145,8 @@ Scope {
 								hoverEnabled: true
 								propagateComposedEvents: true
 								onClicked: mouse => mouse.accepted = false
+								onEntered: dismissTimer.stop()
+								onExited: dismissTimer.start()
 							}
 
 							ColumnLayout {
@@ -174,106 +176,111 @@ Scope {
 										RowLayout {
 											Layout.fillWidth: true
 											spacing: 8
-										Text {
-											visible: card.modelData.summary !== ""
-											text: card.modelData.summary
-											color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
-											font.pixelSize: 16; font.weight: Font.Medium
-											Layout.fillWidth: true
-											Layout.topMargin: 4
-											wrapMode: Text.WordWrap
-											textFormat: Text.PlainText
-										}
-
-									// Icon close button
-									Rectangle {
-										width: 28; height: 28; radius: 14
-										color: cardRect.isUrgent ? (closeBtnHover.containsMouse
-											? Qt.alpha(notifWindow.mdError, 0.08)
-											: "transparent") : (
-										closeBtnHover.containsMouse
-										? Qt.alpha(notifWindow.mdOnSurface, 0.08)
-										: "transparent")
-										Behavior on color { ColorAnimation { duration: 150 } }
-
-										Text {
-											anchors.centerIn: parent
-											text: ""
-											color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdOnSurfaceVariant
-											font.pixelSize: 15
-										}
-
-										MouseArea {
-											id: closeBtnHover
-											anchors.fill: parent
-											hoverEnabled: true
-											cursorShape: Qt.PointingHandCursor
-											onClicked: { enterAnim.stop(); exitAnim.start() }
-										}
-									}
-									}
-
-										// Body — M3 body/medium
-										Text {
-											visible: card.modelData.body !== ""
-											text: card.modelData.body
-											color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
-											font.pixelSize: 14
-											Layout.fillWidth: true
-											wrapMode: Text.WordWrap
-											textFormat: Text.PlainText
-										}
-									}
-								}
-
-								// Action buttons — M3 filled-tonal style
-								Flow {
-									visible: card.modelData.actions.length > 0
-									Layout.fillWidth: true
-									Layout.topMargin: 4
-									Layout.bottomMargin: 8
-									spacing: 8
-
-									Repeater {
-										model: card.modelData.actions
-
-										delegate: Rectangle {
-											required property var modelData
-
-											height: 32
-											implicitWidth: cardInner.width / card.modelData.actions.length - (2 * card.modelData.actions.length)
-											radius:8
-											color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdSecondaryContainer
-											Behavior on color { ColorAnimation { duration: 150 } }
-
-											// State layer
-											Rectangle {
-												anchors.fill: parent; radius: parent.radius
-												color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
-												opacity: btnArea.containsMouse ? 0.08 : 0
-												Behavior on opacity { NumberAnimation { duration: 150 } }
-											}
-
 											Text {
-												id: btnLabel
-												anchors.centerIn: parent
-												text: modelData.text
-												color: cardRect.isUrgent ? notifWindow.mdSurfaceContainerHigh : notifWindow.mdOnSurface
-												font.pixelSize: 13; font.weight: Font.Medium
-												font.letterSpacing: 0.1
+												visible: card.modelData.summary !== ""
+												text: card.modelData.summary
+												color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
+												font.pixelSize: 16; font.weight: Font.Medium
+												Layout.fillWidth: true
+												Layout.topMargin: 4
+												wrapMode: Text.WordWrap
+												textFormat: Text.PlainText
 											}
 
-											MouseArea {
-												id: btnArea
-												anchors.fill: parent
-												hoverEnabled: true
-												cursorShape: Qt.PointingHandCursor
-												onClicked: {
-													modelData.invoke();
-													if (!card.modelData.resident) {
-														enterAnim.stop();
-														exitAnim.start();
+											// Icon close button
+											Rectangle {
+												width: 28; height: 28; radius: 14
+												color: cardRect.isUrgent ? (closeBtnHover.containsMouse
+												? Qt.alpha(notifWindow.mdError, 0.08)
+												: "transparent") : (
+													closeBtnHover.containsMouse
+													? Qt.alpha(notifWindow.mdOnSurface, 0.08)
+													: "transparent")
+													Behavior on color { ColorAnimation { duration: 150 } }
+
+													Text {
+														anchors.centerIn: parent
+														text: ""
+														color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdOnSurfaceVariant
+														font.pixelSize: 15
 													}
+
+													MouseArea {
+														id: closeBtnHover
+														anchors.fill: parent
+														hoverEnabled: true
+														cursorShape: Qt.PointingHandCursor
+														onClicked: { enterAnim.stop(); exitAnim.start() }
+														onEntered: dismissTimer.stop()
+														onExited: dismissTimer.start()
+													}
+												}
+											}
+
+											// Body — M3 body/medium
+											Text {
+												visible: card.modelData.body !== ""
+												text: card.modelData.body
+												color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
+												font.pixelSize: 14
+												Layout.fillWidth: true
+												wrapMode: Text.WordWrap
+												textFormat: Text.PlainText
+											}
+										}
+									}
+
+									// Action buttons — M3 filled-tonal style
+									Flow {
+										visible: card.modelData.actions.length > 0
+										Layout.fillWidth: true
+										Layout.topMargin: 4
+										Layout.bottomMargin: 8
+										spacing: 8
+
+										Repeater {
+											model: card.modelData.actions
+
+											delegate: Rectangle {
+												required property var modelData
+
+												height: 32
+												implicitWidth: cardInner.width / card.modelData.actions.length - (2 * card.modelData.actions.length)
+												radius:8
+												color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdSecondaryContainer
+												Behavior on color { ColorAnimation { duration: 150 } }
+
+												// State layer
+												Rectangle {
+													anchors.fill: parent; radius: parent.radius
+													color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
+													opacity: btnArea.containsMouse ? 0.08 : 0
+													Behavior on opacity { NumberAnimation { duration: 150 } }
+												}
+
+												Text {
+													id: btnLabel
+													anchors.centerIn: parent
+													text: modelData.text
+													color: cardRect.isUrgent ? notifWindow.mdSurfaceContainerHigh : notifWindow.mdOnSurface
+													font.pixelSize: 13; font.weight: Font.Medium
+													font.letterSpacing: 0.1
+												}
+
+												MouseArea {
+													id: btnArea
+													anchors.fill: parent
+													hoverEnabled: true
+													cursorShape: Qt.PointingHandCursor
+													onClicked: {
+														modelData.invoke();
+														if (!card.modelData.resident) {
+															enterAnim.stop();
+															exitAnim.start();
+														}
+													}					
+													onEntered: dismissTimer.stop()
+													onExited: dismissTimer.start()
 												}
 											}
 										}
@@ -286,4 +293,3 @@ Scope {
 			}
 		}
 	}
-}
