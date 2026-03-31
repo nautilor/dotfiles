@@ -59,6 +59,7 @@ keymap.set("x", "<C-_>", "gc", opts)
 keymap.set("n", "<C-_>", "gcc", opts)
 keymap.set("n", "<C-/>", "gcc", opts)
 keymap.set("x", "<C-/>", "gc", opts)
+keymap.set({ "n", "x" }, "<C-k>", function() require("fold_imports").toggle() end, opts)
 
 -- Tabs
 keymap.set("n", "<tab>", ":bnext<Return>", nopts)
