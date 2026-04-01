@@ -65,7 +65,26 @@ return {
 		picker = {
 			actions = {
 				smart_open = function(picker, item)
+					if not item then return end
+					if item.item == "Yes" then
+						picker:action({ "confirm" })
+						return
+					end
 					if not item.dir then
+						if item.file then
+							-- bail out if the file no longer exists (e.g. just deleted)
+							if not vim.uv.fs_stat(item.file) then return end
+							-- if already visible in a window, focus it directly
+							local bufnr = vim.fn.bufnr(item.file)
+							if bufnr ~= -1 then
+								local wins = vim.fn.win_findbuf(bufnr)
+								if #wins > 0 then
+									picker:close()
+									vim.fn.win_gotoid(wins[1])
+									return
+								end
+							end
+						end
 						local ok = picker:action({ "pick_win", "jump" })
 						if ok then return end
 					end
