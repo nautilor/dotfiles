@@ -216,6 +216,7 @@ local function setup_keymaps(bufnr)
 
 	vim.keymap.set("n", "i", smart_insert_start, { buffer = bufnr, silent = true })
 	vim.keymap.set("n", "a", smart_append, { buffer = bufnr, silent = true })
+	vim.keymap.set("n", "q", ":wq<Return>", { buffer = bufnr, silent = true })
 
 	if k.toggle then
 		vim.keymap.set("n", k.toggle, toggle, vim.tbl_extend("force", opts, { desc = "Task: toggle" }))
