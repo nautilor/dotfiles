@@ -15,7 +15,7 @@ alias lt="ls -lt"
 
 # Git
 alias lg=lazygit
-alias lt="/usr/bin/lazytask && reset"
+alias lt="nvim -c Task"
 
 # Tmux
 alias ta='tmux a'
