@@ -2,7 +2,7 @@
 
 OUTPUT_DIR="$HOME/Videos/Recordings"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-OUTPUT_FILE="$OUTPUT_DIR/recording_$TIMESTAMP.mkv"
+OUTPUT_FILE="$OUTPUT_DIR/recording_$TIMESTAMP.mp4"
 PID_FILE="/tmp/recorder_pid"
 FFMPEG_LOG="/tmp/ffmpeg_recording.log"
 
