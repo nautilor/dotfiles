@@ -71,6 +71,7 @@ return {
 						return
 					end
 					if not item.dir then
+						local can_jump = item.file or item.buf or item.pos or item.search
 						if item.file then
 							-- bail out if the file no longer exists (e.g. just deleted)
 							if not vim.uv.fs_stat(item.file) then return end
@@ -85,8 +86,10 @@ return {
 								end
 							end
 						end
-						local ok = picker:action({ "pick_win", "jump" })
-						if ok then return end
+						if can_jump then
+							local ok = picker:action({ "pick_win", "jump" })
+							if ok then return end
+						end
 					end
 					picker:action({ "confirm" })
 				end
