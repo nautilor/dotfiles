@@ -1,6 +1,8 @@
 local keymap = vim.keymap
 local opts = { remap = true, silent = true }
 local nopts = { noremap = true, silent = true }
+local lsp_preview = require("shadow.core.lsp_preview")
+
 local function smart_close()
 	if #vim.api.nvim_list_wins() > 1 then
 		vim.cmd("close")
@@ -92,6 +94,7 @@ keymap.set({ "i", "n" }, "<C-b>", function() require("snacks").picker.buffers({ 
 -- LSP
 keymap.set("n", "gd", function() require("snacks").picker.lsp_definitions() end, nopts)
 keymap.set("n", "gf", function() require("snacks").picker.lsp_references() end, nopts)
+keymap.set("n", "K", lsp_preview.toggle, nopts)
 keymap.set("n", "<leader>r", vim.lsp.buf.rename)
 keymap.set({ "n", "i" }, "<F2>", vim.lsp.buf.rename)
 
