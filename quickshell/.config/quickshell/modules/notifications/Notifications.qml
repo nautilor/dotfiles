@@ -107,7 +107,7 @@ PanelWindow {
 					Timer {
 						id: dismissTimer
 						readonly property real timeoutSecs: card.modelData.expireTimeout
-						interval: (timeoutSecs > 0 ? timeoutSecs : 5) * 1000
+						interval: (timeoutSecs > 0 ? timeoutSecs : 3) * 1000
 						running: true; repeat: false
 						onTriggered: exitAnim.start()
 					}
