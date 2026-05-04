@@ -50,6 +50,7 @@
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
     # context                 # user@host
+		newline									  # \n
     dir                       # current directory
     vcs                       # git status
     # command_execution_time  # previous command duration

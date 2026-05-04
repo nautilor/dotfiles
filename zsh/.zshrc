@@ -9,16 +9,6 @@ fi
 zstyle :omz:plugins:ssh-agent quiet yes
 zstyle :omz:plugins:ssh-agent lazy yes
 
-# add blank line on top of the prompt
-autoload -U add-zsh-hook
-function add_blank_line() {
-	if [[ -z $PREV_WD ]]; then
-		echo
-	fi
-	PREV_WD="$PWD"
-}
-add-zsh-hook precmd add_blank_line
-
 # ─────────────────────────────────────────────
 # ZINITIALIZATION
 # ─────────────────────────────────────────────
