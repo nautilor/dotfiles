@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+while :
+do
+	read -sp ": " input
+	echo "$input"
+done

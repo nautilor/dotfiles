@@ -4,3 +4,4 @@ export PATH=$PATH:$HOME/.local/flutter/bin
 export PATH=$PATH:$HOME/.local/bin:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.config/tmux/bin
 export PATH=$PATH:/home/edoardo/.spicetify
+export PATH=$PATH:/home/edoardo/.local/cbin

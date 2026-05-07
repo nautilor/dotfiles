@@ -1,0 +1,23 @@
+#/usr/bin/env bash
+
+SESSION_NAME="IDE"
+
+# check if a session named "IDE" already exists
+if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+	# increment the session name until we find a unique one
+	i=1
+	while tmux has-session -t "$SESSION_NAME-$i" 2>/dev/null; do
+		((i++))
+	done
+	SESSION_NAME="$SESSION_NAME-$i"
+fi
+
+tmux new-session -d -s "$SESSION_NAME" \; \
+	new-window -c "#{pane_current_path}" \; \
+	select-window -t "$SESSION_NAME":0 \; \
+	send-keys -t "$SESSION_NAME":0 "nvim" Enter \; \
+	send-keys -t "$SESSION_NAME":0 C-t \;
+sleep .2
+tmux send-keys -t "$SESSION_NAME":0 "nd" Enter \; \
+	send-keys -t "$SESSION_NAME":0 C-t \; \
+	attach
