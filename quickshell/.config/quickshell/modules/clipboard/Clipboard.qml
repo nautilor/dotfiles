@@ -168,9 +168,9 @@ Scope {
                 Keys.onPressed: event => {
                     const ctrl = event.modifiers & Qt.ControlModifier;
 
-                    if (event.key === Qt.Key_Escape || event.key === Qt.Key_H) {
+                    if (event.key === Qt.Key_Escape || event.key === Qt.Key_Q && ctrl) {
                         clipboardWindow.closeMenu();
-                    } else if (event.key === Qt.Key_X) {
+                    } else if (event.key === Qt.Key_X && ctrl) {
                         if (listView.currentItem)
                             listView.currentItem.remove();
                     } else if (event.key === Qt.Key_Down || event.key === Qt.Key_J || event.key === Qt.Key_N && ctrl) {
@@ -204,16 +204,6 @@ Scope {
                             text: "Clipboard"
                             color: clipboardWindow.textPrimary
                             font.pixelSize: 22
-                            font.weight: Font.Medium
-                        }
-
-                        Text {
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: `${clipboardWindow.filteredItems.length}`
-                            color: clipboardWindow.textMuted
-                            opacity: 0.8
-                            font.pixelSize: 13
                             font.weight: Font.Medium
                         }
                     }
