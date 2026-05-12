@@ -9,13 +9,14 @@ fi
 toggle_clipboard() {
 	# Check if clipboard-manager.py is already running
 	# running using python ~/.config/hypr/bin/cli
-	if pgrep -x "clipse-gui" > /dev/null; then
-		# If running, kill the process
-		pkill -x "clipse-gui"
-	else
-		# If not running, start the process
-		clipse-gui &
-	fi
+	# if pgrep -x "clipse-gui" > /dev/null; then
+	# 	# If running, kill the process
+	# 	pkill -x "clipse-gui"
+	# else
+	# 	# If not running, start the process
+	# 	clipse-gui &
+	# fi
+	qs ipc call clipMenu toggle
 }
 
 clear_clipboard() {
