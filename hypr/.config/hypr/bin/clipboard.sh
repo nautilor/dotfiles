@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-if ! command -v clipse &> /dev/null || ! command -v clipse-gui &> /dev/null || ! command -v wl-copy &> /dev/null; then
+# if ! command -v clipse &> /dev/null || ! command -v clipse-gui &> /dev/null || ! command -v wl-copy &> /dev/null; then
+if ! command -v clipse &> /dev/null || ! command -v wl-copy &> /dev/null; then
 		notify-send -i "error" "Clipboard Manager" "Required dependencies are not installed!"
 		echo "Please install 'cliphist', 'rofi', and 'wl-copy' to use this script."
 		exit 1
