@@ -4,7 +4,7 @@ PIDFILE="$XDG_RUNTIME_DIR/caffeine.pid"
 
 start() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-        notify-send -i dialog-information "Caffeine" "Already active"
+			swayosd-client --custom-message="Caffeine already active" --custom-icon="caffeine"
         exit 0
     fi
 
@@ -16,9 +16,7 @@ start() {
 
     echo $! > "$PIDFILE"
 
-    notify-send -i dialog-information "Caffeine Started" \
-        "System will not sleep"
-
+		swayosd-client --custom-message="Caffeine active" --custom-icon="caffeine"
     pkill -SIGRTMIN+1 waybar
 }
 
@@ -26,10 +24,10 @@ stop() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
         kill "$(cat "$PIDFILE")"
         rm -f "$PIDFILE"
-        notify-send -i dialog-information "Caffeine Stopped" \
-            "System can sleep"
+				swayosd-client --custom-message="Caffeine inactive" --custom-icon="caffeine"
     else
-        notify-send -i dialog-information "Caffeine" "Not active"
+			swayosd-client --custom-message="Caffeine already inactive" --custom-icon="caffeine-off"
+				exit 0
     fi
 
     pkill -SIGRTMIN+1 waybar
@@ -37,10 +35,10 @@ stop() {
 
 status() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			notify-send -i dialog-information "Caffeine" "Active"
+			swayosd-client --custom-message="Caffeine active" --custom-icon="caffeine" 
         exit 0
     else
-			notify-send -i dialog-information "Caffeine" "Inactive"
+			swayosd-client --custom-message="Caffeine inactive" --custom-icon="caffeine"
         exit 1
     fi
 }
