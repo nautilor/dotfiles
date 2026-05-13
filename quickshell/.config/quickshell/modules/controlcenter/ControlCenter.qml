@@ -155,7 +155,7 @@ Scope {
 		visible: false
 		color: "transparent"
 		implicitWidth: 500
-		implicitHeight: 630
+		implicitHeight: 560
 		exclusionMode: ExclusionMode.Normal
 		focusable: true
 
@@ -315,34 +315,6 @@ Scope {
 						id: contentColumn
 						width: controlScroll.width
 						spacing: 12
-
-						Item {
-							Layout.fillWidth: true
-							implicitHeight: headerColumn.implicitHeight
-
-							ColumnLayout {
-								id: headerColumn
-								anchors.left: parent.left
-								anchors.right: parent.right
-								spacing: 4
-
-								Text {
-									text: "Control Center"
-									color: controlCenter.textPrimary
-									font.pixelSize: 26
-									font.weight: Font.DemiBold
-								}
-
-								Text {
-									Layout.fillWidth: true
-									text: controlCenter.wifiEnabled ? "Connected to " + controlCenter.wifiLabel : "Quick settings, audio, devices"
-									color: controlCenter.textMuted
-									font.pixelSize: 13
-									elide: Text.ElideRight
-								}
-							}
-						}
-
 						Item {
 							Layout.fillWidth: true
 							implicitHeight: quickRow.implicitHeight
