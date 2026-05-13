@@ -155,7 +155,7 @@ Scope {
 		visible: false
 		color: "transparent"
 		implicitWidth: 500
-		implicitHeight: 560
+		implicitHeight: 550
 		exclusionMode: ExclusionMode.Normal
 		focusable: true
 
@@ -710,26 +710,6 @@ Scope {
 										}
 									}
 
-									Rectangle {
-										width: 36
-										height: 36
-										radius: 18
-										color: controlCenter.bgTertiary
-
-										MouseArea {
-											anchors.fill: parent
-											hoverEnabled: true
-											cursorShape: Qt.PointingHandCursor
-											onClicked: controlCenter.runAction("volume-toggle-mute")
-										}
-
-										Text {
-											anchors.centerIn: parent
-											text: "󰓃"
-											color: controlCenter.textPrimary
-											font.pixelSize: 16
-										}
-									}
 								}
 							}
 						}
