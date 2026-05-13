@@ -1,8 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
+import "../shared" as Shared
 
 Item {
     id: entry
+    Shared.Theme { id: theme }
     required property var modelData
     required property int index
 
@@ -30,20 +32,20 @@ Item {
 
     Rectangle {
         color: "transparent"
-        radius: 10
+        radius: theme.listItemRadius
         width: parent.width
         height: parent.height
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: 12
-            spacing: 12
+            anchors.margins: theme.listItemPadding
+            spacing: theme.mediumGap
 
             Rectangle {
                 Layout.alignment: Qt.AlignVCenter
                 width: entry.modelData.imagePath !== "" ? 68 : 44
                 height: entry.modelData.imagePath !== "" ? 68 : 44
-                radius: 10
+                radius: theme.listItemRadius
                 color: entry.ListView.isCurrentItem ? Qt.rgba(1, 1, 1, 0.10) : clipboardWindow.bgSecondary
                 clip: true
 

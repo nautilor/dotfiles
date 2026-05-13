@@ -5,12 +5,14 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Io
+import "../shared" as Shared
 
 Scope {
 	id: launcherScope
 
 	PanelWindow {
 		id: launcher
+		Shared.Theme { id: theme }
 
 		function resetLauncher() {
 			launcher.visible = false;
@@ -27,8 +29,8 @@ Scope {
 
 		visible: false
 		color: "transparent"
-		implicitWidth: 500
-		implicitHeight: 700
+		implicitWidth: theme.floatingWindowWidth
+		implicitHeight: theme.floatingWindowHeight
 		exclusionMode: ExclusionMode.Normal
 		focusable: true
 
@@ -37,18 +39,15 @@ Scope {
 			left: true
 		}
 
-		readonly property color bgPrimary:    "#16161f"   // window background
-		readonly property color bgSecondary:  "#1f2030"   // panels / cards
-		readonly property color bgHighlight:  "#2a2a2a"   // hover / selection
-		readonly property color border:       "#3d3d3d"   // subtle borders
-
-		readonly property color textPrimary:  "#A9B1D6"   // primary text
-		readonly property color textMuted:    "#C8D3F5"   // secondary / disabled
-
-		readonly property color accent:       "#3B4261"   // Adwaita blue
-		readonly property color accentBright: "#545C7E"   // hover / active blue
-
-		readonly property color success:      "#57e389"   // Adwaita green
+		readonly property color bgPrimary: theme.floatingBgPrimary
+		readonly property color bgSecondary: theme.floatingBgSecondary
+		readonly property color bgHighlight: theme.floatingBgHighlight
+		readonly property color border: theme.floatingBorder
+		readonly property color textPrimary: theme.floatingTextPrimary
+		readonly property color textMuted: theme.floatingTextMuted
+		readonly property color accent: theme.floatingAccent
+		readonly property color accentBright: theme.floatingAccentBright
+		readonly property color success: theme.floatingSuccess
 
 		property string query: ""
 
@@ -68,9 +67,9 @@ Scope {
 				anchors.fill: parent
 				color: launcher.bgPrimary
 				anchors.centerIn: parent
-				anchors.margins: 8
+				anchors.margins: theme.floatingWindowMargin
 				opacity: 1
-				radius: 16
+				radius: theme.floatingWindowRadius
 				border.width: 0
 				border.color: launcher.border
 
@@ -79,8 +78,8 @@ Scope {
 
 			ColumnLayout {
 				anchors.fill: parent
-				anchors.margins: 24	
-				spacing: 16
+				anchors.margins: theme.floatingContentPadding
+				spacing: theme.largeGap
 
 
 
@@ -326,7 +325,7 @@ Scope {
 					id: list
 					model: filtered.values
 					currentIndex: filtered.values.length > 0 ? 0 : -1
-					spacing: 6
+					spacing: theme.listGap
 					orientation: ListView.Vertical
 					keyNavigationWraps: false
 					preferredHighlightBegin: 0
@@ -336,7 +335,7 @@ Scope {
 					highlightMoveVelocity: -1
 
 					highlight: Rectangle {
-						radius: 10
+						radius: theme.listItemRadius
 						color: launcher.accent
 						opacity: 0.75
 
@@ -366,13 +365,13 @@ Scope {
 						Rectangle {
 
 							color: "transparent"
-							radius: 10
+							radius: theme.listItemRadius
 							width: parent.width
 							height: parent.height
 
 							RowLayout {
 								anchors.fill: parent
-								anchors.margins: 12
+								anchors.margins: theme.listItemPadding
 								spacing: 0
 
 								// Icon container
@@ -433,9 +432,9 @@ Scope {
 
 				Rectangle {
 					Layout.fillWidth: true
-					height: 56
+					height: theme.searchFieldHeight
 					color: launcher.bgSecondary
-					radius: 12
+					radius: theme.searchFieldRadius
 					border.width: 0
 					border.color: launcher.accent
 
@@ -445,10 +444,10 @@ Scope {
 
 					RowLayout {
 						anchors.fill: parent
-						anchors.margins: 8
-						anchors.leftMargin: 24
-						anchors.rightMargin: 24
-						spacing: 12
+						anchors.margins: theme.searchFieldInset
+						anchors.leftMargin: theme.searchFieldLeftPadding
+						anchors.rightMargin: theme.searchFieldRightPadding
+						spacing: theme.mediumGap
 
 						Text {
 							text: ""
@@ -465,7 +464,7 @@ Scope {
 							selectionColor: launcher.accent
 							selectedTextColor: launcher.bgPrimary
 							focus: true
-							leftPadding: 5
+							leftPadding: theme.textFieldLeftPadding
 							rightPadding: 0
 							topPadding: 0
 							bottomPadding: 0

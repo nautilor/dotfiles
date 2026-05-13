@@ -5,31 +5,34 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
+import "../shared" as Shared
 
 Scope {
 	id: controlCenterScope
 
 	PanelWindow {
 		id: controlCenter
+		Shared.Theme { id: theme }
 
 		property var state: ({})
 		property var wifiNetworks: []
 		property var bluetoothDevices: []
 
-		readonly property color bgPrimary: "#16161f"
-		readonly property color bgSecondary: "#1f2030"
-		readonly property color bgTertiary: "#26283a"
-		readonly property color musicSurface: "#2c2130"
-		readonly property color border: "#3d3d3d"
-		readonly property color divider: "#414868"
-		readonly property color textPrimary: "#c8d3f5"
-		readonly property color textMuted: "#a9b1d6"
-		readonly property color accent: "#7aa2f7"
-		readonly property color accentSoft: "#3B4261"
-		readonly property color success: "#57e389"
-		readonly property color danger: "#f7768e"
-		readonly property color track: "#3a3f5a"
-		readonly property color thumb: "#f6f7fb"
+		readonly property color bgPrimary: theme.panelBgPrimary
+		readonly property color bgSecondary: theme.panelBgSecondary
+		readonly property color bgTertiary: theme.panelBgTertiary
+		readonly property color musicSurface: theme.panelMusicSurface
+		readonly property color border: theme.panelBorder
+		readonly property color divider: theme.panelDivider
+		readonly property color textPrimary: theme.panelTextPrimary
+		readonly property color textMuted: theme.panelTextMuted
+		readonly property color accent: theme.panelAccent
+		readonly property color accentSoft: theme.panelAccentSoft
+		readonly property color success: theme.panelSuccess
+		readonly property color danger: theme.panelDanger
+		readonly property color track: theme.panelTrack
+		readonly property color thumb: theme.panelThumb
+		readonly property color outlineStrong: theme.panelOutlineStrong
 
 		property bool wifiEnabled: readBool("wifiEnabled", false)
 		property string wifiLabel: readString("wifiLabel", "Wi-Fi off")
@@ -154,8 +157,8 @@ Scope {
 
 		visible: false
 		color: "transparent"
-		implicitWidth: 500
-		implicitHeight: 550
+		implicitWidth: theme.controlCenterWidth
+		implicitHeight: theme.controlCenterHeight
 		exclusionMode: ExclusionMode.Normal
 		focusable: true
 
@@ -257,11 +260,11 @@ Scope {
 			Rectangle {
 				id: mainWindow
 				anchors.fill: parent
-				anchors.margins: 8
-				radius: 22
-				color: Qt.rgba(22 / 255, 22 / 255, 31 / 255, 1)
+				anchors.margins: theme.floatingWindowMargin
+				radius: theme.controlCenterWindowRadius
+				color: controlCenter.bgPrimary
 				border.width: 0
-				border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 1)
+				border.color: controlCenter.outlineStrong
 				clip: true
 				focus: true
 
@@ -285,7 +288,7 @@ Scope {
 				Flickable {
 					id: controlScroll
 					anchors.fill: parent
-					anchors.margins: 16
+					anchors.margins: theme.controlCenterScrollPadding
 					clip: true
 					contentWidth: width
 					contentHeight: contentColumn.implicitHeight
@@ -301,8 +304,8 @@ Scope {
 						width: 0
 
 						contentItem: Rectangle {
-							implicitWidth: 8
-							radius: 4
+							implicitWidth: theme.smallGap
+							radius: theme.sliderTrackRadius
 							color: Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.55)
 						}
 
@@ -314,7 +317,7 @@ Scope {
 					ColumnLayout {
 						id: contentColumn
 						width: controlScroll.width
-						spacing: 12
+						spacing: theme.mediumGap
 						Item {
 							Layout.fillWidth: true
 							implicitHeight: quickRow.implicitHeight
@@ -323,13 +326,13 @@ Scope {
 								id: quickRow
 								anchors.left: parent.left
 								anchors.right: parent.right
-								spacing: 12
+								spacing: theme.mediumGap
 
 								Rectangle {
 									Layout.fillWidth: true
 									Layout.preferredWidth: 3
 									implicitHeight: networkColumn.implicitHeight + 24
-									radius: 18
+									radius: theme.cardRadius
 									color: controlCenter.bgSecondary
 									border.width: 1
 									border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
@@ -339,7 +342,7 @@ Scope {
 										anchors.left: parent.left
 										anchors.right: parent.right
 										anchors.top: parent.top
-										anchors.margins: 12
+										anchors.margins: theme.panelInset
 										spacing: 0
 
 										Rectangle {

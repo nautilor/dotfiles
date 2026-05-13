@@ -6,6 +6,7 @@ import QtQuick.Effects
 import Quickshell.Io
 import Quickshell.Services.Notifications
 import Quickshell.Widgets
+import "../shared" as Shared
 
 Scope {
 id: notifScope
@@ -23,25 +24,25 @@ NotificationServer {
 
 PanelWindow {
 	id: notifWindow
+	Shared.Theme { id: theme }
 	property bool doNotDisturb: false
 
 	visible: !notifWindow.doNotDisturb && server.trackedNotifications.values.length > 0
 	color: "transparent"
-	implicitWidth: 360
-	implicitHeight: notifColumn.implicitHeight + 16
+	implicitWidth: theme.notificationWidth
+	implicitHeight: notifColumn.implicitHeight + (theme.smallGap * 2)
 	exclusionMode: ExclusionMode.Normal
 
-	// Material 3 dark baseline color tokens
-	readonly property color mdSurfaceContainerHigh: "#16161f" // bg_dark-ish
-	readonly property color mdSurfaceContainerHighCritical: "#3b1f29" // red bg for urgent notifs
-	readonly property color mdOnSurface:            "#c0caf5" // fg
-	readonly property color mdOnSurfaceVariant:     "#a9b1d6" // fg_dark
-	readonly property color mdPrimary:              "#7aa2f7" // blue
-	readonly property color mdSecondaryContainer:   "#1f2030" // subtle elevated bg
-	readonly property color mdOnSecondaryContainer: "#c0caf5" // readable fg
-	readonly property color mdError:                "#f7768e" // red
-	readonly property color mdErrorContainer:       "#3b1f29" // dark red bg
-	readonly property color mdOutlineVariant:       "#414868" // comment / border
+	readonly property color mdSurfaceContainerHigh: theme.notificationSurface
+	readonly property color mdSurfaceContainerHighCritical: theme.notificationSurfaceCritical
+	readonly property color mdOnSurface: theme.notificationOnSurface
+	readonly property color mdOnSurfaceVariant: theme.notificationOnSurfaceVariant
+	readonly property color mdPrimary: theme.notificationPrimary
+	readonly property color mdSecondaryContainer: theme.notificationSecondaryContainer
+	readonly property color mdOnSecondaryContainer: theme.notificationOnSecondaryContainer
+	readonly property color mdError: theme.notificationError
+	readonly property color mdErrorContainer: theme.notificationErrorContainer
+	readonly property color mdOutlineVariant: theme.notificationOutlineVariant
 	anchors {
 		top: true
 		right: true
@@ -75,11 +76,11 @@ PanelWindow {
 				top: parent.top
 				left: parent.left
 				right: parent.right
-				topMargin: 8
-				leftMargin: 8
-				rightMargin: 8
+				topMargin: theme.smallGap
+				leftMargin: theme.smallGap
+				rightMargin: theme.smallGap
 			}
-			spacing: 8
+			spacing: theme.smallGap
 
 			Repeater {
 				model: server.trackedNotifications.values
@@ -139,7 +140,7 @@ PanelWindow {
 						property bool isUrgent: card.modelData.urgency === NotificationUrgency.Critical
 						width: parent.width
 						implicitHeight: cardInner.implicitHeight + 20
-						radius: 16
+						radius: theme.notificationCardRadius
 						color: isUrgent ? notifWindow.mdSurfaceContainerHighCritical : notifWindow.mdSurfaceContainerHigh
 						border.width: 0
 						border.color: notifWindow.mdOutlineVariant
@@ -175,14 +176,14 @@ PanelWindow {
 							id: cardInner
 							anchors {
 								left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom
-								leftMargin: 16; rightMargin: 16; topMargin: 16; bottomMargin: 16
+								leftMargin: theme.notificationCardPadding; rightMargin: theme.notificationCardPadding; topMargin: theme.notificationCardPadding; bottomMargin: theme.notificationCardPadding
 							}
-							spacing: 4
+							spacing: theme.tightGap
 							RowLayout {
 								Layout.fillWidth: true
 								Layout.topMargin: 4
 								Layout.bottomMargin: 8
-								spacing: 8
+								spacing: theme.smallGap
 								// Icon of application
 								IconImage {
 									Layout.alignment: Qt.AlignLeft
@@ -192,7 +193,7 @@ PanelWindow {
 								}
 								ColumnLayout {
 									Layout.fillWidth: true
-									spacing: 4
+									spacing: theme.tightGap
 
 									// Summary — M3 title/medium
 									RowLayout {
@@ -211,7 +212,7 @@ PanelWindow {
 
 										// Icon close button
 										Rectangle {
-											width: 28; height: 28; radius: 14
+											width: theme.notificationDismissSize; height: theme.notificationDismissSize; radius: theme.notificationDismissRadius
 											color: cardRect.isUrgent ? (closeBtnHover.containsMouse
 											? Qt.alpha(notifWindow.mdError, 0.08)
 											: "transparent") : (
@@ -267,9 +268,9 @@ PanelWindow {
 										delegate: Rectangle {
 											required property var modelData
 
-											height: 32
+											height: theme.notificationActionHeight
 											implicitWidth: cardInner.width / card.modelData.actions.length - (2 * card.modelData.actions.length)
-											radius:8
+											radius: theme.smallGap
 											color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdSecondaryContainer
 											Behavior on color { ColorAnimation { duration: 150 } }
 

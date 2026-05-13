@@ -6,29 +6,31 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
+import "../shared" as Shared
 
 Scope {
     id: clipboardScope
 
     PanelWindow {
         id: clipboardWindow
+        Shared.Theme { id: theme }
 
         property string scriptPath: "$HOME/.config/quickshell/bin/clipse-visual.sh"
         property string query: ""
 
-        readonly property color bgPrimary: "#16161f"
-        readonly property color bgSecondary: "#1f2030"
-        readonly property color bgHighlight: "#2a2a2a"
-        readonly property color border: "#3d3d3d"
-        readonly property color textPrimary: "#A9B1D6"
-        readonly property color textMuted: "#C8D3F5"
-        readonly property color accent: "#3B4261"
-        readonly property color accentBright: "#545C7E"
-        readonly property color success: "#57e389"
-        readonly property color danger: "#f7768e"
+        readonly property color bgPrimary: theme.floatingBgPrimary
+        readonly property color bgSecondary: theme.floatingBgSecondary
+        readonly property color bgHighlight: theme.floatingBgHighlight
+        readonly property color border: theme.floatingBorder
+        readonly property color textPrimary: theme.floatingTextPrimary
+        readonly property color textMuted: theme.floatingTextMuted
+        readonly property color accent: theme.floatingAccent
+        readonly property color accentBright: theme.floatingAccentBright
+        readonly property color success: theme.floatingSuccess
+        readonly property color danger: theme.floatingDanger
 
-        implicitWidth: 500
-        implicitHeight: 700
+        implicitWidth: theme.floatingWindowWidth
+        implicitHeight: theme.floatingWindowHeight
         visible: false
         color: "transparent"
         exclusionMode: ExclusionMode.Normal
@@ -157,9 +159,9 @@ Scope {
             Rectangle {
                 id: mainWindow
                 anchors.fill: parent
-                anchors.margins: 8
+                anchors.margins: theme.floatingWindowMargin
                 color: clipboardWindow.bgPrimary
-                radius: 16
+                radius: theme.floatingWindowRadius
                 border.width: 0
                 border.color: clipboardWindow.border
                 clip: true
@@ -191,8 +193,8 @@ Scope {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 24
-                    spacing: 16
+                    anchors.margins: theme.floatingContentPadding
+                    spacing: theme.largeGap
 
                     Item {
                         Layout.fillWidth: true
@@ -208,7 +210,7 @@ Scope {
                                 id: listView
                                 model: clipboardWindow.filteredItems
                                 currentIndex: clipboardWindow.filteredItems.length > 0 ? 0 : -1
-                                spacing: 6
+                                spacing: theme.listGap
                                 orientation: ListView.Vertical
                                 keyNavigationWraps: false
                                 preferredHighlightBegin: 0
@@ -218,7 +220,7 @@ Scope {
                                 highlightMoveVelocity: -1
 
                                 highlight: Rectangle {
-                                    radius: 10
+                                    radius: theme.listItemRadius
                                     color: clipboardWindow.accent
                                     opacity: 0.75
 
@@ -248,18 +250,18 @@ Scope {
 
                     Rectangle {
                         Layout.fillWidth: true
-                        height: 56
+                        height: theme.searchFieldHeight
                         color: clipboardWindow.bgSecondary
-                        radius: 12
+                        radius: theme.searchFieldRadius
                         border.width: 0
                         border.color: clipboardWindow.accent
 
                         RowLayout {
                             anchors.fill: parent
-                            anchors.margins: 8
-                            anchors.leftMargin: 24
-                            anchors.rightMargin: 16
-                            spacing: 12
+                            anchors.margins: theme.searchFieldInset
+                            anchors.leftMargin: theme.searchFieldLeftPadding
+                            anchors.rightMargin: theme.searchFieldCompactRightPadding
+                            spacing: theme.mediumGap
 
                             Text {
                                 text: ""
@@ -276,7 +278,7 @@ Scope {
                                 selectionColor: clipboardWindow.accent
                                 selectedTextColor: clipboardWindow.bgPrimary
                                 focus: true
-                                leftPadding: 5
+                                leftPadding: theme.textFieldLeftPadding
                                 rightPadding: 0
                                 topPadding: 0
                                 bottomPadding: 0
