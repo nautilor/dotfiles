@@ -196,20 +196,6 @@ Scope {
 
                     Item {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 24
-
-                        Text {
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: "Clipboard"
-                            color: clipboardWindow.textPrimary
-                            font.pixelSize: 22
-                            font.weight: Font.Medium
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
                         Layout.fillHeight: true
 
                         ScrollView {
