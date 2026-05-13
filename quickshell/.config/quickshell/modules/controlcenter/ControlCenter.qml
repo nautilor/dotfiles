@@ -249,9 +249,9 @@ Scope {
 			RectangularShadow {
 				anchors.fill: mainWindow
 				radius: mainWindow.radius
-				blur: 18
-				spread: 0.05
-				color: Qt.rgba(0, 0, 0, 0.45)
+				blur: 5
+				spread: 0.2
+				color: Qt.darker(controlCenter.bgPrimary, 1.6)
 			}
 
 			Rectangle {
