@@ -6,7 +6,8 @@ window {
 window#osd {
   border-radius: 999px;
   border: none;
-  background: #1e1e1e;
+  background: #0e0e19;
+  box-shadow: 0 4px 12px rgba(22, 22, 31, 0.8);
 }
 
 window#osd #container {
