@@ -643,9 +643,8 @@ Scope {
 										from: 1
 										to: 100
 										stepSize: 1
-
-										onPressedChanged: {
-											if (!pressed)
+										onMoved: {
+											if (pressed)
 												controlCenter.runAction("brightness-set", Math.round(value).toString());
 										}
 
@@ -713,9 +712,8 @@ Scope {
 										from: 0
 										to: 100
 										stepSize: 1
-
-										onPressedChanged: {
-											if (!pressed)
+										onMoved: {
+											if (pressed)
 												controlCenter.runAction("volume-set", Math.round(value).toString());
 										}
 
