@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import QtQuick.Effects
+import Quickshell.Io
 import Quickshell.Services.Notifications
 import Quickshell.Widgets
 
@@ -16,13 +17,15 @@ NotificationServer {
 	keepOnReload: true
 
 	onNotification: notif => {
-		notif.tracked = true;
+		notif.tracked = !notifWindow.doNotDisturb;
 	}
 }
 
 PanelWindow {
 	id: notifWindow
-	visible: server.trackedNotifications.values.length > 0
+	property bool doNotDisturb: false
+
+	visible: !notifWindow.doNotDisturb && server.trackedNotifications.values.length > 0
 	color: "transparent"
 	implicitWidth: 360
 	implicitHeight: notifColumn.implicitHeight + 16
@@ -42,6 +45,25 @@ PanelWindow {
 	anchors {
 		top: true
 		right: true
+	}
+
+	Process {
+		id: dndStatusReader
+		command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status']
+		stdout: StdioCollector {
+			onStreamFinished: notifWindow.doNotDisturb = this.text.trim() === "on"
+		}
+	}
+
+	Timer {
+		interval: 1500
+		running: true
+		repeat: true
+		triggeredOnStart: true
+		onTriggered: {
+			if (!dndStatusReader.running)
+				dndStatusReader.running = true;
+		}
 	}
 
 	Item {
