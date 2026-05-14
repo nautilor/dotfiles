@@ -240,7 +240,7 @@ Scope {
 		}
 
 		Timer {
-			interval: 5000
+			interval: 250
 			running: controlCenter.visible
 			repeat: true
 			onTriggered: controlCenter.refreshAll()
