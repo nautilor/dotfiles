@@ -398,6 +398,14 @@ end
 function M.open_task_file()
 	local root = find_git_root() or vim.fn.getcwd()
 	local path = ensure_task_file(root)
+
+	vim.cmd("edit " .. vim.fn.fnameescape(path))
+	focus_first_task_line(0, 0)
+end
+
+function M.open_task_float()
+	local root = find_git_root() or vim.fn.getcwd()
+	local path = ensure_task_file(root)
 	local origin_win = vim.api.nvim_get_current_win()
 	local bufnr = vim.fn.bufadd(path)
 
@@ -485,8 +493,8 @@ function M.setup(opts)
 
 	-- global key to open task file
 	vim.keymap.set("n", config.keys.open, function()
-		M.open_task_file()
-	end, { silent = true, desc = "Task: open file" })
+		M.open_task_float()
+	end, { silent = true, desc = "Task: open float" })
 
 	if config.keys.annotate then
 		vim.keymap.set("n", config.keys.annotate, "<Cmd>TaskAnnotate<CR>", { silent = true, desc = "Task: annotate code" })
@@ -496,7 +504,11 @@ function M.setup(opts)
 	-- user command
 	vim.api.nvim_create_user_command("Task", function()
 		M.open_task_file()
-	end, {})
+	end, { desc = "Open task file in current window" })
+
+	vim.api.nvim_create_user_command("TaskFloat", function()
+		M.open_task_float()
+	end, { desc = "Open task file in floating window" })
 
 	vim.api.nvim_create_user_command("TaskAnnotate", function(opts)
 		annotate_code({
