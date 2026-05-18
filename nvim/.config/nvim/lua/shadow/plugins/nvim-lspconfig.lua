@@ -99,8 +99,11 @@ return {
 						bundles = bundles, -- Keybindings
 					},
 					on_attach = function(client, bufnr)
-						require("jdtls.dap").setup_dap_main_class_configs()
 						require("jdtls.setup").add_commands()
+						local has_dap = pcall(require, "dap")
+						if has_dap then
+							require("jdtls.dap").setup_dap_main_class_configs()
+						end
 					end,
 				}
 
