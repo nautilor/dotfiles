@@ -1,4 +1,5 @@
 require("shadow.core.config")
+require("shadow.core.java").setup()
 require("shadow.core.remap")
 require("shadow.core.latex")
 require("shadow.core.override.lazygit")
