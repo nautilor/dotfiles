@@ -64,6 +64,9 @@ return {
 		},
 		picker = {
 			actions = {
+				java_explorer_add = function(picker)
+					require("shadow.core.java").explorer_add(picker)
+				end,
 				smart_open = function(picker, item)
 					if not item then return end
 					if item.item == "Yes" then
@@ -118,7 +121,7 @@ return {
 					win = {
 						list = {
 							keys = {
-								["a"] = "explorer_add",
+								["a"] = "java_explorer_add",
 								["d"] = "explorer_del",
 								["r"] = "explorer_rename",
 								["c"] = "explorer_copy",

@@ -1,6 +1,8 @@
 local M = {}
 
 local states = {}
+local build_timers = {}
+local mapstruct_cache = {}
 local command_group = vim.api.nvim_create_augroup("shadow-java", { clear = true })
 local buffer_group = vim.api.nvim_create_augroup("shadow-java-buffer", { clear = true })
 
@@ -26,12 +28,37 @@ local function file_exists(path)
 	return vim.uv.fs_stat(path) ~= nil
 end
 
+local function is_java_project(root)
+	return file_exists(root .. "/pom.xml")
+		or file_exists(root .. "/build.gradle")
+		or file_exists(root .. "/build.gradle.kts")
+		or file_exists(root .. "/settings.gradle")
+		or file_exists(root .. "/settings.gradle.kts")
+end
+
 local function read_file(path)
 	local ok, data = pcall(vim.fn.readfile, path)
 	if not ok or not data then
 		return ""
 	end
 	return table.concat(data, "\n")
+end
+
+local function project_has_mapstruct(root)
+	if mapstruct_cache[root] ~= nil then
+		return mapstruct_cache[root]
+	end
+
+	for _, file in ipairs({ "pom.xml", "build.gradle", "build.gradle.kts" }) do
+		local path = root .. "/" .. file
+		if file_exists(path) and read_file(path):find("mapstruct", 1, true) then
+			mapstruct_cache[root] = true
+			return true
+		end
+	end
+
+	mapstruct_cache[root] = false
+	return false
 end
 
 local function build_tool(root)
@@ -335,6 +362,166 @@ local function run_main(opts)
 	java.runner.built_in.run_app(shell_args(opts.args))
 end
 
+local function build_workspace()
+	local ok, java = pcall(require, "java")
+	if not ok or not java.build or not java.build.build_workspace then
+		vim.notify("Java workspace build API unavailable", vim.log.levels.ERROR)
+		return
+	end
+
+	java.build.build_workspace()
+end
+
+local function refresh_mappers()
+	build_workspace()
+end
+
+local function stop_timer(root)
+	local timer = build_timers[root]
+	if timer then
+		timer:stop()
+		timer:close()
+		build_timers[root] = nil
+	end
+end
+
+local function schedule_mapstruct_refresh(path)
+	local root = vim.fs.root(path, { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle", "build.gradle.kts" })
+	if not root or not project_has_mapstruct(root) then
+		return
+	end
+
+	stop_timer(root)
+	local timer = assert(vim.uv.new_timer())
+	build_timers[root] = timer
+	timer:start(350, 0, function()
+		stop_timer(root)
+		vim.schedule(function()
+			refresh_mappers()
+		end)
+	end)
+end
+
+local function source_root_for_dir(dir)
+	local normalized = vim.fs.normalize(dir)
+	return normalized:match("^(.*[/\\]src[/\\][^/\\]+[/\\]java)")
+		or normalized:match("^(.*[/\\]java)")
+end
+
+local function package_name_for_dir(dir)
+	local source_root = source_root_for_dir(dir)
+	if not source_root then
+		return nil
+	end
+
+	local rel = dir:sub(#source_root + 2)
+	if rel == "" then
+		return nil
+	end
+
+	return rel:gsub("[/\\]+", ".")
+end
+
+local function java_type_stub(kind, name, package_name)
+	local lines = {}
+	if package_name and package_name ~= "" then
+		table.insert(lines, "package " .. package_name .. ";")
+		table.insert(lines, "")
+	end
+
+	if kind == "class" then
+		vim.list_extend(lines, {
+			"public class " .. name .. " {",
+			"",
+			"}",
+		})
+	elseif kind == "enum" then
+		vim.list_extend(lines, {
+			"public enum " .. name .. " {",
+			"",
+			"}",
+		})
+	elseif kind == "interface" then
+		vim.list_extend(lines, {
+			"public interface " .. name .. " {",
+			"",
+			"}",
+		})
+	else
+		vim.list_extend(lines, {
+			"public @interface " .. name .. " {",
+			"",
+			"}",
+		})
+	end
+
+	return lines
+end
+
+local function explorer_update(picker, path)
+	local Tree = require("snacks.explorer.tree")
+	local actions = require("snacks.explorer.actions")
+	local dir = vim.fs.dirname(path)
+	Tree:open(dir)
+	Tree:refresh(dir)
+	actions.update(picker, { target = path })
+end
+
+local function create_simple_explorer_path(picker)
+	require("snacks.explorer.actions").actions.explorer_add(picker)
+end
+
+local function create_java_type_file(picker, kind)
+	local dir = picker:dir()
+	vim.ui.input({ prompt = "Java " .. kind .. " name: " }, function(name)
+		if not name or name:match("^%s*$") then
+			return
+		end
+
+		name = vim.trim(name)
+		local path = vim.fs.normalize(dir .. "/" .. name .. ".java")
+		if file_exists(path) then
+			vim.notify("File already exists: " .. path, vim.log.levels.WARN)
+			return
+		end
+
+		vim.fn.mkdir(vim.fs.dirname(path), "p")
+		local lines = java_type_stub(kind, name, package_name_for_dir(dir))
+		vim.fn.writefile(lines, path)
+		explorer_update(picker, path)
+	end)
+end
+
+function M.explorer_add(picker)
+	local dir = picker:dir()
+	local root = vim.fs.root(dir, { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle", "build.gradle.kts" })
+	if not root or not is_java_project(root) then
+		create_simple_explorer_path(picker)
+		return
+	end
+
+	vim.ui.select({
+		"class",
+		"enum",
+		"interface",
+		"annotation",
+		"simple file",
+	}, {
+		prompt = "Java file type",
+	}, function(choice)
+		if not choice then
+			return
+		end
+
+		if choice == "simple file" then
+			create_simple_explorer_path(picker)
+			return
+		end
+
+		create_java_type_file(picker, choice)
+	end)
+end
+
 local function select_profile()
 	with_profile(root_dir(), function(profile)
 		local msg = profile and ("Java profile: " .. profile) or "Java profile cleared"
@@ -370,6 +557,9 @@ local function setup_commands()
 	vim.api.nvim_create_user_command("JavaDebugMain", function()
 		vim.cmd("DapNew")
 	end, { desc = "Pick Java debug configuration" })
+	vim.api.nvim_create_user_command("JavaBuildWorkspace", build_workspace, { desc = "Build Java workspace" })
+	vim.api.nvim_create_user_command("JavaRefreshMappers", refresh_mappers,
+		{ desc = "Rebuild Java workspace to refresh generated mappers" })
 end
 
 local function setup_java_buffer(bufnr)
@@ -384,6 +574,7 @@ local function setup_java_buffer(bufnr)
 	map(bufnr, "<leader>ja", "<Cmd>JavaTestRunAllTests<CR>", "Java: run all tests")
 	map(bufnr, "<leader>jd", "<Cmd>JavaTestDebugCurrentMethod<CR>", "Java: debug test method")
 	map(bufnr, "<leader>jD", "<Cmd>JavaDebugMain<CR>", "Java: debug main")
+	map(bufnr, "<leader>jm", "<Cmd>JavaRefreshMappers<CR>", "Java: refresh mappers")
 	map(bufnr, "<leader>jo", "<Cmd>JavaTestViewLastReport<CR>", "Java: test report")
 end
 
@@ -419,6 +610,14 @@ function M.setup()
 					}))
 				end
 			end
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("BufWritePost", {
+		group = command_group,
+		pattern = { "*.java", "pom.xml", "build.gradle", "build.gradle.kts" },
+		callback = function(event)
+			schedule_mapstruct_refresh(event.match)
 		end,
 	})
 end

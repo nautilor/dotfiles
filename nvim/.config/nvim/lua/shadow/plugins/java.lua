@@ -28,7 +28,11 @@ return {
 				end,
 				settings = {
 					java = {
+						autobuild = {
+							enabled = true,
+						},
 						configuration = {
+							updateBuildConfiguration = "automatic",
 							runtimes = {
 								{
 									name = "JavaSE-21",
@@ -36,6 +40,16 @@ return {
 									default = true,
 								},
 							},
+						},
+						import = {
+							gradle = {
+								annotationProcessing = {
+									enabled = true,
+								},
+							},
+						},
+						symbols = {
+							includeGeneratedCode = true,
 						},
 						gradle = {
 							downloadSources = true,
