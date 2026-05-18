@@ -1,7 +1,25 @@
 return {
 	'stevearc/conform.nvim',
 	opts = {
+		formatters = {
+			intellij_java = {
+				inherit = false,
+				command = function()
+					return vim.fn.exepath("idea") ~= "" and "idea" or "idea.sh"
+				end,
+				args = { "format", "-allowDefaults", "$FILENAME" },
+				stdin = false,
+				cwd = function(_, ctx)
+					return vim.fs.root(ctx.filename, { ".idea", ".editorconfig", ".git", "mvnw", "gradlew" })
+				end,
+				require_cwd = false,
+				condition = function()
+					return vim.fn.executable("idea") == 1 or vim.fn.executable("idea.sh") == 1
+				end,
+			},
+		},
 		formatters_by_ft = {
+			java = { "intellij_java", lsp_format = "fallback" },
 			python = { "black" },
 			typescript = { 'prettierd', "prettier", stop_after_first = true },
 			typescriptreact = { 'prettierd', "prettier", stop_after_first = true },
