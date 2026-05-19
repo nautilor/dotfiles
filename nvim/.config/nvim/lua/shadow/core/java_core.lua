@@ -147,7 +147,7 @@ local function list_profiles(root)
 		add(profile)
 	end
 
-	for _, profile in ipairs({ "dev", "test", "prod", "local" }) do
+	for _, profile in ipairs({ "dev", "local" }) do
 		add(profile)
 	end
 
@@ -345,46 +345,33 @@ local function build_run_command(kind, tool, profile, arg_string, debug_mode)
 	return cmd, "Tests"
 end
 
-local function profile_choices(root, allow_debug)
+local function profile_choices(root)
 	local items = {}
 
-	local function add(label, profile, debug_mode, custom)
+	local function add(label, profile, custom)
 		table.insert(items, {
 			label = label,
 			profile = profile,
-			debug = debug_mode or false,
 			custom = custom or false,
 		})
 	end
 
 	for _, profile in ipairs(list_profiles(root)) do
 		if profile == "custom" then
-			add("custom", nil, false, true)
-			if allow_debug then
-				add("custom [debug]", nil, true, true)
-			end
+			add("custom", nil, true)
 		else
 			local resolved = profile ~= "none" and profile or nil
-			add(profile, resolved, false, false)
-			if allow_debug then
-				add(profile .. " [debug]", resolved, true, false)
-			end
+			add(profile, resolved, false)
 		end
 	end
 
 	return items
 end
 
-local function with_profile(root, opts, cb)
-	if type(opts) == "function" then
-		cb = opts
-		opts = {}
-	end
-
-	opts = opts or {}
-	local options = profile_choices(root, opts.allow_debug)
+local function with_profile(root, cb)
+	local options = profile_choices(root)
 	vim.ui.select(options, {
-		prompt = opts.allow_debug and "Java profile / mode" or "Java profile",
+		prompt = "Java profile",
 		format_item = function(item)
 			return item.label
 		end,
@@ -395,7 +382,7 @@ local function with_profile(root, opts, cb)
 
 		local function finish(profile)
 			project_state(root).profile = profile
-			cb(profile, choice.debug)
+			cb(profile)
 		end
 
 		if choice.custom then
@@ -414,21 +401,39 @@ local function with_profile(root, opts, cb)
 	end)
 end
 
+local function with_run_mode(opts, cb)
+	opts = opts or {}
+	if not opts.allow_debug then
+		cb(false)
+		return
+	end
+
+	vim.ui.select({ "run", "debug" }, { prompt = "Java run mode" }, function(choice)
+		if not choice then
+			return
+		end
+
+		cb(choice == "debug")
+	end)
+end
+
 local function run_framework(kind, opts)
 	local root = root_dir()
 	local tool = build_tool(root)
 	opts = opts or {}
 
-	with_profile(root, { allow_debug = opts.allow_debug }, function(profile, debug_mode)
-		local cmd, title = build_run_command(kind, tool, profile, opts.args, debug_mode)
-		local state = project_state(root)
-		state.debug_host = debug_mode and debug.host or nil
-		state.debug_port = debug_mode and debug.port or nil
-		local suffix = profile and (" [" .. profile .. "]") or ""
-		if debug_mode then
-			suffix = suffix .. " [debug]"
-		end
-		run_in_terminal(root, title .. suffix, cmd)
+	with_run_mode(opts, function(debug_mode)
+		with_profile(root, function(profile)
+			local cmd, title = build_run_command(kind, tool, profile, opts.args, debug_mode)
+			local state = project_state(root)
+			state.debug_host = debug_mode and debug.host or nil
+			state.debug_port = debug_mode and debug.port or nil
+			local suffix = profile and (" [" .. profile .. "]") or ""
+			if debug_mode then
+				suffix = suffix .. " [debug]"
+			end
+			run_in_terminal(root, title .. suffix, cmd)
+		end)
 	end)
 end
 
@@ -676,8 +681,8 @@ local function setup_java_buffer(bufnr)
 	map(bufnr, "<leader>jt", "<Cmd>JavaTestRunCurrentMethod<CR>", "Java: run test method")
 	map(bufnr, "<leader>jT", "<Cmd>JavaTestRunCurrentClass<CR>", "Java: run test class")
 	map(bufnr, "<leader>ja", "<Cmd>JavaTestRunAllTests<CR>", "Java: run all tests")
-	map(bufnr, "<leader>jd", "<Cmd>JavaTestDebugCurrentMethod<CR>", "Java: debug test method")
-	map(bufnr, "<leader>jD", "<Cmd>JavaAttachDebugger<CR>", "Java: attach debugger")
+	map(bufnr, "<leader>dt", "<Cmd>JavaTestDebugCurrentMethod<CR>", "Debug: test method")
+	map(bufnr, "<leader>da", "<Cmd>JavaAttachDebugger<CR>", "Debug: attach Java")
 	map(bufnr, "<leader>jm", "<Cmd>JavaRefreshMappers<CR>", "Java: refresh mappers")
 	map(bufnr, "<leader>jo", "<Cmd>JavaTestViewLastReport<CR>", "Java: test report")
 end
