@@ -37,7 +37,7 @@ Scope {
         focusable: true
 
         anchors {
-            bottom: true
+            top: true
             left: true
         }
 
