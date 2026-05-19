@@ -12,6 +12,12 @@ local float = {
 	border = "solid",
 }
 
+local debug = {
+	host = "127.0.0.1",
+	port = 5005,
+}
+
+-- Determine the project root by looking for common build files or using a buffer-local override
 local function root_dir()
 	local current = vim.api.nvim_get_current_buf()
 	local console_root = vim.b[current].shadow_java_root
@@ -20,22 +26,25 @@ local function root_dir()
 	end
 
 	local name = vim.api.nvim_buf_get_name(0)
-	return vim.fs.root(name ~= "" and name or vim.fn.getcwd(), { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle", "build.gradle.kts" })
-		or vim.fn.getcwd()
+	return vim.fs.root(name ~= "" and name or vim.fn.getcwd(),
+				{ ".git", "mvnw", "gradlew", "pom.xml", "build.gradle", "build.gradle.kts" })
+			or vim.fn.getcwd()
 end
 
 local function file_exists(path)
 	return vim.uv.fs_stat(path) ~= nil
 end
 
+-- Detect if the project is a Java project by looking for common build files
 local function is_java_project(root)
 	return file_exists(root .. "/pom.xml")
-		or file_exists(root .. "/build.gradle")
-		or file_exists(root .. "/build.gradle.kts")
-		or file_exists(root .. "/settings.gradle")
-		or file_exists(root .. "/settings.gradle.kts")
+			or file_exists(root .. "/build.gradle")
+			or file_exists(root .. "/build.gradle.kts")
+			or file_exists(root .. "/settings.gradle")
+			or file_exists(root .. "/settings.gradle.kts")
 end
 
+-- Read a file's content safely, returning an empty string on failure
 local function read_file(path)
 	local ok, data = pcall(vim.fn.readfile, path)
 	if not ok or not data then
@@ -44,6 +53,7 @@ local function read_file(path)
 	return table.concat(data, "\n")
 end
 
+-- Check if the project uses MapStruct by looking for its mention in build files, with caching
 local function project_has_mapstruct(root)
 	if mapstruct_cache[root] ~= nil then
 		return mapstruct_cache[root]
@@ -61,6 +71,7 @@ local function project_has_mapstruct(root)
 	return false
 end
 
+-- Build the command to run the project based on detected build tool (Maven or Gradle)
 local function build_tool(root)
 	local gradle_files = {
 		root .. "/gradlew",
@@ -85,6 +96,7 @@ local function build_tool(root)
 	}
 end
 
+-- Detect if the project uses Spring Boot or Quarkus by looking for their mention in build files
 local function detect_framework(root)
 	for _, file in ipairs({ "pom.xml", "build.gradle", "build.gradle.kts" }) do
 		local path = root .. "/" .. file
@@ -102,10 +114,11 @@ local function detect_framework(root)
 	return nil
 end
 
+-- Find profile files in the project root that match common Spring Boot naming conventions
 local function profile_files(root)
 	return vim.fs.find(function(name)
 		return name:match("^application%-.+%.properties$")
-			or name:match("^application%-.+%.ya?ml$")
+				or name:match("^application%-.+%.ya?ml$")
 	end, {
 		path = root,
 		limit = 100,
@@ -113,6 +126,7 @@ local function profile_files(root)
 	})
 end
 
+-- List available profiles by checking current state, scanning for profile files, and including common defaults
 local function list_profiles(root)
 	local seen = {}
 	local items = {}
@@ -129,7 +143,7 @@ local function list_profiles(root)
 	for _, path in ipairs(profile_files(root)) do
 		local name = vim.fs.basename(path)
 		local profile = name:match("^application%-(.+)%.properties$")
-			or name:match("^application%-(.+)%.ya?ml$")
+				or name:match("^application%-(.+)%.ya?ml$")
 		add(profile)
 	end
 
@@ -143,6 +157,7 @@ local function list_profiles(root)
 	return items
 end
 
+-- Open a floating window centered on the screen with the given buffer and title
 local function open_float(bufnr, title)
 	local width = math.max(80, math.floor(vim.o.columns * float.width))
 	local height = math.max(12, math.floor(vim.o.lines * float.height))
@@ -160,6 +175,7 @@ local function open_float(bufnr, title)
 	})
 end
 
+-- Set up keymaps for the console buffer to allow toggling it from both normal and terminal mode, and store the project root in buffer-local state
 local function set_console_buffer_keymaps(bufnr, root)
 	local opts = { buffer = bufnr, silent = true, desc = "Java: toggle console" }
 	vim.b[bufnr].shadow_java_root = root
@@ -204,6 +220,10 @@ local function stop_custom(root)
 		vim.fn.jobstop(state.job_id)
 		state.job_id = nil
 	end
+	if state then
+		state.debug_host = nil
+		state.debug_port = nil
+	end
 end
 
 local function stop_runner()
@@ -236,8 +256,13 @@ local function run_in_terminal(root, title, cmd)
 	state.title = title
 	state.job_id = vim.fn.termopen(cmd, {
 		cwd = root,
-		on_exit = function(_, code)
+		on_exit = function(job_id, code)
 			vim.schedule(function()
+				if state.job_id == job_id then
+					state.job_id = nil
+					state.debug_host = nil
+					state.debug_port = nil
+				end
 				local level = code == 0 and vim.log.levels.INFO or vim.log.levels.WARN
 				vim.notify(title .. " exited (" .. code .. ")", level)
 			end)
@@ -265,7 +290,11 @@ local function shell_args(arg_string)
 	return vim.split(arg_string, "%s+", { trimempty = true })
 end
 
-local function build_run_command(kind, tool, profile, arg_string)
+local function debug_agent_arg()
+	return "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:" .. debug.port
+end
+
+local function build_run_command(kind, tool, profile, arg_string, debug_mode)
 	local extra_args = shell_args(arg_string)
 
 	if kind == "spring" then
@@ -274,10 +303,16 @@ local function build_run_command(kind, tool, profile, arg_string)
 			if profile and profile ~= "" then
 				table.insert(cmd, "-Dspring-boot.run.profiles=" .. profile)
 			end
+			if debug_mode then
+				table.insert(cmd, "-Dspring-boot.run.jvmArguments=" .. debug_agent_arg())
+			end
 			return cmd, "Spring Boot"
 		end
 
 		local cmd = { tool.cmd, "bootRun" }
+		if debug_mode then
+			table.insert(cmd, "--debug-jvm")
+		end
 		local args = spring_gradle_args(profile, extra_args)
 		if #args > 0 then
 			table.insert(cmd, "--args=" .. table.concat(args, " "))
@@ -290,6 +325,9 @@ local function build_run_command(kind, tool, profile, arg_string)
 		local cmd = { tool.cmd, goal }
 		if profile and profile ~= "" then
 			table.insert(cmd, "-Dquarkus.profile=" .. profile)
+		end
+		if debug_mode then
+			table.insert(cmd, "-Ddebug=" .. debug.port)
 		end
 		for _, arg in ipairs(extra_args) do
 			table.insert(cmd, arg)
@@ -307,39 +345,89 @@ local function build_run_command(kind, tool, profile, arg_string)
 	return cmd, "Tests"
 end
 
-local function with_profile(root, cb)
-	local options = list_profiles(root)
-	vim.ui.select(options, { prompt = "Java profile" }, function(choice)
+local function profile_choices(root, allow_debug)
+	local items = {}
+
+	local function add(label, profile, debug_mode, custom)
+		table.insert(items, {
+			label = label,
+			profile = profile,
+			debug = debug_mode or false,
+			custom = custom or false,
+		})
+	end
+
+	for _, profile in ipairs(list_profiles(root)) do
+		if profile == "custom" then
+			add("custom", nil, false, true)
+			if allow_debug then
+				add("custom [debug]", nil, true, true)
+			end
+		else
+			local resolved = profile ~= "none" and profile or nil
+			add(profile, resolved, false, false)
+			if allow_debug then
+				add(profile .. " [debug]", resolved, true, false)
+			end
+		end
+	end
+
+	return items
+end
+
+local function with_profile(root, opts, cb)
+	if type(opts) == "function" then
+		cb = opts
+		opts = {}
+	end
+
+	opts = opts or {}
+	local options = profile_choices(root, opts.allow_debug)
+	vim.ui.select(options, {
+		prompt = opts.allow_debug and "Java profile / mode" or "Java profile",
+		format_item = function(item)
+			return item.label
+		end,
+	}, function(choice)
 		if not choice then
 			return
 		end
 
-		if choice == "custom" then
+		local function finish(profile)
+			project_state(root).profile = profile
+			cb(profile, choice.debug)
+		end
+
+		if choice.custom then
 			vim.ui.input({ prompt = "Profile: ", default = (states[root] or {}).profile or "" }, function(input)
 				if input == nil then
 					return
 				end
 
 				local profile = input ~= "" and input or nil
-				project_state(root).profile = profile
-				cb(profile)
+				finish(profile)
 			end)
 			return
 		end
 
-		local profile = choice ~= "none" and choice or nil
-		project_state(root).profile = profile
-		cb(profile)
+		finish(choice.profile)
 	end)
 end
 
 local function run_framework(kind, opts)
 	local root = root_dir()
 	local tool = build_tool(root)
+	opts = opts or {}
 
-	with_profile(root, function(profile)
-		local cmd, title = build_run_command(kind, tool, profile, opts.args)
+	with_profile(root, { allow_debug = opts.allow_debug }, function(profile, debug_mode)
+		local cmd, title = build_run_command(kind, tool, profile, opts.args, debug_mode)
+		local state = project_state(root)
+		state.debug_host = debug_mode and debug.host or nil
+		state.debug_port = debug_mode and debug.port or nil
 		local suffix = profile and (" [" .. profile .. "]") or ""
+		if debug_mode then
+			suffix = suffix .. " [debug]"
+		end
 		run_in_terminal(root, title .. suffix, cmd)
 	end)
 end
@@ -349,7 +437,7 @@ local function run_main(opts)
 	local framework = detect_framework(root)
 
 	if framework == "spring" or framework == "quarkus" then
-		run_framework(framework, opts)
+		run_framework(framework, vim.tbl_extend("force", opts or {}, { allow_debug = true }))
 		return
 	end
 
@@ -405,7 +493,7 @@ end
 local function source_root_for_dir(dir)
 	local normalized = vim.fs.normalize(dir)
 	return normalized:match("^(.*[/\\]src[/\\][^/\\]+[/\\]java)")
-		or normalized:match("^(.*[/\\]java)")
+			or normalized:match("^(.*[/\\]java)")
 end
 
 local function package_name_for_dir(dir)
@@ -529,6 +617,23 @@ local function select_profile()
 	end)
 end
 
+local function attach_debugger()
+	local ok, dap = pcall(require, "dap")
+	if not ok then
+		vim.notify("nvim-dap not available", vim.log.levels.ERROR)
+		return
+	end
+
+	local state = project_state(root_dir())
+	dap.run({
+		type = "java_attach",
+		request = "attach",
+		name = "Debug (Attach) - Java",
+		hostName = state.debug_host or debug.host,
+		port = state.debug_port or debug.port,
+	})
+end
+
 local function map(bufnr, lhs, rhs, desc)
 	vim.keymap.set("n", lhs, rhs, { buffer = bufnr, silent = true, desc = desc })
 end
@@ -554,9 +659,8 @@ local function setup_commands()
 		{ desc = "Toggle Java floating console" })
 	vim.api.nvim_create_user_command("JavaStop", stop_runner, { desc = "Stop Java runner" })
 	vim.api.nvim_create_user_command("JavaSelectProfile", select_profile, { desc = "Select Java profile" })
-	vim.api.nvim_create_user_command("JavaDebugMain", function()
-		vim.cmd("DapNew")
-	end, { desc = "Pick Java debug configuration" })
+	vim.api.nvim_create_user_command("JavaAttachDebugger", attach_debugger, { desc = "Attach Java debugger" })
+	vim.api.nvim_create_user_command("JavaDebugMain", attach_debugger, { desc = "Attach Java debugger" })
 	vim.api.nvim_create_user_command("JavaBuildWorkspace", build_workspace, { desc = "Build Java workspace" })
 	vim.api.nvim_create_user_command("JavaRefreshMappers", refresh_mappers,
 		{ desc = "Rebuild Java workspace to refresh generated mappers" })
@@ -573,7 +677,7 @@ local function setup_java_buffer(bufnr)
 	map(bufnr, "<leader>jT", "<Cmd>JavaTestRunCurrentClass<CR>", "Java: run test class")
 	map(bufnr, "<leader>ja", "<Cmd>JavaTestRunAllTests<CR>", "Java: run all tests")
 	map(bufnr, "<leader>jd", "<Cmd>JavaTestDebugCurrentMethod<CR>", "Java: debug test method")
-	map(bufnr, "<leader>jD", "<Cmd>JavaDebugMain<CR>", "Java: debug main")
+	map(bufnr, "<leader>jD", "<Cmd>JavaAttachDebugger<CR>", "Java: attach debugger")
 	map(bufnr, "<leader>jm", "<Cmd>JavaRefreshMappers<CR>", "Java: refresh mappers")
 	map(bufnr, "<leader>jo", "<Cmd>JavaTestViewLastReport<CR>", "Java: test report")
 end
