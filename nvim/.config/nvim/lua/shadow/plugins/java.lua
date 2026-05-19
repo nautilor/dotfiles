@@ -111,26 +111,6 @@ return {
 				end)
 			end
 
-			dap.configurations.java = {
-				{
-					type = "java_attach",
-					request = "attach",
-					name = "Debug (Attach) - Remote",
-					hostName = "127.0.0.1",
-					port = 5005,
-				},
-			}
-
-			vim.keymap.set("n", "<leader>da", function()
-				dap.run({
-					type = "java_attach",
-					request = "attach",
-					name = "Debug (Attach) - Remote",
-					hostName = "127.0.0.1",
-					port = 5005,
-				})
-			end, { desc = "Java remote attach" })
-
 			vim.keymap.set("n", "<F5>", function()
 				dap.continue()
 			end, { silent = true, desc = "Debug: continue" })
