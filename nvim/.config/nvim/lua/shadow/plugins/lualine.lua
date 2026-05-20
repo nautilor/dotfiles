@@ -8,7 +8,7 @@ return {
 		options = {
 			component_separators = { left = "", right = "" },
 			section_separators = { left = "", right = "" },
-			theme = "tokyonight",
+			theme = require("shadow.theme.miasma_lualine"),
 		},
 		sections = {
 			lualine_a = {

@@ -1,22 +1,22 @@
 local palette = {
-	-- Base (Tokyo Night Moon)
-	bg       = 0x1A1B26, -- base background (Moon)
-	surface1 = 0x16161F, -- inset / darker panels
-	surface2 = 0x1F2030, -- raised surfaces
-	surface3 = 0x25263A, -- active / hover
+	-- Base (Miasma)
+	bg       = 0x222222,
+	surface1 = 0x151515,
+	surface2 = 0x1C1C1C,
+	surface3 = 0x43492A,
 
 	-- Foregrounds
-	fg       = 0xC8D3F5, -- Moon foreground
-	fg_muted = 0x545C7E, -- comments / muted text
+	fg       = 0xC2C2B0,
+	fg_muted = 0x666666,
 
-	-- Accents (Moon-tuned)
-	primary  = 0x82AAFF, -- Moon blue
-	fun      = 0x86E1FC, -- cyan (functions)
-	special  = 0xFFC777, -- warm accent
+	-- Accents
+	primary  = 0x78824B,
+	fun      = 0x5F875F,
+	special  = 0xC9A554,
 
 	-- UI
-	border   = 0x3B4261,
-	black    = 0x13131B,
+	border   = 0x685742,
+	black    = 0x222222,
 }
 
 
@@ -105,7 +105,7 @@ end
 
 
 autocmd({ "ColorScheme", "VimEnter" }, {
-	desc = "Borderless snacks picker look (Atom One Dark)",
+	desc = "Borderless snacks picker look (Miasma)",
 	group = augroup("borderless-snacks"),
 	callback = function()
 		local colors         = {
@@ -136,6 +136,15 @@ autocmd({ "ColorScheme", "VimEnter" }, {
 
 		sethl("SnacksPickerList", {
 			bg = lighter_pmenu2,
+			fg = colors.foreground,
+		})
+		sethl("SnacksPickerDirectory", {
+			bg = "NONE",
+			fg = colors.identifier,
+		})
+		sethl("SnacksPickerDir", {
+			bg = "NONE",
+			fg = palette.fg_muted,
 		})
 		sethl("SnacksPickerListBorder", {
 			bg = lighter_pmenu2,

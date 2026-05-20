@@ -1,21 +1,34 @@
 return {
-	"folke/tokyonight.nvim",
+	"xero/miasma.nvim",
+	lazy = false,
 	priority = 1000,
-	opts = {
-		colorscheme = "tokyonight-night",
-		transparent = true,
-		on_colors = function(colors)
-			colors.border = "#7AA2F7"
-		end,
-		styles = {
-			sidebars = "transparent",
-			floats = "dark",
-		},
-	},
+	config = function()
+		local group = vim.api.nvim_create_augroup("miasma-transparent-ui", { clear = true })
+		local apply_transparent_highlights = function()
+			local transparent = {
+				"SignColumn",
+				"LineNr",
+				"LineNrAbove",
+				"LineNrBelow",
+				"CursorLineNr",
+				"FoldColumn",
+				"Directory",
+			}
 
-	config = function(_, opts)
-		require("tokyonight").setup(opts)
-		vim.cmd.colorscheme(opts.colorscheme)
+			for _, name in ipairs(transparent) do
+				local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+				hl.bg = "NONE"
+				vim.api.nvim_set_hl(0, name, hl)
+			end
+		end
+
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			group = group,
+			pattern = "miasma",
+			callback = apply_transparent_highlights,
+		})
+
+		vim.cmd.colorscheme("miasma")
+		apply_transparent_highlights()
 	end,
-
 }

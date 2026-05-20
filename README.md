@@ -1,7 +1,7 @@
 # dotfiles
 
 Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
-Everything is themed around **Tokyo Night** (Night variant).
+Terminal tooling is themed around **Miasma**; some desktop components still use Tokyo Night.
 
 ## Setup
 
@@ -105,7 +105,7 @@ Config namespace: `shadow`.
 
 | Plugin | Purpose |
 |---|---|
-| `tokyonight.nvim` | Colorscheme (night, transparent bg) |
+| `miasma.nvim` | Colorscheme |
 | `snacks.nvim` | Dashboard, file picker/explorer, indent guides, zen mode, scroll, words, statuscolumn |
 | `blink.cmp` | Completion (LSP + path + buffer, super-tab preset) |
 | `nvim-lspconfig` + `mason.nvim` | LSP: pyright, ts_ls, eslint, clangd, lua_ls, rust_analyzer, dartls, qmlls |
@@ -167,12 +167,12 @@ Config is split into modular files under `~/.zsh/`.
 
 **FZF integration** (`~/.zsh/fzf.zsh`):
 - `Ctrl+T` previews directories with `eza --tree`
-- Tokyo Night colors applied globally
+- Miasma colors applied globally
 - `_fzf_comprun` for context-aware previews
 
 **Completions** (`~/.zsh/zsh.zsh`): fzf-tab for menu-style completion with directory previews; case-insensitive matching.
 
-**nmtui theming** (`~/.zsh/nmtui.zsh`): Tokyo Night `NEWT_COLORS` for `nmtui`.
+**nmtui theming** (`~/.zsh/nmtui.zsh`): Miasma `NEWT_COLORS` for `nmtui`.
 
 **Aliases:**
 
@@ -231,7 +231,7 @@ Prefix: `Ctrl+A` (changed from default).
 | `Alt+,` / `Alt+.` | Rename window / session |
 | `Ctrl+R` | Reload config |
 
-**Theme:** Tokyo Night Moon (`#1E2030` bg, `#D3869B` active, `#82AAFF` accents).
+**Theme:** Miasma (`#222222` bg, `#78824B` active, `#5F875F`/`#C9A554` accents).
 Status bar shows session name (left) and shortened current path (right).
 
 ---
@@ -244,7 +244,7 @@ Status bar shows session name (left) and shortened current path (right).
 | Cursor | Block, no blink, trail effect |
 | Opacity | 1 (dynamic opacity enabled) |
 | Padding | 10px all sides |
-| Colorscheme | Tokyo Night Night |
+| Colorscheme | Miasma |
 | Remote control | Enabled |
 | Bell | Disabled |
 
@@ -308,7 +308,7 @@ Two modules:
 
 ### `lazygit` — Git TUI
 
-Themed with **Tokyo Night Moon** colors.  
+Themed with **Miasma** colors.
 Nerd Fonts v3 icons enabled.
 
 ---
@@ -339,7 +339,7 @@ from all `fd` searches.
 
 Located at `~/.config/fzf_utils/`.
 
-**`source.sh`** — Exports Tokyo Night FZF colors and `NEWT_COLORS` for `nmtui`.
+**`source.sh`** — Exports Miasma FZF colors and `NEWT_COLORS` for `nmtui`.
 Source this in your shell to apply colors.
 
 **Scripts in `bin/`:**
