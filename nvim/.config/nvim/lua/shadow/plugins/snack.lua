@@ -65,7 +65,7 @@ return {
 		picker = {
 			actions = {
 				java_explorer_add = function(picker)
-					require("shadow.core.java").explorer_add(picker)
+					require("shadow.core.java_core").explorer_add(picker)
 				end,
 				smart_open = function(picker, item)
 					if not item then return end
