@@ -8,31 +8,27 @@
 }
 
 * {
-bg-primary:        #16161F;  /* main background */
-bg-surface:        #242424;  /* elevated panels / hover surfaces */
-bg-container:      #262626;  /* container backgrounds / modal panels */
+bg-primary:        #1c1c1c;
+bg-background:     #1c1c1c;
+bg-surface:        #1c1c1c;
+bg-container:      #151515;
 
-/* Primary colors */
-primary:           #3B4261;  /* active / highlight / buttons */
-primary-container: #1f2a3a;  /* darker container for primary elements */
-on-primary:        #A9B1D6;  /* text/icons on primary surfaces */
+primary:           #78824b;
+primary-container: #43492a;
+on-primary:        #222222;
 
-/* Secondary colors */
-secondary:         #c0c0c0;  /* secondary text / less prominent elements */
-secondary-container:#242424; /* darker secondary surfaces */
+secondary:         #c9a554;
+secondary-container:#1c1c1c;
 
-/* Surface layers (Adwaita-style elevation) */
-surface-1:         #16161F;  /* subtle elevation */
-surface-2:         #202020;  /* intermediate elevation */
-surface-3:         #242424;  /* hover / panels / overlays */
+surface-1:         #1c1c1c;
+surface-2:         #151515;
+surface-3:         #43492a;
 
-/* Text colors */
-text-primary:      #A9B1D6;  /* main text */
-text-secondary:    #c0c0c0;  /* muted secondary text */
-text-disabled:     #54586b;  /* disabled text / placeholders */
+text-primary:      #d7c483;
+text-secondary:    #c2c2b0;
+text-disabled:     #666666;
 
-/* Borders */
-border-color:      #3d3d3d;  /* subtle border color for dividers / outlines */
+border-color:      #666666;
     /* General UI */
     background-color: transparent;
     text-color:       @text-primary;
@@ -113,7 +109,7 @@ element normal.normal {
 
 element selected.normal {
     background-color: @primary;
-    text-color: @text-primary;
+    text-color: @on-primary;
 }
 
 element alternate.normal {
@@ -143,7 +139,7 @@ element selected.normal element-text {
 scrollbar {
     handle-width: 8px;
     handle-color: @border-color;
-    background-color: @surface-1;
+    background-color: @bg-surface;
     border-radius: 4px;
     margin: 0px 0px 0px 8px;
 }

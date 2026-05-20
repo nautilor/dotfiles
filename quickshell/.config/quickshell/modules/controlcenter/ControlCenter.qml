@@ -306,7 +306,7 @@ Scope {
 						contentItem: Rectangle {
 							implicitWidth: theme.smallGap
 							radius: theme.sliderTrackRadius
-							color: Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.55)
+							color: Qt.alpha(controlCenter.accent, 0.55)
 						}
 
 						background: Rectangle {
@@ -335,7 +335,7 @@ Scope {
 									radius: theme.cardRadius
 									color: controlCenter.bgSecondary
 									border.width: 1
-									border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
+									border.color: Qt.alpha(controlCenter.outlineStrong, 0.24)
 
 									ColumnLayout {
 										id: networkColumn
@@ -372,7 +372,7 @@ Scope {
 													Text {
 														anchors.centerIn: parent
 														text: controlCenter.wifiEnabled ? "󰤨" : "󰤮"
-														color: "#ffffff"
+														color: controlCenter.bgPrimary
 														font.pixelSize: 18
 													}
 												}
@@ -433,7 +433,7 @@ Scope {
 													Text {
 														anchors.centerIn: parent
 														text: controlCenter.bluetoothEnabled ? "󰂯" : "󰂲"
-														color: "#ffffff"
+														color: controlCenter.bgPrimary
 														font.pixelSize: 18
 													}
 												}
@@ -494,7 +494,7 @@ Scope {
 													Text {
 														anchors.centerIn: parent
 														text: controlCenter.volumeMuted ? "󰝟" : "󰕾"
-														color: "#ffffff"
+														color: controlCenter.bgPrimary
 														font.pixelSize: 18
 													}
 												}
@@ -530,15 +530,15 @@ Scope {
 									radius: 18
 									color: controlCenter.bgSecondary
 									border.width: 1
-									border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
+									border.color: Qt.alpha(controlCenter.outlineStrong, 0.24)
 
 									Rectangle {
 										anchors.fill: parent
 										anchors.margins: 12
 										radius: 16
-										color: controlCenter.dndEnabled ? Qt.rgba(247 / 255, 118 / 255, 142 / 255, 0.12) : controlCenter.bgTertiary
+										color: controlCenter.dndEnabled ? Qt.alpha(controlCenter.danger, 0.12) : controlCenter.bgTertiary
 										border.width: 1
-										border.color: controlCenter.dndEnabled ? Qt.rgba(247 / 255, 118 / 255, 142 / 255, 0.35) : Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.2)
+										border.color: controlCenter.dndEnabled ? Qt.alpha(controlCenter.danger, 0.35) : Qt.alpha(controlCenter.outlineStrong, 0.20)
 
 										MouseArea {
 											anchors.fill: parent
@@ -584,7 +584,7 @@ Scope {
 							radius: 18
 							color: controlCenter.bgSecondary
 							border.width: 1
-							border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
+							border.color: Qt.alpha(controlCenter.outlineStrong, 0.24)
 
 							ColumnLayout {
 								id: displaySection
@@ -640,7 +640,7 @@ Scope {
 											radius: 9
 											color: controlCenter.thumb
 											border.width: 1
-											border.color: Qt.rgba(0, 0, 0, 0.08)
+											border.color: Qt.alpha(controlCenter.bgPrimary, 0.18)
 										}
 									}
 								}
@@ -653,7 +653,7 @@ Scope {
 							radius: 18
 							color: controlCenter.bgSecondary
 							border.width: 1
-							border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
+							border.color: Qt.alpha(controlCenter.outlineStrong, 0.24)
 
 							ColumnLayout {
 								id: soundSection
@@ -709,7 +709,7 @@ Scope {
 											radius: 9
 											color: controlCenter.thumb
 											border.width: 1
-											border.color: Qt.rgba(0, 0, 0, 0.08)
+											border.color: Qt.alpha(controlCenter.bgPrimary, 0.18)
 										}
 									}
 
@@ -723,7 +723,7 @@ Scope {
 							radius: 18
 							color: controlCenter.musicSurface
 							border.width: 1
-							border.color: Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.18)
+							border.color: Qt.alpha(controlCenter.accent, 0.18)
 
 							RowLayout {
 								id: musicSection
@@ -737,20 +737,20 @@ Scope {
 									width: 48
 									height: 48
 									radius: 14
-									color: "#c94f6d"
+									color: controlCenter.danger
 
 									RectangularShadow {
 										anchors.fill: parent
 										radius: parent.radius
 										blur: 12
 										spread: 0.05
-										color: Qt.rgba(0.3, 0.1, 0.15, 0.45)
+										color: Qt.alpha(controlCenter.danger, 0.45)
 									}
 
 									Text {
 										anchors.centerIn: parent
 										text: "󰎈"
-										color: "#ffffff"
+										color: controlCenter.bgPrimary
 										font.pixelSize: 22
 									}
 								}
@@ -833,7 +833,7 @@ Scope {
 							radius: 18
 							color: controlCenter.bgSecondary
 							border.width: 1
-							border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
+							border.color: Qt.alpha(controlCenter.outlineStrong, 0.24)
 
 							ColumnLayout {
 								id: wifiSection
@@ -900,9 +900,9 @@ Scope {
 										Layout.fillWidth: true
 										implicitHeight: 56
 										radius: 14
-										color: modelData.active ? Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.14) : controlCenter.bgTertiary
+										color: modelData.active ? Qt.alpha(controlCenter.accent, 0.14) : controlCenter.bgTertiary
 										border.width: 1
-										border.color: modelData.active ? Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.35) : Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.16)
+										border.color: modelData.active ? Qt.alpha(controlCenter.accent, 0.35) : Qt.alpha(controlCenter.outlineStrong, 0.16)
 
 										RowLayout {
 											anchors.fill: parent
@@ -972,7 +972,7 @@ Scope {
 							radius: 18
 							color: controlCenter.bgSecondary
 							border.width: 1
-							border.color: Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.24)
+							border.color: Qt.alpha(controlCenter.outlineStrong, 0.24)
 
 							ColumnLayout {
 								id: bluetoothSection
@@ -1012,9 +1012,9 @@ Scope {
 										Layout.fillWidth: true
 										implicitHeight: 56
 										radius: 14
-										color: modelData.connected ? Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.14) : controlCenter.bgTertiary
+										color: modelData.connected ? Qt.alpha(controlCenter.accent, 0.14) : controlCenter.bgTertiary
 										border.width: 1
-										border.color: modelData.connected ? Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.35) : Qt.rgba(97 / 255, 104 / 255, 139 / 255, 0.16)
+										border.color: modelData.connected ? Qt.alpha(controlCenter.accent, 0.35) : Qt.alpha(controlCenter.outlineStrong, 0.16)
 
 										RowLayout {
 											anchors.fill: parent

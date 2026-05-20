@@ -46,7 +46,7 @@ Item {
                 width: entry.modelData.imagePath !== "" ? 68 : 44
                 height: entry.modelData.imagePath !== "" ? 68 : 44
                 radius: theme.listItemRadius
-                color: entry.ListView.isCurrentItem ? Qt.rgba(1, 1, 1, 0.10) : clipboardWindow.bgSecondary
+                color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.textPrimary, 0.10) : clipboardWindow.bgSecondary
                 clip: true
 
                 Image {

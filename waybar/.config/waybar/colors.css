@@ -1,47 +1,50 @@
-@define-color background  #16161f; /* main bg */
-@define-color foreground  #C8D3F5;
+@define-color background  #1c1c1c;
+@define-color foreground  #c2c2b0;
 
-@define-color color0  #3B4261; /* Normal black (borders, UI chrome) */
-@define-color color8  #545C7E; /* Bright black (disabled / comments) */
+@define-color color0  #222222;
+@define-color color8  #666666;
 
-/* Red */
-@define-color color1  #F7768E; /* Normal red */
-@define-color color9  #E06C75; /* Bright red */
+/* Red / Brown */
+@define-color color1  #685742;
+@define-color color9  #685742;
 
 /* Green */
-@define-color color2  #9ECE6A; /* Normal green */
-@define-color color10 #7EC07C; /* Bright green */
+@define-color color2  #5f875f;
+@define-color color10 #5f875f;
 
-/* Yellow */
-@define-color color3  #E0AF68; /* Normal yellow */
-@define-color color11 #D19A66; /* Bright yellow */
+/* Yellow / Rust */
+@define-color color3  #b36d43;
+@define-color color11 #b36d43;
 
-/* Blue */
-@define-color color4  #7AA2F7; /* Normal blue */
-@define-color color12 #82AAFF; /* Bright blue */
+/* Blue / Olive */
+@define-color color4  #78824b;
+@define-color color12 #78824b;
 
-/* Magenta / Purple */
-@define-color color5  #BB9AF7; /* Normal magenta */
-@define-color color13 #D55FDE; /* Bright magenta */
+/* Magenta / Copper */
+@define-color color5  #bb7744;
+@define-color color13 #bb7744;
 
-/* Cyan */
-@define-color color6  #7DCFFF; /* Normal cyan */
-@define-color color14 #2BBAC5; /* Bright cyan */
+/* Cyan / Gold */
+@define-color color6  #c9a554;
+@define-color color14 #c9a554;
 
 /* White */
-@define-color color7  #C8D3F5; /* Normal white (secondary text) */
-@define-color color15 #E6E6E6; /* Bright white (primary text) */
+@define-color color7  #d7c483;
+@define-color color15 #d7c483;
 
-@define-color surface1    #16161F;
-@define-color surface2    #1F2030;
-@define-color surface3    #25263A;
+@define-color surface1    #222222;
+@define-color surface2    #1c1c1c;
+@define-color surface3    #151515;
 
-@define-color secondary           #86E1FC;
-@define-color secondary-container #1F2030;
+@define-color primary             #78824b;
+@define-color secondary           #c9a554;
+@define-color secondary-container #1c1c1c;
 
-@define-color text-primary    #a9b1d6;
-@define-color text-secondary  #C8D3F5;
-@define-color text-disabled   #545C7E;
+@define-color text-primary    #d7c483;
+@define-color text-secondary  #c2c2b0;
+@define-color text-disabled   #666666;
 
-@define-color border-color    #3B4261;
-@define-color outline         #545C7E;
+@define-color border-color    #666666;
+@define-color outline         #666666;
+@define-color red             #685742;
+@define-color mantle          #222222;
