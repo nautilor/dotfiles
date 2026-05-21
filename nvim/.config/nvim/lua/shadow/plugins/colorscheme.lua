@@ -20,6 +20,14 @@ return {
 				hl.bg = "NONE"
 				vim.api.nvim_set_hl(0, name, hl)
 			end
+
+			for _, name in ipairs({ "LspReferenceText", "LspReferenceRead", "LspReferenceWrite" }) do
+				vim.api.nvim_set_hl(0, name, {
+					bg = "NONE",
+					underline = false,
+					undercurl = false,
+				})
+			end
 		end
 
 		vim.api.nvim_create_autocmd("ColorScheme", {
