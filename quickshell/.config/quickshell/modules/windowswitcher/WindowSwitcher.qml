@@ -399,6 +399,7 @@ Scope {
                                                 clip: true
 
                                                 Rectangle {
+                                                    z: 2
                                                     anchors.left: parent.left
                                                     anchors.top: parent.top
                                                     anchors.margins: 8
