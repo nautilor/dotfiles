@@ -32,11 +32,19 @@ Scope {
 
         readonly property int previewWidth: 128 * 2
         readonly property int previewHeight: 76 * 2
+        readonly property int switcherItemWidth: previewWidth + (theme.listItemPadding * 2)
+        readonly property int switcherItemHeight: previewHeight + (theme.listItemPadding * 2)
+        readonly property int switcherFramePadding: (theme.floatingWindowMargin * 2) + (theme.floatingContentPadding * 2)
+        readonly property int switcherContentWidth: {
+            const count = Math.max(1, allWindows.length);
+            return (switcherItemWidth * count) + (theme.listGap * Math.max(0, count - 1));
+        }
+        readonly property int switcherMaxContentWidth: Math.max(switcherItemWidth, Screen.width - switcherFramePadding)
 
         visible: false
         color: "transparent"
-				implicitWidth: Math.min(Screen.width * 0.9, (previewWidth + (theme.listItemPadding * 2)) * Math.max(1, Math.min(allWindows.length, 5)) + theme.largeGap * (Math.max(0, Math.min(allWindows.length, 5) - 1))) + (theme.floatingWindowMargin * 2) + (theme.floatingContentPadding) 
-        implicitHeight: previewHeight + (theme.floatingWindowMargin * 2) + (theme.floatingContentPadding * 2) + (previewHeight / 4)
+        implicitWidth: Math.min(Screen.width, switcherFramePadding + Math.min(switcherContentWidth, switcherMaxContentWidth))
+        implicitHeight: switcherItemHeight + switcherFramePadding
         exclusionMode: ExclusionMode.Normal
         focusable: true
 
@@ -332,7 +340,7 @@ Scope {
                                 orientation: ListView.Horizontal
                                 keyNavigationWraps: false
                                 preferredHighlightBegin: 0
-                                preferredHighlightEnd: height
+                                preferredHighlightEnd: width
                                 highlightRangeMode: ListView.ApplyRange
                                 highlightMoveDuration: 150
                                 highlightMoveVelocity: -1
@@ -355,8 +363,8 @@ Scope {
                                     required property var modelData
                                     required property int index
 
-                                    width: windowSwitcher.previewWidth + (theme.listItemPadding * 2)
-                                    height: windowSwitcher.previewHeight + (theme.listItemPadding * 2)
+                                    width: windowSwitcher.switcherItemWidth
+                                    height: windowSwitcher.switcherItemHeight
                                     readonly property var matchedToplevel: windowSwitcher.toplevelForAddress(modelData.address)
 
                                     function activateWindow() {
