@@ -514,8 +514,8 @@ IpcHandler {
 	function toggle() {
 		launcher.visible = !launcher.visible;
 		if (launcher.visible) {
-			launcher.input.focus = true;
-			launcher.input.selectAll();
+			input.focus = true;
+			input.selectAll();
 		}
 	}
 }
