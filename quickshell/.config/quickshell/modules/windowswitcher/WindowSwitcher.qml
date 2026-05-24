@@ -44,8 +44,8 @@ Scope {
 
         visible: false
         color: "transparent"
-				implicitWidth: Math.min(switcherContentWidth, switcherMaxContentWidth) + switcherFramePadding
-				implicitHeight: Math.ceil(allWindows.length / switcherColumns) * switcherItemHeight + switcherFramePadding
+				implicitWidth: Math.min(switcherContentWidth, switcherMaxContentWidth)
+				implicitHeight: Math.ceil(allWindows.length / switcherColumns) * switcherItemHeight
         exclusionMode: ExclusionMode.Normal
         focusable: true
 
@@ -288,7 +288,6 @@ Scope {
 						Rectangle {
 							id: mainWindow
 							anchors.fill: parent
-							anchors.margins: theme.floatingWindowMargin
 							color: windowSwitcher.bgPrimary
 							radius: theme.floatingWindowRadius
 							border.width: 0
@@ -328,7 +327,6 @@ Scope {
 
 							ColumnLayout {
 								anchors.fill: parent
-								anchors.margins: theme.floatingContentPadding
 								spacing: theme.largeGap
 
 								Item {
