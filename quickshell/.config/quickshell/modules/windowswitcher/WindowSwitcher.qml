@@ -35,7 +35,7 @@ Scope {
 
         visible: false
         color: "transparent"
-        implicitWidth: Screen.width - (theme.floatingWindowMargin * 2) - (theme.floatingContentPadding * 2) 
+				implicitWidth: Math.min(Screen.width * 0.9, (previewWidth + (theme.listItemPadding * 2)) * Math.max(1, Math.min(allWindows.length, 5)) + theme.largeGap * (Math.max(0, Math.min(allWindows.length, 5) - 1))) + (theme.floatingWindowMargin * 2) + (theme.floatingContentPadding) 
         implicitHeight: previewHeight + (theme.floatingWindowMargin * 2) + (theme.floatingContentPadding * 2) + (previewHeight / 4)
         exclusionMode: ExclusionMode.Normal
         focusable: true
