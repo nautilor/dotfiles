@@ -30,19 +30,17 @@ Scope {
         readonly property color accentBright: theme.floatingAccentBright
         readonly property color success: theme.floatingSuccess
 
-        readonly property int previewWidth: 128
-        readonly property int previewHeight: 76
+        readonly property int previewWidth: 128 * 2
+        readonly property int previewHeight: 76 * 2
 
         visible: false
         color: "transparent"
-        implicitWidth: theme.floatingWindowWidth
-        implicitHeight: theme.floatingWindowHeight
+        implicitWidth: Screen.width - (theme.floatingWindowMargin * 2) - (theme.floatingContentPadding * 2) 
+        implicitHeight: previewHeight + (theme.floatingWindowMargin * 2) + (theme.floatingContentPadding * 2) + (previewHeight / 4)
         exclusionMode: ExclusionMode.Normal
         focusable: true
 
         anchors {
-            top: true
-            left: true
         }
 
         margins {
@@ -293,10 +291,10 @@ Scope {
 
                     if (event.key === Qt.Key_Escape || event.key === Qt.Key_Q && ctrl) {
                         windowSwitcher.closeMenu();
-                    } else if (event.key === Qt.Key_Down || event.key === Qt.Key_J || event.key === Qt.Key_N && ctrl) {
+                    } else if (event.key === Qt.Key_Right || event.key === Qt.Key_L || event.key === Qt.Key_N && ctrl) {
                         listView.incrementCurrentIndex();
                         windowSwitcher.resetHintBuffer();
-                    } else if (event.key === Qt.Key_Up || event.key === Qt.Key_K || event.key === Qt.Key_P && ctrl) {
+                    } else if (event.key === Qt.Key_Left || event.key === Qt.Key_H || event.key === Qt.Key_P && ctrl) {
                         listView.decrementCurrentIndex();
                         windowSwitcher.resetHintBuffer();
                     } else if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return || event.key === Qt.Key_L) {
@@ -331,7 +329,7 @@ Scope {
                                 model: windowSwitcher.allWindows
                                 currentIndex: windowSwitcher.allWindows.length > 0 ? 0 : -1
                                 spacing: theme.listGap
-                                orientation: ListView.Vertical
+                                orientation: ListView.Horizontal
                                 keyNavigationWraps: false
                                 preferredHighlightBegin: 0
                                 preferredHighlightEnd: height
@@ -357,7 +355,7 @@ Scope {
                                     required property var modelData
                                     required property int index
 
-                                    width: parent.width
+                                    width: windowSwitcher.previewWidth + (theme.listItemPadding * 2)
                                     height: windowSwitcher.previewHeight + (theme.listItemPadding * 2)
                                     readonly property var matchedToplevel: windowSwitcher.toplevelForAddress(modelData.address)
 
@@ -383,158 +381,79 @@ Scope {
                                         color: "transparent"
                                         radius: theme.listItemRadius
 
-                                        RowLayout {
-                                            anchors.fill: parent
-                                            anchors.margins: theme.listItemPadding
-                                            spacing: theme.mediumGap
+                                        Rectangle {
+                                            anchors.centerIn: parent
+                                            width: windowSwitcher.previewWidth
+                                            height: windowSwitcher.previewHeight
+                                            radius: theme.listItemRadius
+                                            color: entry.ListView.isCurrentItem ? Qt.rgba(1, 1, 1, 0.10) : windowSwitcher.bgSecondary
+                                            border.width: entry.matchedToplevel ? 1 : 0
+                                            border.color: Qt.rgba(255, 255, 255, 0.08)
+                                            clip: true
 
                                             Rectangle {
-                                                Layout.alignment: Qt.AlignVCenter
-                                                width: windowSwitcher.previewWidth
-                                                height: windowSwitcher.previewHeight
-                                                radius: theme.listItemRadius
-                                                color: entry.ListView.isCurrentItem ? Qt.rgba(1, 1, 1, 0.10) : windowSwitcher.bgSecondary
-                                                border.width: entry.matchedToplevel ? 1 : 0
-                                                border.color: Qt.rgba(255, 255, 255, 0.08)
-                                                clip: true
+                                                z: 2
+                                                anchors.left: parent.left
+                                                anchors.top: parent.top
+                                                anchors.margins: 8
+                                                radius: 8
+																								color: entry.ListView.isCurrentItem ? windowSwitcher.accentBright : (modelData.active ? windowSwitcher.success : Qt.rgba(255, 255, 255, 0.12))
+                                                border.width: 1
+																								border.color: Qt.rgba(255, 255, 255, 0.12)
+                                                implicitWidth: hintText.implicitWidth + 20
+                                                implicitHeight: hintText.implicitHeight + 10
 
-                                                Rectangle {
-                                                    z: 2
-                                                    anchors.left: parent.left
-                                                    anchors.top: parent.top
-                                                    anchors.margins: 8
-                                                    radius: 8
-                                                    color: entry.ListView.isCurrentItem ? Qt.rgba(122 / 255, 162 / 255, 247 / 255, 0.95) : Qt.rgba(22 / 255, 22 / 255, 31 / 255, 0.90)
-                                                    border.width: 1
-                                                    border.color: entry.ListView.isCurrentItem ? Qt.rgba(1, 1, 1, 0.18) : Qt.rgba(255, 255, 255, 0.08)
-                                                    implicitWidth: hintText.implicitWidth + 14
-                                                    implicitHeight: hintText.implicitHeight + 8
-
-                                                    Text {
-                                                        id: hintText
-                                                        anchors.centerIn: parent
-                                                        text: modelData.hint.toUpperCase()
-                                                        color: entry.ListView.isCurrentItem ? windowSwitcher.bgPrimary : windowSwitcher.textPrimary
-                                                        font.pixelSize: 11
-                                                        font.weight: Font.DemiBold
-                                                    }
-                                                }
-
-                                                ScreencopyView {
-                                                    anchors.fill: parent
-                                                    visible: entry.matchedToplevel
-                                                    captureSource: entry.matchedToplevel
-                                                    live: true
-                                                }
-
-                                                Column {
+                                                Text {
+                                                    id: hintText
                                                     anchors.centerIn: parent
-                                                    visible: !entry.matchedToplevel
-                                                    spacing: theme.microGap
-
-                                                    Text {
-                                                        anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: windowSwitcher.fallbackPreviewText(modelData)
-                                                        color: windowSwitcher.textPrimary
-                                                        font.pixelSize: 18
-                                                        font.weight: Font.DemiBold
-                                                    }
-
-                                                    Text {
-                                                        anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: windowSwitcher.workspaceLabel(modelData)
-                                                        color: windowSwitcher.textMuted
-                                                        opacity: 0.85
-                                                        font.pixelSize: 10
-                                                        font.weight: Font.Medium
-                                                    }
+                                                    text: modelData.hint.toUpperCase()
+																										color: modelData.active ? windowSwitcher.bgPrimary : windowSwitcher.textPrimary
+                                                    font.pixelSize: 14
+                                                    font.weight: Font.DemiBold
                                                 }
                                             }
 
-                                            ColumnLayout {
-                                                Layout.fillWidth: true
-                                                Layout.alignment: Qt.AlignVCenter
-                                                spacing: theme.tightGap
+                                            Rectangle {
+                                                z: 2
+                                                anchors.right: parent.right
+                                                anchors.top: parent.top
+                                                anchors.margins: 10
+                                                width: 10
+                                                height: 10
+                                                radius: 5
+                                                visible: modelData.active
+                                                color: windowSwitcher.success
+                                                border.width: 1
+                                                border.color: Qt.rgba(1, 1, 1, 0.18)
+                                            }
 
-                                                RowLayout {
-                                                    Layout.fillWidth: true
-                                                    spacing: theme.smallGap
+                                            ScreencopyView {
+                                                anchors.fill: parent
+                                                visible: entry.matchedToplevel
+                                                captureSource: entry.matchedToplevel
+                                                live: true
+                                            }
 
-                                                    Text {
-                                                        Layout.fillWidth: true
-                                                        text: windowSwitcher.windowLabel(modelData)
-                                                        color: windowSwitcher.textPrimary
-                                                        font.pixelSize: 14
-                                                        font.weight: Font.Medium
-                                                        elide: Text.ElideRight
-                                                    }
+                                            Column {
+                                                anchors.centerIn: parent
+                                                visible: !entry.matchedToplevel
+                                                spacing: theme.microGap
 
-                                                    Rectangle {
-                                                        visible: modelData.active
-                                                        radius: 8
-                                                        color: Qt.rgba(87 / 255, 227 / 255, 137 / 255, 0.16)
-                                                        border.width: 1
-                                                        border.color: Qt.rgba(87 / 255, 227 / 255, 137 / 255, 0.35)
-                                                        implicitWidth: activeText.implicitWidth + 16
-                                                        implicitHeight: activeText.implicitHeight + 8
-
-                                                        Text {
-                                                            id: activeText
-                                                            anchors.centerIn: parent
-                                                            text: "active"
-                                                            color: windowSwitcher.success
-                                                            font.pixelSize: 11
-                                                            font.weight: Font.Medium
-                                                        }
-                                                    }
+                                                Text {
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: windowSwitcher.fallbackPreviewText(modelData)
+                                                    color: windowSwitcher.textPrimary
+                                                    font.pixelSize: 22
+                                                    font.weight: Font.DemiBold
                                                 }
 
                                                 Text {
-                                                    Layout.fillWidth: true
-                                                    text: modelData.className !== "" ? modelData.className : "Unknown app"
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    text: windowSwitcher.workspaceLabel(modelData)
                                                     color: windowSwitcher.textMuted
-                                                    opacity: 0.9
-                                                    font.pixelSize: 12
+                                                    opacity: 0.85
+                                                    font.pixelSize: 10
                                                     font.weight: Font.Medium
-                                                    elide: Text.ElideRight
-                                                }
-
-                                                RowLayout {
-                                                    Layout.fillWidth: true
-                                                    spacing: theme.smallGap
-
-                                                    Rectangle {
-                                                        radius: 9
-                                                        color: windowSwitcher.bgSecondary
-                                                        implicitWidth: workspaceText.implicitWidth + 18
-                                                        implicitHeight: workspaceText.implicitHeight + 8
-
-                                                        Text {
-                                                            id: workspaceText
-                                                            anchors.centerIn: parent
-                                                            text: windowSwitcher.workspaceLabel(modelData)
-                                                            color: windowSwitcher.textMuted
-                                                            font.pixelSize: 11
-                                                            font.weight: Font.Medium
-                                                        }
-                                                    }
-
-                                                    Rectangle {
-                                                        radius: 9
-                                                        color: windowSwitcher.bgSecondary
-                                                        visible: modelData.monitorName !== ""
-                                                        implicitWidth: monitorText.implicitWidth + 18
-                                                        implicitHeight: monitorText.implicitHeight + 8
-
-                                                        Text {
-                                                            id: monitorText
-                                                            anchors.centerIn: parent
-                                                            text: modelData.monitorName
-                                                            color: windowSwitcher.textMuted
-                                                            font.pixelSize: 11
-                                                            font.weight: Font.Medium
-                                                        }
-                                                    }
                                                 }
                                             }
                                         }
@@ -553,55 +472,6 @@ Scope {
                             opacity: 0.8
                             font.pixelSize: 16
                             font.weight: Font.Medium
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: theme.searchFieldHeight + 6
-                        color: windowSwitcher.bgSecondary
-                        radius: theme.searchFieldRadius
-                        border.width: 0
-                        border.color: windowSwitcher.accent
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: theme.searchFieldInset
-                            anchors.leftMargin: theme.searchFieldLeftPadding
-                            anchors.rightMargin: theme.searchFieldRightPadding
-                            spacing: theme.mediumGap
-
-                            Text {
-                                text: "󰘳"
-                                font.pixelSize: 20
-                                color: windowSwitcher.textMuted
-                            }
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 1
-
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: "Arrow keys move. Enter jumps. Type hint letters to jump fast."
-                                    color: windowSwitcher.textPrimary
-                                    font.pixelSize: 13
-                                    font.weight: Font.Medium
-                                    elide: Text.ElideRight
-                                }
-
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: windowSwitcher.hintBuffer === ""
-                                        ? "Hints shown on cards. Esc closes."
-                                        : "Typed hint: " + windowSwitcher.hintBuffer.toUpperCase()
-                                    color: windowSwitcher.hintBuffer === "" ? windowSwitcher.textMuted : windowSwitcher.accentBright
-                                    opacity: 0.9
-                                    font.pixelSize: 12
-                                    font.weight: Font.Medium
-                                    elide: Text.ElideRight
-                                }
-                            }
                         }
                     }
                 }
