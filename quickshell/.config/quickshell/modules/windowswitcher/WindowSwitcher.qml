@@ -44,8 +44,8 @@ Scope {
 
         visible: false
         color: "transparent"
-				implicitWidth: Math.min(switcherContentWidth, switcherMaxContentWidth)
-				implicitHeight: Math.ceil(allWindows.length / switcherColumns) * switcherItemHeight
+				implicitWidth: (windowSwitcher.allWindows.length > 0) ? Math.min(switcherContentWidth, switcherMaxContentWidth) : switcherItemWidth
+				implicitHeight: (windowSwitcher.allWindows.length > 0) ? Math.ceil(allWindows.length / switcherColumns) * switcherItemHeight : switcherItemHeight
         exclusionMode: ExclusionMode.Normal
         focusable: true
 
