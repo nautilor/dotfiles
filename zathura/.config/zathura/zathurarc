@@ -1,3 +1,6 @@
+# --- Copy to system clipboard ---
+set selection-clipboard clipboard
+
 # --- Default Colors ---
 set default-fg                rgba(192,202,245,1)  # #c0caf5
 set default-bg                rgba(26,27,38,1)     # #1a1b26
