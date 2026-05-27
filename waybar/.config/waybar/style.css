@@ -1,253 +1,277 @@
-/* Material 3 You - Slate/Neutral Waybar Theme */
 @import "./colors.css";
 
 * {
-  font-family: "JetBrainsMono Nerd Font Propo";
+  font-family:
+    "Google Sans Display", "Google Sans", "Roboto", "Noto Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
   min-height: 0;
+  border: none;
 }
 
-/* Main window with M3 background */
 window#waybar {
-  background: @background;
-  border-radius: 9px;
-  box-shadow: 0 4px 12px alpha(black, 0.1);
+  background: @surface;
+  color: @text-primary;
 }
 
 window#waybar > box {
-  padding: 5px 10px;
+  padding: 5px 0;
 }
 
-/* M3 State Layers - Hover effects with 8% opacity overlay */
-#custom-cachy:hover,
-#cpu:hover,
-#network:hover,
-#bluetooth:hover,
-#pulseaudio:hover,
-#pulseaudio.microphone:hover,
-#pulseaudio.sink-muted:hover,
-#custom-powermenu:hover,
-#backlight:hover,
-#battery:hover,
-#power-profiles-daemon:hover,
-#custom-caffeine:hover,
-#clock:hover,
-#mpris:hover,
-#custom-workspace-layout:hover,
-#custom-menu:hover,
-#custom-hjkl:hover,
-#window:hover,
-#custom-pomodoro:hover,
-#privacy:hover {
-  opacity: 0.5;
-  border-radius: 16px;
-  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+.modules-left,
+.modules-center,
+.modules-right {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
-/* Base module styling with M3 principles */
-#cpu,
-#clock,
-#mpris,
-#custom-menu,
-#tray,
-#privacy,
-#network,
-#bluetooth,
-#pulseaudio,
-#pulseaudio.microphone,
-#backlight,
-#battery,
-#power-profiles-daemon,
-#custom-caffeine,
-#custom-pomodoro,
 #custom-workspace-layout,
-#custom-hjkl,
+#workspaces,
 #window,
 #custom-pomodoro,
-#custom-powermenu {
-  opacity: 0.9;
+#network,
+#bluetooth,
+#pulseaudio.microphone,
+#power-profiles-daemon,
+#battery,
+#clock,
+#custom-menu,
+#tray {
+  background: alpha(@surface-container, 0.96);
   color: @text-primary;
-  font-size: 14px;
+  border-radius: 29px;
+  padding: 3px 14px;
+  box-shadow: 0 1px 3px alpha(black, 0.22);
+  transition:
+    background-color 200ms cubic-bezier(0.2, 0, 0, 1),
+    color 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+#custom-pomodoro:hover,
+#custom-caffeine:hover,
+#network:hover,
+#bluetooth:hover,
+#pulseaudio.microphone:hover,
+#power-profiles-daemon:hover,
+#battery:hover,
+#clock:hover,
+#tray:hover {
+  background: alpha(@surface-container, 0.8);
+}
+
+#custom-workspace-layout,
+#clock {
   font-weight: 500;
-  padding: 0px 10px;
-  border-radius: 14px;
-  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-#custom-cachy {
-  font-size: 16px;
-  color: @primary;
-  border-radius: 18px;
-}
-
-.modules-right {
-  background: transparent;
-  border-radius: 24px;
-  border: 0px solid @border-color;
-}
-
-.modules-left {
-  margin: 5px 0px;
-  background: alpha(@surface1, 0.5);
-  border-radius: 24px;
+#custom-workspace-layout {
+  background-color: #000;
+  color: @text-secondary;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin: 0px 10px;
 }
 
 #workspaces {
-  padding: 0px;
-  margin: 0px 5px;
-  color: @text-secondary;
+  padding: 4px;
 }
 
 #workspaces button {
-  padding: 3px 8px;
-  margin: 0px 2px;
+  min-width: 26px;
+  min-height: 26px;
+  padding: 0 9px;
+  margin: 0 1px;
   border-radius: 16px;
   color: @text-secondary;
-  font-weight: bold;
-  transition: all 0.3s ease-in-out;
-}
-
-#workspaces button.active {
-  background: linear-gradient(
-    135deg,
-    @color1 0%,
-    @color2 25%,
-    @color3 50%,
-    @color4 75%,
-    @color5 100%
-  );
-  color: @background;
-  min-width: 40px;
-  transition: all 0.3s ease-in-out;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background-color 250ms cubic-bezier(0.2, 0, 0, 1),
+    color 250ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 250ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 #workspaces button:hover {
-  opacity: 0.8;
-  color: @background;
-  background: linear-gradient(
-    135deg,
-    alpha(@color1, 0.8) 0%,
-    alpha(@color2, 0.8) 25%,
-    alpha(@color3, 0.8) 50%,
-    alpha(@color4, 0.8) 75%,
-    alpha(@color5, 0.8) 100%
-  );
+  background: alpha(@text-primary, 0.08);
+  color: @text-primary;
+}
+
+#workspaces button.active {
+  background: @secondary-container;
+  color: @on-secondary-container;
 }
 
 #workspaces button.urgent {
-  background-color: @red;
-  color: @mantle;
-  border-radius: 16px;
-  background-size: 400% 400%;
-  transition: all 0.3s ease-in-out;
+  background: @error;
+  color: @on-error;
 }
 
-#workspaces button.special {
-  color: @color2;
-}
-#workspaces button.special:hover {
+#workspaces button.empty {
+  color: alpha(@text-secondary, 0.65);
 }
 
-@keyframes urgent-pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 1;
-  }
+#window {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+#custom-pomodoro {
+  background-color: transparent;
+  color: @primary;
+  font-weight: 500;
+}
+
+#custom-caffeine,
+#network,
+#bluetooth,
+#pulseaudio.microphone,
+#power-profiles-daemon,
+#battery,
+#custom-menu {
+  font-family:
+    "Material Symbols Rounded", "MaterialSymbolsRounded", "Google Sans Display",
+    sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  padding-left: 13px;
+  padding-right: 13px;
 }
 
 #clock {
-  color: @text-secondary;
-  font-weight: bold;
-  padding: 0px 12px;
-  background: transparent;
-  border-radius: 18px;
-  border: 0px solid @border-color;
+  color: @text-primary;
+  padding-left: 18px;
+  padding-right: 18px;
 }
 
-#clock:hover {
-  background: transparent;
-  color: @text-secondary;
-  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-#mpris {
-  color: @color2;
-}
-
-/* Network states with M3 colors */
-#network.disabled {
+#network.disabled,
+#bluetooth.disabled,
+#pulseaudio.microphone.source-muted,
+#battery.warning,
+#battery.critical {
   color: @text-disabled;
 }
 
-#network.wifi {
-  color: @text-secondary;
-}
-
-#network.ethernet {
-  color: @text-secondary;
-}
-
-#bluetooth {
-  color: @text-secondary;
-  background: transparent;
-}
-
-/* Bluetooth states */
-#bluetooth.disabled {
-  color: @text-disabled;
-}
-
-#bluetooth.connected {
-  color: @color4;
-}
-
-#pulseaudio {
+#bluetooth.connected,
+#battery.charging,
+#battery.plugged,
+#custom-caffeine {
   color: @primary;
-  background: transparent;
 }
 
-/* Audio controls */
-#pulseaudio.sink-muted:not(.microphone) {
-  color: @text-disabled;
-}
-
-#pulseaudio.microphone {
-  color: @text-secondary;
-  background: transparent;
-  font-size: 0px;
-  padding: 0px;
-}
-
-#pulseaudio.microphone.source-muted {
-  color: @text-disabled;
-  font-size: 12pt;
-  padding: 5px 6px;
-}
-
-#battery {
-  color: @text-secondary;
-  background: transparent;
-}
-
-#battery.plugged {
-  color: @color4;
-}
-
-#battery.charging {
-  color: @color2;
+#power-profiles-daemon {
+  color: @secondary;
 }
 
 #battery.warning {
-  color: @color3;
+  color: @tertiary;
 }
 
 #battery.critical {
-  color: @color1;
-  animation: battery-blink 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background: @error;
+  color: @on-error;
+}
+
+#custom-menu {
+  background: transparent;
+}
+
+#tray {
+  padding-left: 16px;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray menu {
+  background: @surface-container;
+  color: @text-primary;
+}
+
+tooltip {
+  background: @surface-container-high;
+  border: 1px solid @border-color;
+  border-radius: 12px;
+}
+
+tooltip label {
+  color: @text-primary;
+  font-family: "Google Sans Text", "Google Sans", "Roboto", sans-serif;
+}
+
+calendar {
+  background: transparent;
+  color: @text-primary;
+}
+
+calendar.header {
+  color: @primary;
+}
+
+calendar.button {
+  color: @text-primary;
+}
+
+calendar.highlight {
+  color: @primary;
+}
+
+calendar:selected {
+  background: @secondary-container;
+  color: @on-secondary-container;
+}
+
+#privacy {
+  background: @surface-container;
+  color: @text-secondary;
+  border-radius: 29px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+#privacy-item {
+  color: @text-secondary;
+}
+
+#group-extras,
+#group-extras:hover {
+  background: transparent;
+}
+
+#custom-menu,
+#tray {
+  margin-left: 3px;
+}
+
+#custom-pomodoro,
+#clock,
+#custom-menu,
+#tray {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+#pulseaudio.microphone {
+  min-width: 24px;
+}
+
+#tray image {
+  margin: 0 4px;
+}
+
+menu {
+  background: @surface-container-high;
+  color: @text-primary;
+}
+
+menuitem {
+  border-radius: 10px;
+}
+
+menuitem:hover {
+  background: alpha(@text-primary, 0.08);
 }
 
 @keyframes battery-blink {
@@ -255,7 +279,7 @@ window#waybar > box {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.72;
   }
   100% {
     opacity: 1;
@@ -291,22 +315,24 @@ tooltip * {
 }
 
 #custom-caffeine.active {
+  background-color: @surface-container;
+  border-radius: 0px;
   color: @text-secondary;
-  padding: 0px 10px;
+  padding: 0px 15px 0px 5px;
 }
 
 #custom-caffeine.inactive {
   font-size: 0px;
   padding: 0px;
+  margin: 0px;
   color: transparent;
   background: transparent;
 }
 
 #custom-pomodoro {
   font-weight: bold;
-  margin: 7px 5px;
   color: @text-primary;
-  background-color: @color0;
+  background-color: @surface-container;
 }
 
 #custom-pomodoro.work {
@@ -321,14 +347,11 @@ tooltip * {
 
 #custom-pomodoro.pause {
   color: @background;
-  background-color: @color5;
+  background-color: @color3;
 }
 
 #custom-workspace-layout {
-  background: alpha(@color0, 0.5);
-  border-radius: 8px;
-  padding: 0px 10px;
-  margin: 0px 5px 0px 0px;
+  padding: 0px 20px;
   color: @text-secondary;
 }
 
@@ -341,8 +364,6 @@ tooltip * {
 }
 
 #tray {
-  border-radius: 14px;
-  padding: 8px 4px;
   border: 0px solid @border-color;
 }
 
@@ -364,4 +385,30 @@ tooltip * {
   padding: 0px 10px;
   margin: 5px 5px;
   color: @color10;
+}
+
+#network,
+#battery,
+#bluetooth,
+#pulseaudio.microphone,
+#power-profiles-daemon,
+#battery {
+  margin: 0px;
+  border-radius: 0px;
+}
+
+#battery {
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  margin-right: 5px;
+}
+
+#network {
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  margin-left: 5px;
+}
+
+window#waybar.empty #window {
+  background-color: transparent;
 }

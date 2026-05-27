@@ -296,20 +296,6 @@ Scope {
 							d.name && d.name.toLowerCase().includes(q) || d.exec && d.exec.toLowerCase().includes(q)
 						);
 						if (entries.length === 0) {
-							// check if query looks like a URL
-							const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-							if (urlPattern.test(q)) {
-								const url = q.startsWith("http://") || q.startsWith("https://") ? q : "https://" + q;
-								return [{
-									name: `Open ${url}`,
-									comment: `Open ${url} with default application`,
-									icon: "document-open",
-									execute: function() {										
-										Qt.openUrlExternally(url);
-										Qt.quit();
-									}
-								}];
-							}
 							return [{
 								name: "Search the web",
 								comment: `No results found for "${launcher.query}", search the web instead`,

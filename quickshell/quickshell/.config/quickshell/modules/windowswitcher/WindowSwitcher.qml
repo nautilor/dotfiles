@@ -436,7 +436,7 @@ Scope {
 														anchors.centerIn: parent
 														width: windowSwitcher.previewWidth
 														height: windowSwitcher.previewHeight
-														radius: theme.listItemSmallRadius
+														radius: theme.listItemRadius
 														color: entry.isCurrentItem ? Qt.rgba(1, 1, 1, 0.10) : windowSwitcher.bgSecondary
 														border.width: entry.matchedToplevel ? 1 : 0
 														border.color: Qt.rgba(255, 255, 255, 0.08)
@@ -458,7 +458,7 @@ Scope {
 																id: hintText
 																anchors.centerIn: parent
 																text: modelData.hint.toUpperCase()
-																color: modelData.active ? windowSwitcher.bgPrimary : windowSwitcher.bgPrimary
+																color: modelData.active ? windowSwitcher.bgPrimary : windowSwitcher.textPrimary
 																font.pixelSize: 14
 																font.weight: Font.DemiBold
 															}

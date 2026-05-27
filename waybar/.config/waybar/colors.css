@@ -1,47 +1,40 @@
-@define-color background  #16161f; /* main bg */
-@define-color foreground  #C8D3F5;
+@define-color background #131318;
+@define-color foreground #e4e1e9;
 
-@define-color color0  #3B4261; /* Normal black (borders, UI chrome) */
-@define-color color8  #545C7E; /* Bright black (disabled / comments) */
+@define-color surface #131318;
+@define-color surface-container-lowest #0e0e13;
+@define-color surface-container-low #1b1b21;
+@define-color surface-container #1f1f25;
+@define-color surface-container-high #2a292f;
+@define-color surface-container-highest #34343a;
 
-/* Red */
-@define-color color1  #F7768E; /* Normal red */
-@define-color color9  #E06C75; /* Bright red */
+@define-color primary #bec2ff;
+@define-color on-primary #272b60;
+@define-color primary-container #3e4278;
+@define-color on-primary-container #e0e0ff;
 
-/* Green */
-@define-color color2  #9ECE6A; /* Normal green */
-@define-color color10 #7EC07C; /* Bright green */
+@define-color secondary #c5c4dd;
+@define-color on-secondary #2e2f42;
+@define-color secondary-container #444559;
+@define-color on-secondary-container #e1e0f9;
 
-/* Yellow */
-@define-color color3  #E0AF68; /* Normal yellow */
-@define-color color11 #D19A66; /* Bright yellow */
+@define-color tertiary #e8b9d5;
+@define-color on-tertiary #46263b;
 
-/* Blue */
-@define-color color4  #7AA2F7; /* Normal blue */
-@define-color color12 #82AAFF; /* Bright blue */
+@define-color error #ffb4ab;
+@define-color on-error #690005;
+@define-color error-container #93000a;
 
-/* Magenta / Purple */
-@define-color color5  #BB9AF7; /* Normal magenta */
-@define-color color13 #D55FDE; /* Bright magenta */
+@define-color text-primary #e4e1e9;
+@define-color text-secondary #c7c5d0;
+@define-color text-disabled #91909a;
 
-/* Cyan */
-@define-color color6  #7DCFFF; /* Normal cyan */
-@define-color color14 #2BBAC5; /* Bright cyan */
+@define-color outline #91909a;
+@define-color outline-variant #46464f;
+@define-color border-color #2e2e35;
 
-/* White */
-@define-color color7  #C8D3F5; /* Normal white (secondary text) */
-@define-color color15 #E6E6E6; /* Bright white (primary text) */
-
-@define-color surface1    #16161F;
-@define-color surface2    #1F2030;
-@define-color surface3    #25263A;
-
-@define-color secondary           #86E1FC;
-@define-color secondary-container #1F2030;
-
-@define-color text-primary    #a9b1d6;
-@define-color text-secondary  #C8D3F5;
-@define-color text-disabled   #545C7E;
-
-@define-color border-color    #3B4261;
-@define-color outline         #545C7E;
+@define-color color1 #ffb4ab;
+@define-color color2 #bec2ff;
+@define-color color3 #e8b9d5;
+@define-color color4 #c5c4dd;
+@define-color color5 #e0e0ff;

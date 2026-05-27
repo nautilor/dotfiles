@@ -1,5 +1,5 @@
 * {
-	bg-primary:        #16161F;  
+	bg-primary:        #0B0B11;  
 	bg-secondary:      #16161F;  
 	bg-container:      #16161F;
 	primary:					 #3B4261;  
@@ -15,7 +15,7 @@ window {
 	background-color: @bg-primary;
 	border: 0px;
 	border-color: @border-color;
-	border-radius: 16px;
+	border-radius: 100px;
 	padding: 10px;
 	margin: 10px;
 	width: 100px;
@@ -39,9 +39,9 @@ listview {
 
 element {
 	background-color: @bg-primary;
-	border-radius: 20px;
+	border-radius: 100px;
 	orientation: vertical;
-	padding: 18px;
+	padding: 16px;
 	cursor: pointer;
 	spacing: 0px;
 }

@@ -320,9 +320,9 @@ Scope {
                                 visible: clipboardWindow.allItems.length > 0
                                 width: clearText.implicitWidth + 24
                                 height: 36
-                                radius: theme.listItemRadius
-                                color: clearHover.hovered ? clipboardWindow.danger : theme.floatingBgHighlight
-                                border.width: 0
+                                radius: 10
+                                color: clearHover.hovered ? clipboardWindow.danger : "transparent"
+                                border.width: 1
                                 border.color: clearHover.hovered ? clipboardWindow.danger : clipboardWindow.border
                                 scale: clearTap.pressed ? 0.96 : 1.0
 

@@ -27,9 +27,10 @@ QtObject {
     readonly property int tightGap: 4
     readonly property int microGap: 2
 
-    readonly property int listItemRadius: 10
+    readonly property int listItemRadius: 100
+		readonly property int listItemSmallRadius: 8
     readonly property int searchFieldHeight: 56
-    readonly property int searchFieldRadius: 12
+    readonly property int searchFieldRadius: 100
     readonly property int cardRadius: 18
     readonly property int notificationCardRadius: 16
     readonly property int notificationCardPadding: 16
@@ -42,41 +43,41 @@ QtObject {
     readonly property int sliderHandleRadius: 9
     readonly property int textFieldLeftPadding: 5
 
-    readonly property color floatingBgPrimary: "#1b2030"
-    readonly property color floatingBgSecondary: "#242b40"
-    readonly property color floatingBgHighlight: "#313a59"
-    readonly property color floatingBorder: "#58638f"
-    readonly property color floatingTextPrimary: "#A9B1D6"
-    readonly property color floatingTextMuted: "#C8D3F5"
-    readonly property color floatingAccent: "#3B4261"
-    readonly property color floatingAccentBright: "#545C7E"
-    readonly property color floatingSuccess: "#57e389"
-    readonly property color floatingDanger: "#f7768e"
+    readonly property color floatingBgPrimary: "#131318"
+    readonly property color floatingBgSecondary: "#1f1f25"
+    readonly property color floatingBgHighlight: "#2a292f"
+    readonly property color floatingBorder: "#2e2e35"
+    readonly property color floatingTextPrimary: "#e4e1e9"
+    readonly property color floatingTextMuted: "#c7c5d0"
+    readonly property color floatingAccent: "#444559"
+    readonly property color floatingAccentBright: "#bec2ff"
+    readonly property color floatingSuccess: "#bec2ff"
+    readonly property color floatingDanger: "#ffb4ab"
 
-    readonly property color panelBgPrimary: "#1b2030"
-    readonly property color panelBgSecondary: "#242b40"
-    readonly property color panelBgTertiary: "#313a59"
-    readonly property color panelMusicSurface: "#2c2130"
-    readonly property color panelBorder: "#58638f"
-    readonly property color panelDivider: "#4c5880"
-    readonly property color panelTextPrimary: "#c8d3f5"
-    readonly property color panelTextMuted: "#a9b1d6"
-    readonly property color panelAccent: "#7aa2f7"
-    readonly property color panelAccentSoft: "#3B4261"
-    readonly property color panelSuccess: "#57e389"
-    readonly property color panelDanger: "#f7768e"
-    readonly property color panelTrack: "#3a3f5a"
-    readonly property color panelThumb: "#f6f7fb"
-    readonly property color panelOutlineStrong: "#61688b"
+    readonly property color panelBgPrimary: "#131318"
+    readonly property color panelBgSecondary: "#1f1f25"
+    readonly property color panelBgTertiary: "#2a292f"
+    readonly property color panelMusicSurface: "#3e4278"
+    readonly property color panelBorder: "#2e2e35"
+    readonly property color panelDivider: "#34343a"
+    readonly property color panelTextPrimary: "#e4e1e9"
+    readonly property color panelTextMuted: "#c7c5d0"
+    readonly property color panelAccent: "#bec2ff"
+    readonly property color panelAccentSoft: "#444559"
+    readonly property color panelSuccess: "#bec2ff"
+    readonly property color panelDanger: "#ffb4ab"
+    readonly property color panelTrack: "#444559"
+    readonly property color panelThumb: "#e4e1e9"
+    readonly property color panelOutlineStrong: "#91909a"
 
-    readonly property color notificationSurface: "#1b2030"
-    readonly property color notificationSurfaceCritical: "#3b1f29"
-    readonly property color notificationOnSurface: "#c0caf5"
-    readonly property color notificationOnSurfaceVariant: "#a9b1d6"
-    readonly property color notificationPrimary: "#7aa2f7"
-    readonly property color notificationSecondaryContainer: "#242b40"
-    readonly property color notificationOnSecondaryContainer: "#c0caf5"
-    readonly property color notificationError: "#f7768e"
-    readonly property color notificationErrorContainer: "#3b1f29"
-    readonly property color notificationOutlineVariant: "#58638f"
+    readonly property color notificationSurface: "#1f1f25"
+    readonly property color notificationSurfaceCritical: "#93000a"
+    readonly property color notificationOnSurface: "#e4e1e9"
+    readonly property color notificationOnSurfaceVariant: "#c7c5d0"
+    readonly property color notificationPrimary: "#bec2ff"
+    readonly property color notificationSecondaryContainer: "#444559"
+    readonly property color notificationOnSecondaryContainer: "#e1e0f9"
+    readonly property color notificationError: "#ffb4ab"
+    readonly property color notificationErrorContainer: "#93000a"
+    readonly property color notificationOutlineVariant: "#46464f"
 }

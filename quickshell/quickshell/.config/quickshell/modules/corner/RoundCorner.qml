@@ -10,7 +10,7 @@ PanelWindow {
 	aboveWindows: false
 	margins {
 		left: 0
-		top: 56
+		top: 0
 		right: 0
 		bottom: 0
 	}
