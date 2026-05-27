@@ -9,370 +9,377 @@ import QtQuick.Effects
 import "../shared" as Shared
 
 Scope {
-    id: clipboardScope
+	id: clipboardScope
 
-    PanelWindow {
-        id: clipboardWindow
-        Shared.Theme { id: theme }
+	PanelWindow {
+		id: clipboardWindow
+		Shared.Theme { id: theme }
 
-        property string scriptPath: "$HOME/.config/quickshell/bin/clipse-visual.sh"
-        property string query: ""
+		property string scriptPath: "$HOME/.config/quickshell/bin/clipse-visual.sh"
+		property string query: ""
 
-        readonly property color bgPrimary: theme.floatingBgPrimary
-        readonly property color bgSecondary: theme.floatingBgSecondary
-        readonly property color bgHighlight: theme.floatingBgHighlight
-        readonly property color border: theme.floatingBorder
-        readonly property color textPrimary: theme.floatingTextPrimary
-        readonly property color textMuted: theme.floatingTextMuted
-        readonly property color accent: theme.floatingAccent
-        readonly property color accentBright: theme.floatingAccentBright
-        readonly property color success: theme.floatingSuccess
-        readonly property color danger: theme.floatingDanger
+		readonly property color bgPrimary: theme.floatingBgPrimary
+		readonly property color bgSecondary: theme.floatingBgSecondary
+		readonly property color bgHighlight: theme.floatingBgHighlight
+		readonly property color border: theme.floatingBorder
+		readonly property color textPrimary: theme.floatingTextPrimary
+		readonly property color textMuted: theme.floatingTextMuted
+		readonly property color accent: theme.floatingAccent
+		readonly property color accentBright: theme.floatingAccentBright
+		readonly property color success: theme.floatingSuccess
+		readonly property color danger: theme.floatingDanger
 
-        implicitWidth: theme.floatingWindowWidth
-        implicitHeight: theme.floatingWindowHeight
-        visible: false
-        color: "transparent"
-        exclusionMode: ExclusionMode.Normal
-        focusable: true
+		implicitWidth: theme.floatingWindowWidth
+		implicitHeight: theme.floatingWindowHeight
+		visible: false
+		color: "transparent"
+		exclusionMode: ExclusionMode.Normal
+		focusable: true
 
-        anchors {
-            top: true
-            left: true
-        }
+		anchors {
+			top: true
+		}
 
-        property var allItems: []
-        property var filteredItems: []
+		margins {
+		}
 
-        HyprlandFocusGrab {
-            id: focusGrab
-            windows: [clipboardWindow]
-            onCleared: clipboardWindow.closeMenu()
-        }
+		property var allItems: []
+		property var filteredItems: []
 
-        function closeMenu() {
-            clipboardWindow.visible = false;
-            focusGrab.active = false;
-            clipboardWindow.query = "";
-            searchField.text = "";
-        }
+		HyprlandFocusGrab {
+			id: focusGrab
+			windows: [clipboardWindow]
+			onCleared: clipboardWindow.closeMenu()
+		}
 
-        function updateSearch() {
-            const q = clipboardWindow.query.trim().toLowerCase();
+		function closeMenu() {
+			clipboardWindow.visible = false;
+			focusGrab.active = false;
+			clipboardWindow.query = "";
+			searchField.text = "";
+		}
 
-            if (q === "") {
-                clipboardWindow.filteredItems = clipboardWindow.allItems;
-            } else {
-                clipboardWindow.filteredItems = clipboardWindow.allItems.filter(item => {
-                    const str = item.display.toLowerCase();
-                    let i = 0;
-                    let j = 0;
+		function updateSearch() {
+			const q = clipboardWindow.query.trim().toLowerCase();
 
-                    while (i < str.length && j < q.length) {
-                        if (str[i] === q[j])
-                            j++;
-                        i++;
-                    }
+			if (q === "") {
+				clipboardWindow.filteredItems = clipboardWindow.allItems;
+			} else {
+				clipboardWindow.filteredItems = clipboardWindow.allItems.filter(item => {
+					const str = item.display.toLowerCase();
+					let i = 0;
+					let j = 0;
 
-                    return j === q.length;
-                });
-            }
+					while (i < str.length && j < q.length) {
+						if (str[i] === q[j])
+						j++;
+						i++;
+					}
 
-            listView.currentIndex = clipboardWindow.filteredItems.length > 0 ? 0 : -1;
-        }
+					return j === q.length;
+				});
+			}
 
-        function copySelected() {
-            if (listView.currentItem)
-                listView.currentItem.select();
-        }
+			listView.currentIndex = clipboardWindow.filteredItems.length > 0 ? 0 : -1;
+		}
 
-        Process {
-            id: fetchHistory
-            command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" list']
-            stdout: StdioCollector {
-                onStreamFinished: {
-                    clipboardWindow.allItems = this.text.split("\n").filter(line => line.trim() !== "").map(line => {
-                        const parts = line.split("\t");
-                        const id = parts[0];
-                        const display = parts[1] || "";
-                        const imagePath = parts[2] || "";
+		function copySelected() {
+			if (listView.currentItem)
+			listView.currentItem.select();
+		}
 
-                        return {
-                            raw: id,
-                            recorded: id,
-                            display: display,
-                            imagePath: imagePath
-                        };
-                    });
+		Process {
+			id: fetchHistory
+			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" list']
+			stdout: StdioCollector {
+				onStreamFinished: {
+					clipboardWindow.allItems = this.text.split("\n").filter(line => line.trim() !== "").map(line => {
+						const parts = line.split("\t");
+						const id = parts[0];
+						const display = parts[1] || "";
+						const imagePath = parts[2] || "";
 
-                    clipboardWindow.updateSearch();
-                }
-            }
-        }
+						return {
+							raw: id,
+							recorded: id,
+							display: display,
+							imagePath: imagePath
+						};
+					});
 
-        Process {
-            id: copyToClipboard
-            property string selectedItem: ""
-            command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" copy "$1"', "_", selectedItem]
-            onRunningChanged: {
-                if (!running && copyToClipboard.selectedItem !== "") {
-                    clipboardWindow.closeMenu();
-                    copyToClipboard.selectedItem = "";
-                }
-            }
-        }
+					clipboardWindow.updateSearch();
+				}
+			}
+		}
 
-        Process {
-            id: deleteEntry
-            property string targetId: ""
-            command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" delete "$1"', "_", targetId]
-            onRunningChanged: {
-                if (!running && targetId !== "") {
-                    targetId = "";
-                    fetchHistory.running = true;
-                }
-            }
-        }
+		Process {
+			id: copyToClipboard
+			property string selectedItem: ""
+			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" copy "$1"', "_", selectedItem]
+			onRunningChanged: {
+				if (!running && copyToClipboard.selectedItem !== "") {
+					clipboardWindow.closeMenu();
+					copyToClipboard.selectedItem = "";
+				}
+			}
+		}
 
-        Process {
-            id: clearHistory
-            command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" clear']
-            onRunningChanged: {
-                if (!running) {
-                    clipboardWindow.allItems = [];
-                    clipboardWindow.updateSearch();
-                }
-            }
-        }
+		Process {
+			id: deleteEntry
+			property string targetId: ""
+			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" delete "$1"', "_", targetId]
+			onRunningChanged: {
+				if (!running && targetId !== "") {
+					targetId = "";
+					fetchHistory.running = true;
+				}
+			}
+		}
 
-        Item {
-            anchors.fill: parent
+		Process {
+			id: clearHistory
+			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" clear']
+			onRunningChanged: {
+				if (!running) {
+					clipboardWindow.allItems = [];
+					clipboardWindow.updateSearch();
+				}
+			}
+		}
 
-            RectangularShadow {
-                anchors.fill: mainWindow
-                radius: mainWindow.radius
-                blur: 5
-                spread: 0.2
-                color: Qt.darker(mainWindow.color, 1.6)
-            }
+		Item {
+			anchors.fill: parent
 
-            Rectangle {
-                id: mainWindow
-                anchors.fill: parent
-                anchors.margins: theme.floatingWindowMargin
-                color: clipboardWindow.bgPrimary
-                radius: theme.floatingWindowRadius
-                border.width: 0
-                border.color: clipboardWindow.border
-                clip: true
-                focus: true
+			RectangularShadow {
+				anchors.fill: mainWindow
+				radius: theme.floatingWindowRadius
+				bottomRightRadius: theme.floatingWindowRadius
+				bottomLeftRadius: theme.floatingWindowRadius
+				blur: 5
+				spread: 0.2
+				offset: Qt.point(0, 4) 
+				color: Qt.darker(mainWindow.color, 1.6)
+			}
 
-                Keys.onPressed: event => {
-                    const ctrl = event.modifiers & Qt.ControlModifier;
+			Rectangle {
+				id: mainWindow
+				anchors.fill: parent
+				anchors.margins: theme.floatingWindowMargin
+				color: clipboardWindow.bgPrimary
+				radius: theme.floatingWindowRadius
+				bottomRightRadius: theme.floatingWindowRadius
+				bottomLeftRadius: theme.floatingWindowRadius
+				border.width: 0
+				border.color: clipboardWindow.border
+				clip: true
+				focus: true
 
-                    if (event.key === Qt.Key_Escape || event.key === Qt.Key_Q && ctrl) {
-                        clipboardWindow.closeMenu();
-                    } else if (event.key === Qt.Key_X && ctrl) {
-                        if (listView.currentItem)
-                            listView.currentItem.remove();
-                    } else if (event.key === Qt.Key_Down || event.key === Qt.Key_J || event.key === Qt.Key_N && ctrl) {
-                        listView.incrementCurrentIndex();
-                    } else if (event.key === Qt.Key_Up || event.key === Qt.Key_K || event.key === Qt.Key_P && ctrl) {
-                        listView.decrementCurrentIndex();
-                    } else if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return || event.key === Qt.Key_L) {
-                        clipboardWindow.copySelected();
-                    } else if (event.key === Qt.Key_Slash) {
-                        searchField.forceActiveFocus();
-                        event.accepted = true;
-                    } else if (event.key === Qt.Key_C && ctrl) {
-                        clipboardWindow.closeMenu();
-                    }
+				Keys.onPressed: event => {
+					const ctrl = event.modifiers & Qt.ControlModifier;
 
-                    event.accepted = true;
-                }
+					if (event.key === Qt.Key_Escape || event.key === Qt.Key_Q && ctrl) {
+						clipboardWindow.closeMenu();
+					} else if (event.key === Qt.Key_X && ctrl) {
+						if (listView.currentItem)
+						listView.currentItem.remove();
+					} else if (event.key === Qt.Key_Down || event.key === Qt.Key_J || event.key === Qt.Key_N && ctrl) {
+						listView.incrementCurrentIndex();
+					} else if (event.key === Qt.Key_Up || event.key === Qt.Key_K || event.key === Qt.Key_P && ctrl) {
+						listView.decrementCurrentIndex();
+					} else if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return || event.key === Qt.Key_L) {
+						clipboardWindow.copySelected();
+					} else if (event.key === Qt.Key_Slash) {
+						searchField.forceActiveFocus();
+						event.accepted = true;
+					} else if (event.key === Qt.Key_C && ctrl) {
+						clipboardWindow.closeMenu();
+					}
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: theme.floatingContentPadding
-                    spacing: theme.largeGap
+					event.accepted = true;
+				}
 
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+				ColumnLayout {
+					anchors.fill: parent
+					anchors.margins: theme.floatingContentPadding
+					spacing: theme.largeGap
 
-                        ScrollView {
-                            anchors.fill: parent
-                            clip: true
-                            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+					Item {
+						Layout.fillWidth: true
+						Layout.fillHeight: true
 
-                            ListView {
-                                id: listView
-                                model: clipboardWindow.filteredItems
-                                currentIndex: clipboardWindow.filteredItems.length > 0 ? 0 : -1
-                                spacing: theme.listGap
-                                orientation: ListView.Vertical
-                                keyNavigationWraps: false
-                                preferredHighlightBegin: 0
-                                preferredHighlightEnd: height
-                                highlightRangeMode: ListView.ApplyRange
-                                highlightMoveDuration: 150
-                                highlightMoveVelocity: -1
+						ScrollView {
+							anchors.fill: parent
+							clip: true
+							ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+							ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-                                highlight: Rectangle {
-                                    radius: theme.listItemRadius
-                                    color: clipboardWindow.accent
-                                    opacity: 0.75
+							ListView {
+								id: listView
+								model: clipboardWindow.filteredItems
+								currentIndex: clipboardWindow.filteredItems.length > 0 ? 0 : -1
+								spacing: theme.listGap
+								orientation: ListView.Vertical
+								keyNavigationWraps: false
+								preferredHighlightBegin: 0
+								preferredHighlightEnd: height
+								highlightRangeMode: ListView.ApplyRange
+								highlightMoveDuration: 150
+								highlightMoveVelocity: -1
 
-                                    Behavior on y {
-                                        NumberAnimation {
-                                            duration: 150
-                                            easing.type: Easing.OutCubic
-                                        }
-                                    }
-                                }
+								highlight: Rectangle {
+									radius: theme.listItemRadius
+									color: clipboardWindow.accent
+									opacity: 0.75
 
-                                delegate: ClipboardDelegate {}
-                                Keys.onReturnPressed: clipboardWindow.copySelected()
-                            }
-                        }
+									Behavior on y {
+										NumberAnimation {
+											duration: 150
+											easing.type: Easing.OutCubic
+										}
+									}
+								}
 
-                        Text {
-                            anchors.centerIn: parent
-                            visible: clipboardWindow.filteredItems.length === 0
-                            text: clipboardWindow.allItems.length === 0 ? "Clipboard empty" : "No results found"
-                            color: clipboardWindow.textMuted
-                            opacity: 0.8
-                            font.pixelSize: 16
-                            font.weight: Font.Medium
-                        }
-                    }
+								delegate: ClipboardDelegate {}
+								Keys.onReturnPressed: clipboardWindow.copySelected()
+							}
+						}
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: theme.searchFieldHeight
-                        color: clipboardWindow.bgSecondary
-                        radius: theme.searchFieldRadius
-                        border.width: 0
-                        border.color: clipboardWindow.accent
+						Text {
+							anchors.centerIn: parent
+							visible: clipboardWindow.filteredItems.length === 0
+							text: clipboardWindow.allItems.length === 0 ? "Clipboard empty" : "No results found"
+							color: clipboardWindow.textMuted
+							opacity: 0.8
+							font.pixelSize: 16
+							font.weight: Font.Medium
+						}
+					}
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: theme.searchFieldInset
-                            anchors.leftMargin: theme.searchFieldLeftPadding
-                            anchors.rightMargin: theme.searchFieldCompactRightPadding
-                            spacing: theme.mediumGap
+					Rectangle {
+						Layout.fillWidth: true
+						height: theme.searchFieldHeight
+						color: clipboardWindow.bgSecondary
+						radius: theme.searchFieldRadius
+						border.width: 0
+						border.color: clipboardWindow.accent
 
-                            Text {
-                                text: ""
-                                font.pixelSize: 22
-                                color: clipboardWindow.textMuted
-                            }
+						RowLayout {
+							anchors.fill: parent
+							anchors.margins: theme.searchFieldInset
+							anchors.leftMargin: theme.searchFieldLeftPadding
+							anchors.rightMargin: theme.searchFieldCompactRightPadding
+							spacing: theme.mediumGap
 
-                            TextField {
-                                id: searchField
-                                Layout.fillWidth: true
-                                placeholderText: "Search clipboard..."
-                                font.pixelSize: 16
-                                color: clipboardWindow.textPrimary
-                                selectionColor: clipboardWindow.accent
-                                selectedTextColor: clipboardWindow.bgPrimary
-                                focus: true
-                                leftPadding: theme.textFieldLeftPadding
-                                rightPadding: 0
-                                topPadding: 0
-                                bottomPadding: 0
-                                placeholderTextColor: clipboardWindow.textMuted
-                                background: Rectangle {
-                                    color: "transparent"
-                                    border.width: 0
-                                }
+							Text {
+								text: ""
+								font.pixelSize: 22
+								color: clipboardWindow.textMuted
+							}
 
-                                onTextChanged: {
-                                    clipboardWindow.query = text;
-                                    clipboardWindow.updateSearch();
-                                }
+							TextField {
+								id: searchField
+								Layout.fillWidth: true
+								placeholderText: "Search clipboard..."
+								font.pixelSize: 16
+								color: clipboardWindow.textPrimary
+								selectionColor: clipboardWindow.accent
+								selectedTextColor: clipboardWindow.bgPrimary
+								focus: true
+								leftPadding: theme.textFieldLeftPadding
+								rightPadding: 0
+								topPadding: 0
+								bottomPadding: 0
+								placeholderTextColor: clipboardWindow.textMuted
+								background: Rectangle {
+									color: "transparent"
+									border.width: 0
+								}
 
-                                Keys.onEscapePressed: clipboardWindow.closeMenu()
-                                Keys.onPressed: event => {
-                                    const ctrl = event.modifiers & Qt.ControlModifier;
+								onTextChanged: {
+									clipboardWindow.query = text;
+									clipboardWindow.updateSearch();
+								}
 
-                                    if (event.key === Qt.Key_Up || event.key === Qt.Key_P && ctrl) {
-                                        event.accepted = true;
-                                        if (listView.currentIndex > 0)
-                                            listView.currentIndex--;
-                                    } else if (event.key === Qt.Key_Down || event.key === Qt.Key_N && ctrl) {
-                                        event.accepted = true;
-                                        if (listView.currentIndex < listView.count - 1)
-                                            listView.currentIndex++;
-                                    } else if ([Qt.Key_Return, Qt.Key_Enter].includes(event.key)) {
-                                        event.accepted = true;
-                                        clipboardWindow.copySelected();
-                                    } else if (event.key === Qt.Key_C && ctrl) {
-                                        event.accepted = true;
-                                        clipboardWindow.closeMenu();
-                                    }
-                                }
-                            }
+								Keys.onEscapePressed: clipboardWindow.closeMenu()
+								Keys.onPressed: event => {
+									const ctrl = event.modifiers & Qt.ControlModifier;
 
-                            Rectangle {
-                                id: clearButton
-                                visible: clipboardWindow.allItems.length > 0
-                                width: clearText.implicitWidth + 24
-                                height: 36
-                                radius: theme.listItemRadius
-                                color: clearHover.hovered ? clipboardWindow.danger : theme.floatingBgHighlight
-                                border.width: 0
-                                border.color: clearHover.hovered ? clipboardWindow.danger : clipboardWindow.border
-                                scale: clearTap.pressed ? 0.96 : 1.0
+									if (event.key === Qt.Key_Up || event.key === Qt.Key_P && ctrl) {
+										event.accepted = true;
+										if (listView.currentIndex > 0)
+										listView.currentIndex--;
+									} else if (event.key === Qt.Key_Down || event.key === Qt.Key_N && ctrl) {
+										event.accepted = true;
+										if (listView.currentIndex < listView.count - 1)
+										listView.currentIndex++;
+									} else if ([Qt.Key_Return, Qt.Key_Enter].includes(event.key)) {
+										event.accepted = true;
+										clipboardWindow.copySelected();
+									} else if (event.key === Qt.Key_C && ctrl) {
+										event.accepted = true;
+										clipboardWindow.closeMenu();
+									}
+								}
+							}
 
-                                Behavior on scale {
-                                    NumberAnimation {
-                                        duration: 150
-                                        easing.type: Easing.OutBack
-                                    }
-                                }
+							Rectangle {
+								id: clearButton
+								visible: clipboardWindow.allItems.length > 0
+								width: clearText.implicitWidth + 24
+								height: 36
+								radius: theme.listItemRadius
+								color: clearHover.hovered ? clipboardWindow.danger : theme.floatingBgHighlight
+								border.width: 0
+								border.color: clearHover.hovered ? clipboardWindow.danger : clipboardWindow.border
+								scale: clearTap.pressed ? 0.96 : 1.0
 
-                                Text {
-                                    id: clearText
-                                    anchors.centerIn: parent
-                                    text: "Clear"
-                                    color: clearHover.hovered ? clipboardWindow.bgPrimary : clipboardWindow.textMuted
-                                    font.pixelSize: 13
-                                    font.weight: Font.Medium
-                                }
+								Behavior on scale {
+									NumberAnimation {
+										duration: 150
+										easing.type: Easing.OutBack
+									}
+								}
 
-                                HoverHandler {
-                                    id: clearHover
-                                    cursorShape: Qt.PointingHandCursor
-                                }
+								Text {
+									id: clearText
+									anchors.centerIn: parent
+									text: "Clear"
+									color: clearHover.hovered ? clipboardWindow.bgPrimary : clipboardWindow.textMuted
+									font.pixelSize: 13
+									font.weight: Font.Medium
+								}
 
-                                TapHandler {
-                                    id: clearTap
-                                    onTapped: clearHistory.running = true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+								HoverHandler {
+									id: clearHover
+									cursorShape: Qt.PointingHandCursor
+								}
 
-    IpcHandler {
-        target: "clipMenu"
+								TapHandler {
+									id: clearTap
+									onTapped: clearHistory.running = true
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
-        function toggle() {
-            if (clipboardWindow.visible) {
-                clipboardWindow.closeMenu();
-            } else {
-                clipboardWindow.visible = true;
-                fetchHistory.running = true;
-                searchField.text = "";
-                clipboardWindow.query = "";
-                focusGrab.active = true;
-                searchField.forceActiveFocus();
-            }
-        }
-    }
+	IpcHandler {
+		target: "clipMenu"
+
+		function toggle() {
+			if (clipboardWindow.visible) {
+				clipboardWindow.closeMenu();
+			} else {
+				clipboardWindow.visible = true;
+				fetchHistory.running = true;
+				searchField.text = "";
+				clipboardWindow.query = "";
+				focusGrab.active = true;
+				searchField.forceActiveFocus();
+			}
+		}
+	}
 }

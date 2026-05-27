@@ -36,7 +36,9 @@ Scope {
 
 		anchors {
 			top: true
-			left: true
+		}
+
+		margins {
 		}
 
 		readonly property color bgPrimary: theme.floatingBgPrimary
@@ -56,9 +58,12 @@ Scope {
 
 			RectangularShadow {
 				anchors.fill: mainWindow
-				radius: mainWindow.radius
+				radius: theme.floatingWindowRadius
+				bottomRightRadius: theme.floatingWindowRadius
+				bottomLeftRadius: theme.floatingWindowRadius
 				blur: 5
 				spread: 0.2
+				offset: Qt.point(0, 4)
 				color: Qt.darker(mainWindow.color, 1.6)
 			}	
 
@@ -70,6 +75,8 @@ Scope {
 				anchors.margins: theme.floatingWindowMargin
 				opacity: 1
 				radius: theme.floatingWindowRadius
+				bottomRightRadius: theme.floatingWindowRadius
+				bottomLeftRadius: theme.floatingWindowRadius
 				border.width: 0
 				border.color: launcher.border
 

@@ -1,8 +1,8 @@
 import QtQuick
 
 QtObject {
-    readonly property int floatingWindowWidth: 500
-    readonly property int floatingWindowHeight: 700
+    readonly property int floatingWindowWidth: 700
+    readonly property int floatingWindowHeight: 400
     readonly property int controlCenterWidth: 500
     readonly property int controlCenterHeight: 550
     readonly property int notificationWidth: 360
