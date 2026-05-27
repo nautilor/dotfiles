@@ -29,10 +29,10 @@
     "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
     "tooltip": true,
     "format-icons": {
-      "default": "",
-      "performance": "",
-      "balanced": "",
-      "power-saver": ""
+      "default": "󰈸",
+      "performance": "󰈸",
+      "balanced": "󰗑",
+      "power-saver": "󰌪"
     }
   },
   "group/extras": {
@@ -101,15 +101,15 @@
   "network": {
     "format-icons": {
       "wifi": [
-        "<span size='12pt'></span>",
-        "<span size='12pt'></span>",
-        "<span size='12pt'></span>",
-        "<span size='12pt'></span>",
-        "<span size='12pt'></span>"
+        "<span size='12pt'>󰤯</span>",
+        "<span size='12pt'>󰤟</span>",
+        "<span size='12pt'>󰤢</span>",
+        "<span size='12pt'>󰤥</span>",
+        "<span size='12pt'>󰤨</span>"
       ],
-      "ethernet": "<span size='12pt'></span>",
-      "disabled": "<span size='12pt'></span>",
-      "disconnected": "<span size='12pt'></span>"
+      "ethernet": "<span size='12pt'>󰈀</span>",
+      "disabled": "<span size='12pt'>󰤭</span>",
+      "disconnected": "<span size='12pt'>󰤭</span>"
     },
     "format-wifi": "{icon}",
     "format-ethernet": "{icon}",
@@ -138,7 +138,7 @@
   "pulseaudio#microphone": {
     "format": "{format_source}",
     "format-source": "",
-    "format-source-muted": "",
+    "format-source-muted": "󰍭",
     "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
     "tooltip-format": "Microphone disabled"
   },
@@ -151,20 +151,20 @@
     "format": "{icon}",
     "format-alt": "{capacity}%",
     "format-icons": [
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>",
-      "<span size='14pt'></span>"
+      "<span size='14pt'>󰁺</span>",
+      "<span size='14pt'>󰁻</span>",
+      "<span size='14pt'>󰁼</span>",
+      "<span size='14pt'>󰁽</span>",
+      "<span size='14pt'>󰁾</span>",
+      "<span size='14pt'>󰁿</span>",
+      "<span size='14pt'>󰂀</span>",
+      "<span size='14pt'>󰂁</span>",
+      "<span size='14pt'>󰂂</span>",
+      "<span size='14pt'>󰁹</span>"
     ],
-    "format-charging": "<span size='14pt'></span>",
+    "format-charging": "<span size='14pt'>󰂄</span>",
     "format-plugged": "<span size='14pt'>󰚥</span>",
-    "format-critical": "<span size='14pt'></span>",
+    "format-critical": "<span size='14pt'>󰂃</span>",
     "tooltip": true,
     "tooltip-format": "Charge: {capacity}%",
     "tooltip-format-charging": "Charging: {capacity}%"

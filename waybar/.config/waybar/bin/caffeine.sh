@@ -55,9 +55,9 @@ toggle() {
 
 icon() {
 		if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			echo '{"text":"","class":"active"}'
+			echo '{"text":"󰅶","class":"active"}'
     else
-			echo '{"text":"","class":"inactive"}'
+			echo '{"text":"󰅶","class":"inactive"}'
 		fi
 }
 
