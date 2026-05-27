@@ -395,6 +395,7 @@ tooltip * {
 #battery {
   margin: 0px;
   border-radius: 0px;
+  box-shadow: 0 1px 3px alpha(black, 0);
 }
 
 #battery {
