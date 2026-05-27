@@ -9,6 +9,13 @@ ShellRoot {
 	Launcher {}
 	Clipboard {}
 	WindowSwitcher {}
-	RoundCorner {}
+	Variants {
+		model: Quickshell.screens
+
+		RoundCorner {
+			required property var modelData
+			screen: modelData
+		}
+	}
 	Notifications {}
 }
