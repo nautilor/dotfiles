@@ -37,5 +37,3 @@ source ~/.zsh/tmux.zsh
 source ~/.zsh/node.zsh
 source ~/.zsh/java.zsh
 source ~/.zsh/ssh.zsh
-
-eval "$(fzf --zsh)"

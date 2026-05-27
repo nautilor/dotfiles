@@ -12,3 +12,7 @@ else
 		next_workspace=$(sed 'y/qwert/67899/' <<< "$1")
 		hyprctl dispatch movetoworkspacesilent $next_workspace
 fi
+
+if pgrep -x "waybar" >/dev/null 2>&1; then
+		pkill -SIGRTMIN+2 waybar
+fi

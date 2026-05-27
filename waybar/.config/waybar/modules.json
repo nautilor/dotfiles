@@ -12,14 +12,14 @@
   "custom/workspace-layout": {
     "exec": "~/.config/waybar/bin/workspace_layout.sh",
     "format": "{}",
-    "interval": 1,
+    "interval": 10,
     "signal": 2,
     "return-type": "json"
   },
   "custom/caffeine": {
     "exec": "~/.config/waybar/bin/caffeine.sh icon",
     "format": "{}",
-    "interval": 1,
+    "interval": 60,
     "signal": 1,
     "return-type": "json",
     "on-click": "~/.config/waybar/bin/caffeine.sh toggle"
