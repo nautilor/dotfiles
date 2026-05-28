@@ -165,6 +165,7 @@
     "format-charging": "<span size='14pt'>󰂄</span>",
     "format-plugged": "<span size='14pt'>󰚥</span>",
     "format-critical": "<span size='14pt'>󰂃</span>",
+    "format-full": "<span size='14pt'>󰁹</span>",
     "tooltip": true,
     "tooltip-format": "Charge: {capacity}%",
     "tooltip-format-charging": "Charging: {capacity}%"
