@@ -1,12 +1,12 @@
 * {
-	bg-primary:        #0B0B11;  
-	bg-secondary:      #16161F;  
-	bg-container:      #16161F;
-	primary:					 #3B4261;  
-	on-primary:        #A9B1D6;	
-	text-primary:      #A9B1D6;  
-	text-secondary:    #C8D3F5;  
-	text-disabled:     #C8D3F5;  
+	bg-primary:        #14141b;
+	bg-secondary:      #16161e;
+	bg-container:      #1b1d2a;
+	primary:           #7aa2f7;
+	on-primary:        #d6defb;
+	text-primary:      #c0caf5;
+	text-secondary:    #a9b1d6;
+	text-disabled:     #565f89;
 	background-color: transparent;
 	text-color:       @text-primary;
 }
@@ -57,5 +57,4 @@ element selected normal {
 	background-color: @primary;
 	text-color: @on-primary;
 }
-
 

@@ -5,26 +5,30 @@
 
  
 * {
-bg-primary:        #16161F;  /* main background */
+bg-primary:        #16161e;  /* main background */
+bg-surface:        #1b1d2a;  /* elevated panels */
+bg-container:      #222536;  /* container backgrounds */
 
-primary-container: #323750;  /* darker container for primary elements */
+primary:           #7aa2f7;  /* active / highlight */
+primary-container: #2a2f45;  /* darker container for primary elements */
+on-primary:        #d6defb;  /* text/icons on primary surfaces */
 
 /* Secondary colors */
-secondary:         #c0c0c0;  /* secondary text / less prominent elements */
-secondary-container:#242424; /* darker secondary surfaces */
+secondary:         #a9b1d6;  /* secondary text / less prominent elements */
+secondary-container:#222536; /* darker secondary surfaces */
 
 /* Surface layers (Adwaita-style elevation) */
-surface-1:         #121212;  /* subtle elevation */
-surface-2:         #202020;  /* intermediate elevation */
-surface-3:         #242424;  /* hover / panels / overlays */
+surface-1:         #16161e;  /* subtle elevation */
+surface-2:         #1b1d2a;  /* intermediate elevation */
+surface-3:         #222536;  /* hover / panels / overlays */
 
 /* Text colors */
-text-primary:      #a9b1d6;  /* main text */
-text-secondary:    #c0c0c0;  /* muted secondary text */
-text-disabled:     #8a8a8a;  /* disabled / low emphasis text */
+text-primary:      #c0caf5;  /* main text */
+text-secondary:    #a9b1d6;  /* muted secondary text */
+text-disabled:     #565f89;  /* disabled / low emphasis text */
 
 /* Borders */
-border-color:      #3d3d3d;  /* subtle border color for dividers / outlines */
+border-color:      #3b4261;  /* subtle border color for dividers / outlines */
     /* General UI */
     background-color: transparent;
     text-color:       @text-primary;
@@ -33,7 +37,7 @@ border-color:      #3d3d3d;  /* subtle border color for dividers / outlines */
 window {
     background-color: @bg-primary;
     border: 0px;
-		boorder-color: @border-color;
+    border-color: @border-color;
     border-radius: 24px;
     padding: 20px;
     width: 400px;
@@ -57,7 +61,7 @@ listview {
 }
 
 element {
-    background-color: @bg-background;
+    background-color: @surface-1;
     text-color: @text-primary;
     border-radius: 16px;
     padding: 14px 20px;
@@ -73,7 +77,7 @@ element-text {
 
 /* Normal state */
 element normal.normal {
-    background-color: @bg-background;
+    background-color: @surface-1;
     text-color: @text-primary;
 }
 
@@ -89,7 +93,7 @@ element selected.normal element-text {
 
 /* Alternate rows (same as normal for consistency) */
 element alternate.normal {
-    background-color: @bg-background;
+    background-color: @surface-1;
     text-color: @text-primary;
 }
 

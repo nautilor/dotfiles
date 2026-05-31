@@ -737,14 +737,14 @@ Scope {
 									width: 48
 									height: 48
 									radius: 14
-									color: "#c94f6d"
+									color: "#bb9af7"
 
 									RectangularShadow {
 										anchors.fill: parent
 										radius: parent.radius
 										blur: 12
 										spread: 0.05
-										color: Qt.rgba(0.3, 0.1, 0.15, 0.45)
+										color: Qt.rgba(0.16, 0.13, 0.28, 0.45)
 									}
 
 									Text {

@@ -8,31 +8,31 @@
 }
 
 * {
-bg-primary:        #16161F;  /* main background */
-bg-surface:        #242424;  /* elevated panels / hover surfaces */
-bg-container:      #262626;  /* container backgrounds / modal panels */
+bg-primary:        #16161e;  /* main background */
+bg-surface:        #1b1d2a;  /* elevated panels / hover surfaces */
+bg-container:      #222536;  /* container backgrounds / modal panels */
 
 /* Primary colors */
-primary:           #3B4261;  /* active / highlight / buttons */
-primary-container: #1f2a3a;  /* darker container for primary elements */
-on-primary:        #A9B1D6;  /* text/icons on primary surfaces */
+primary:           #7aa2f7;  /* active / highlight / buttons */
+primary-container: #2a2f45;  /* darker container for primary elements */
+on-primary:        #d6defb;  /* text/icons on primary surfaces */
 
 /* Secondary colors */
-secondary:         #c0c0c0;  /* secondary text / less prominent elements */
-secondary-container:#242424; /* darker secondary surfaces */
+secondary:         #a9b1d6;  /* secondary text / less prominent elements */
+secondary-container:#222536; /* darker secondary surfaces */
 
 /* Surface layers (Adwaita-style elevation) */
-surface-1:         #16161F;  /* subtle elevation */
-surface-2:         #202020;  /* intermediate elevation */
-surface-3:         #242424;  /* hover / panels / overlays */
+surface-1:         #16161e;  /* subtle elevation */
+surface-2:         #1b1d2a;  /* intermediate elevation */
+surface-3:         #222536;  /* hover / panels / overlays */
 
 /* Text colors */
-text-primary:      #A9B1D6;  /* main text */
-text-secondary:    #c0c0c0;  /* muted secondary text */
-text-disabled:     #54586b;  /* disabled text / placeholders */
+text-primary:      #c0caf5;  /* main text */
+text-secondary:    #a9b1d6;  /* muted secondary text */
+text-disabled:     #565f89;  /* disabled text / placeholders */
 
 /* Borders */
-border-color:      #3d3d3d;  /* subtle border color for dividers / outlines */
+border-color:      #3b4261;  /* subtle border color for dividers / outlines */
     /* General UI */
     background-color: transparent;
     text-color:       @text-primary;
