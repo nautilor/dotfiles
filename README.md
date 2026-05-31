@@ -261,7 +261,7 @@ power profile, battery, clock, extras group (tray, privacy)
 
 Custom scripts in `bin/`:
 - `pomodoro` — pomodoro timer binary
-- `caffeine.sh` — idle inhibit toggle status for the bar
+- `quickshell/bin/caffeine.sh` — idle inhibit toggle status for the bar
 - `workspace_layout.sh` — toggle workspace layout display
 
 ---

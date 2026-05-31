@@ -42,6 +42,16 @@ QtObject {
     readonly property int sliderHandleSize: 18
     readonly property int sliderHandleRadius: 9
     readonly property int textFieldLeftPadding: 5
+    readonly property int barHeight: 56
+    readonly property int barHorizontalPadding: 12
+    readonly property int barVerticalPadding: 10
+    readonly property int barSectionGap: 6
+    readonly property int barCapsuleHorizontalPadding: 12
+    readonly property int barCapsuleVerticalPadding: 3
+    readonly property int barCapsuleRadius: 19
+    readonly property int barWorkspaceButtonSize: 24
+    readonly property int barStatusButtonSize: 26
+    readonly property int barTrayIconSize: 16
 
     readonly property color floatingBgPrimary: "#131318"
     readonly property color floatingBgSecondary: "#1f1f25"
@@ -80,4 +90,16 @@ QtObject {
     readonly property color notificationError: "#ffb4ab"
     readonly property color notificationErrorContainer: "#93000a"
     readonly property color notificationOutlineVariant: "#46464f"
+    readonly property color barBgPrimary: "#131318"
+    readonly property color barCapsule: "#1f1f25"
+    readonly property color barCapsuleHover: "#2a292f"
+    readonly property color barTextPrimary: "#e4e1e9"
+    readonly property color barTextSecondary: "#c7c5d0"
+    readonly property color barTextDisabled: "#91909a"
+    readonly property color barAccent: "#bec2ff"
+    readonly property color barAccentContainer: "#444559"
+    readonly property color barOnAccentContainer: "#e1e0f9"
+    readonly property color barTertiary: "#e8b9d5"
+    readonly property color barError: "#ffb4ab"
+    readonly property color barOnError: "#690005"
 }

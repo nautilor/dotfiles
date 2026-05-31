@@ -1,3 +1,5 @@
+//@ pragma UseQApplication
+import qs.modules.bar
 import qs.modules.launcher
 import qs.modules.corner
 import qs.modules.notifications
@@ -6,6 +8,7 @@ import qs.modules.windowswitcher
 import Quickshell
 
 ShellRoot {
+	Bar {}
 	Launcher {}
 	Clipboard {}
 	WindowSwitcher {}

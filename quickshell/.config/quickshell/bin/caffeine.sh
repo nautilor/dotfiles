@@ -37,35 +37,35 @@ stop() {
 
 status() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			notify-send -i dialog-information "Caffeine" "Active"
+        notify-send -i dialog-information "Caffeine" "Active"
         exit 0
     else
-			notify-send -i dialog-information "Caffeine" "Inactive"
+        notify-send -i dialog-information "Caffeine" "Inactive"
         exit 1
     fi
 }
 
 toggle() {
-		if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-				stop
-		else
-				start
-		fi
+    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        stop
+    else
+        start
+    fi
 }
 
 icon() {
-		if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			echo '{"text":"󰅶","class":"active"}'
+    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        echo '{"text":"󰅶","class":"active"}'
     else
-			echo '{"text":"󰅶","class":"inactive"}'
-		fi
+        echo '{"text":"󰅶","class":"inactive"}'
+    fi
 }
 
 case "$1" in
     start)  start ;;
     stop)   stop ;;
     status) status ;;
-		toggle) toggle ;;
-		icon) icon ;;
+    toggle) toggle ;;
+    icon) icon ;;
     *) echo "Usage: $0 {start|stop|status|toggle|icon}" ;;
 esac
