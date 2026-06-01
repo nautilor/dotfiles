@@ -12,10 +12,11 @@
     "foreground": "#C0CAF5",
     "background": "#1A1B26",
     "surface": "#1A1B26",
-    "panel": "#1A1B26",
+    "panel": "#414868",
     "variables": {
       "border": "#414868",
-      "button-color-foreground": "#24283B"
+      "button-color-foreground": "#24283B",
+      "scrollbar-background": "#1A1B26"
     }
   }
 }
