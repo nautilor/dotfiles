@@ -11,7 +11,7 @@ cd ~/.dotfiles
 
 # Stow individual packages
 stow hypr kitty nvim tmux zsh waybar swaync swayosd rofi \
-     lazygit yazi zathura ideavim fd fzutils quickshell
+     lazygit yazi zathura ideavim fd fzutils quickshell kvantum
 ```
 
 Each top-level directory is a Stow package. Running `stow <package>` creates
@@ -292,6 +292,14 @@ Icon theme: `oomox-TokyoNight-Moon`, Font: Roboto 11.
 
 On-screen display for volume and brightness changes.
 Styled with rounded pill shape, JetBrainsMono Nerd Font.
+
+---
+
+### `kvantum` — Qt theme selection
+
+Selects the `palette-tokyo-dark` Kvantum theme for Qt apps. Theme assets are
+installed by `extra.sh` from
+[`nautilor/tokyo-dark-colloid-kvantum`](https://github.com/nautilor/tokyo-dark-colloid-kvantum).
 
 ---
 
