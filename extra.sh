@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+info()    { echo -e "${CYAN}${BOLD}==> ${RESET}${BOLD}$*${RESET}"; }
+success() { echo -e "${GREEN}${BOLD}  ✓ ${RESET}$*"; }
+warn()    { echo -e "${YELLOW}${BOLD}  ! ${RESET}$*"; }
+section() { echo -e "\n${BOLD}${CYAN}────────────────────────────────────────${RESET}"; \
+            echo -e "${BOLD}$*${RESET}"; \
+            echo -e "${BOLD}${CYAN}────────────────────────────────────────${RESET}"; }
+die()     { echo -e "${RED}${BOLD}error: ${RESET}$*" >&2; exit 1; }
+
 # ==============================================================================
 # Configure tpm (tmux plugin manager) to use a custom plugins directory.
 # ==============================================================================
@@ -50,21 +65,20 @@ fi
 # =============================================================================
 # Download and install the GTK theme and icons
 # =============================================================================
-GTK_THEME_REPO="https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme"
-GTK_THEME_TEMP_DIR="/tmp/tokyonight-gtk-theme"
-GTK_ICON_EXTRACT_DIR="$HOME/.local/share/icons/"
+GTK_THEME_REPO="https://github.com/nautilor/tokyo-dark-colloid"
+GTK_DESTINATION_FOLDER="$HOME/.themes/Tokyo Dark Colloid"
+GTK_ICONS_REPO="https://github.com/m4thewz/dracula-icons"
+GTK_ICONS_DESTINATION_FOLDER="$HOME/.icons/dracula-icons"
 
-# Download and install the GTK theme and icons
-git clone "$GTK_THEME_REPO" "$GTK_THEME_TEMP_DIR"
-cd "$GTK_THEME_TEMP_DIR/themes" || exit
-./install.sh --tweaks storm macos -l -d ~/.themes
-mkdir -p "$GTK_ICON_EXTRACT_DIR"
-cd "$GTK_THEME_TEMP_DIR/icons" || exit
-cp -R * "$GTK_ICON_EXTRACT_DIR"
+git clone "$GTK_THEME_REPO" "$GTK_DESTINATION_FOLDER"
+git clone "$GTK_ICONS_REPO" "$GTK_ICONS_DESTINATION_FOLDER"
 
-# Clean up temporary directories
-rm -rf "$GTK_THEME_TEMP_DIR"
+if [[ -d "$GTK_DESTINATION_FOLDER" && -d "$GTK_ICONS_DESTINATION_FOLDER" ]]; then
+		success "GTK theme and icons downloaded and installed successfully."
+else
+		die "Failed to download and install the GTK theme and icons."
+fi
 
 # Set the GTK theme and icons
-gsettings set org.gnome.desktop.interface gtk-theme "Tokyonight-Dark"
-gsettings set org.gnome.desktop.interface icon-theme "Tokyonight-Dark"
+gsettings set org.gnome.desktop.interface gtk-theme "Tokyo Dark Colloid"
+gsettings set org.gnome.desktop.interface icon-theme "Dracula"
