@@ -48,7 +48,6 @@ Scope {
 			readonly property color textDisabled: theme.barTextDisabled
 			readonly property color accent: theme.barAccent
 			readonly property color accentContainer: theme.barAccentContainer
-			readonly property color onAccentContainer: theme.barOnAccentContainer
 			readonly property color tertiary: theme.barTertiary
 			readonly property color error: theme.barError
 			readonly property color onError: theme.barOnError
@@ -449,7 +448,7 @@ Scope {
 									Text {
 										anchors.centerIn: parent
 										text: workspaceId
-										color: workspace && workspace.active ? onAccentContainer : (workspace && workspace.urgent ? error : (workspace && workspace.toplevels && workspace.toplevels.values.length === 0 ? Qt.alpha(textSecondary, 0.65) : textSecondary))
+										color: workspace && workspace.active ? textPrimary : (workspace && workspace.urgent ? error : (workspace && workspace.toplevels && workspace.toplevels.values.length === 0 ? Qt.alpha(textSecondary, 0.65) : textDisabled))
 										font.pixelSize: 14
 										font.weight: Font.DemiBold
 									}
