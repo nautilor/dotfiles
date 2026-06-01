@@ -448,7 +448,7 @@ Scope {
 									Text {
 										anchors.centerIn: parent
 										text: workspaceId
-										color: workspace && workspace.active ? textPrimary : (workspace && workspace.urgent ? error : (workspace && workspace.toplevels && workspace.toplevels.values.length === 0 ? Qt.alpha(textSecondary, 0.65) : textDisabled))
+										color: workspace && workspace.active && workspace.focused ? textPrimary : (workspace && workspace.urgent ? error : (workspace && workspace.toplevels && workspace.toplevels.values.length === 0 ? Qt.alpha(textSecondary, 0.65) : textDisabled))
 										font.pixelSize: 14
 										font.weight: Font.DemiBold
 									}
