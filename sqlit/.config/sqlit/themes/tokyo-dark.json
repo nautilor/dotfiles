@@ -1,0 +1,21 @@
+{
+  "_note": "Custom Tokyo night dark theme for sqlit.",
+  "theme": {
+    "name": "tokyo-dark",
+    "dark": true,
+    "primary": "#BB9AF7",
+    "secondary": "#7AA2F7",
+    "accent": "#BB9AF7",
+    "warning": "#E0AF68",
+    "error": "#F7768E",
+    "success": "#9ECE6A",
+    "foreground": "#C0CAF5",
+    "background": "#1A1B26",
+    "surface": "#1A1B26",
+    "panel": "#1A1B26",
+    "variables": {
+      "border": "#414868",
+      "button-color-foreground": "#24283B"
+    }
+  }
+}

@@ -1,2 +1,5 @@
 tmux/.config/tmux/plugins
+sqlit/.config/sqlit/connections.json
+sqlit/.config/sqlit/query_history.json
+sqlit/.config/sqlit/keymap.json
 .task.md
