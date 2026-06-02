@@ -255,17 +255,19 @@ Scope {
 			margins.bottom: screen.height / 5
 			exclusiveZone: 0
 
+			readonly property int shadowPadding: 16
+
 			// Ubuntu-like OSD: a bit taller and less wide.
-			implicitWidth: osd.mode === "message" ? osd.messagePillWidth : osd.osdWidth
-			implicitHeight: osd.osdHeight
+			implicitWidth: (osd.mode === "message" ? osd.messagePillWidth : osd.osdWidth) + (shadowPadding * 2)
+			implicitHeight: osd.osdHeight + (shadowPadding * 2)
 			color: "transparent"
 
 			// Prevent blocking mouse events behind the overlay
 			mask: Region {}
 
 			RectangularShadow {
-				anchors.fill: parent
-				radius: height / 2
+				anchors.fill: container
+				radius: container.radius
 				color: Qt.darker(theme.panelBgPrimary, 1.6)
 				blur: 5
 				spread: 0.2
@@ -275,6 +277,7 @@ Scope {
 			Rectangle {
 				id: container
 				anchors.fill: parent
+				anchors.margins: shadowPadding
 				radius: height / 2
 				color: theme.panelBgPrimary
 				border.width: 0
