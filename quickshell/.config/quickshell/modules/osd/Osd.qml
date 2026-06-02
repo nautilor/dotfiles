@@ -266,7 +266,7 @@ Scope {
 			RectangularShadow {
 				anchors.fill: parent
 				radius: height / 2
-				color: Qt.rgba(0, 0, 0, 0.25)
+				color: Qt.darker(theme.panelBgPrimary, 1.6)
 				blur: 5
 				spread: 0.2
 				offset: Qt.point(0, 4)
