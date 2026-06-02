@@ -34,7 +34,7 @@ Scope {
 		readonly property color bgPrimary: theme.floatingBgPrimary
 		readonly property color border: theme.floatingBorder
 		readonly property color textPrimary: theme.floatingTextPrimary
-		readonly property color accentBright: theme.floatingAccentBright
+		readonly property color accentBright: theme.floatingAccent
 
 		readonly property int pillWidth: 92
 		readonly property int pillPadding: 10
@@ -197,7 +197,7 @@ Scope {
 							Text {
 								anchors.centerIn: parent
 								text: modelData.glyph
-								color: selected ? powerMenu.bgPrimary : powerMenu.textPrimary
+								color: selected ? powerMenu.textPrimary : Qt.alpha(powerMenu.textPrimary, 0.5)
 								font.pixelSize: 30
 								font.weight: Font.DemiBold
 							}
