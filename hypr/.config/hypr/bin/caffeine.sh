@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-PIDFILE="$XDG_RUNTIME_DIR/caffeine.pid"
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/caffeine.pid"
+
+qs_ipc() {
+    qs ipc --any-display --newest call "$@" >/dev/null 2>&1 || true
+}
 
 start() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			swayosd-client --custom-message="Caffeine already active" --custom-icon="caffeine"
+        qs_ipc osd caffeine
         exit 0
     fi
 
@@ -16,55 +20,58 @@ start() {
 
     echo $! > "$PIDFILE"
 
-		swayosd-client --custom-message="Caffeine active" --custom-icon="caffeine"
-    pkill -SIGRTMIN+1 waybar
+    pkill -x -SIGRTMIN+1 waybar >/dev/null 2>&1 || true
+    qs_ipc osd caffeine
 }
 
 stop() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
         kill "$(cat "$PIDFILE")"
         rm -f "$PIDFILE"
-				swayosd-client --custom-message="Caffeine inactive" --custom-icon="caffeine"
-    else
-			swayosd-client --custom-message="Caffeine already inactive" --custom-icon="caffeine-off"
-				exit 0
     fi
 
-    pkill -SIGRTMIN+1 waybar
+    pkill -x -SIGRTMIN+1 waybar >/dev/null 2>&1 || true
+    qs_ipc osd caffeine
+}
+
+state() {
+    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        printf 'active\n'
+    else
+        printf 'inactive\n'
+    fi
 }
 
 status() {
-    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			swayosd-client --custom-message="Caffeine active" --custom-icon="caffeine" 
+    if [[ "$(state)" == "active" ]]; then
         exit 0
     else
-			swayosd-client --custom-message="Caffeine inactive" --custom-icon="caffeine"
         exit 1
     fi
 }
 
 toggle() {
-		if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-				stop
-		else
-				start
-		fi
+    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        stop
+    else
+        start
+    fi
 }
 
 icon() {
-		if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-			echo '{"text":"","class":"active"}'
+    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        echo '{"text":"󰅶","class":"active"}'
     else
-			echo '{"text":"","class":"inactive"}'
-		fi
+        echo '{"text":"󰅶","class":"inactive"}'
+    fi
 }
 
 case "$1" in
     start)  start ;;
     stop)   stop ;;
-    status) status ;;
-		toggle) toggle ;;
-		icon) icon ;;
-    *) echo "Usage: $0 {start|stop|status|toggle|icon}" ;;
+   state)  state ;;
+   status) status ;;
+   toggle) toggle ;;
+   icon) icon ;;
+   *) echo "Usage: $0 {start|stop|state|status|toggle|icon}" ;;
 esac
-

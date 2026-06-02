@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-PIDFILE="$XDG_RUNTIME_DIR/caffeine.pid"
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/caffeine.pid"
+
+qs_ipc() {
+    qs ipc --any-display --newest call "$@" >/dev/null 2>&1 || true
+}
 
 start() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-        notify-send -i dialog-information "Caffeine" "Already active"
+        qs_ipc osd caffeine
         exit 0
     fi
 
@@ -16,31 +20,32 @@ start() {
 
     echo $! > "$PIDFILE"
 
-    notify-send -i dialog-information "Caffeine Started" \
-        "System will not sleep"
-
     pkill -x -SIGRTMIN+1 waybar >/dev/null 2>&1 || true
+    qs_ipc osd caffeine
 }
 
 stop() {
     if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
         kill "$(cat "$PIDFILE")"
         rm -f "$PIDFILE"
-        notify-send -i dialog-information "Caffeine Stopped" \
-            "System can sleep"
-    else
-        notify-send -i dialog-information "Caffeine" "Not active"
     fi
 
     pkill -x -SIGRTMIN+1 waybar >/dev/null 2>&1 || true
+    qs_ipc osd caffeine
+}
+
+state() {
+    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        printf 'active\n'
+    else
+        printf 'inactive\n'
+    fi
 }
 
 status() {
-    if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-        notify-send -i dialog-information "Caffeine" "Active"
+    if [[ "$(state)" == "active" ]]; then
         exit 0
     else
-        notify-send -i dialog-information "Caffeine" "Inactive"
         exit 1
     fi
 }
@@ -64,8 +69,9 @@ icon() {
 case "$1" in
     start)  start ;;
     stop)   stop ;;
-    status) status ;;
-    toggle) toggle ;;
-    icon) icon ;;
-    *) echo "Usage: $0 {start|stop|status|toggle|icon}" ;;
+   state)  state ;;
+   status) status ;;
+   toggle) toggle ;;
+   icon) icon ;;
+   *) echo "Usage: $0 {start|stop|state|status|toggle|icon}" ;;
 esac

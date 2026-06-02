@@ -2,30 +2,55 @@
 
 set -euo pipefail
 
-mapfile -t SOURCES < <(pactl list short sources | awk '!/monitor/ {print $1}')
+qs_ipc() {
+	qs ipc --any-display --newest call "$@" >/dev/null 2>&1 || true
+}
 
-ANY_UNMUTED=false
-for id in "${SOURCES[@]}"; do
-	if [[ "$(pactl get-source-mute "$id" | awk '{print $2}')" == "no" ]]; then
-		ANY_UNMUTED=true
-		break
+sources() {
+	pactl list short sources 2>/dev/null | awk '!/monitor/ {print $1}'
+}
+
+is_any_unmuted() {
+	local id
+	while read -r id; do
+		[[ -n "${id:-}" ]] || continue
+		if [[ "$(pactl get-source-mute "$id" | awk '{print $2}')" == "no" ]]; then
+			return 0
+		fi
+	done < <(sources)
+	return 1
+}
+
+state() {
+	if is_any_unmuted; then
+		printf 'unmuted\n'
+	else
+		printf 'muted\n'
 	fi
-done
+}
 
-if $ANY_UNMUTED; then
-	TARGET=1
-	MESSAGE="Microphone muted"
-	ICON="microphone-sensitivity-muted"
-else
-	TARGET=0
-	MESSAGE="Microphone unmuted"
-	ICON="microphone-sensitivity-high"
-fi
+toggle() {
+	local target
+	if is_any_unmuted; then
+		target=1
+	else
+		target=0
+	fi
 
-for id in "${SOURCES[@]}"; do
-	pactl set-source-mute "$id" "$TARGET"
-done
+	local id
+	while read -r id; do
+		[[ -n "${id:-}" ]] || continue
+		pactl set-source-mute "$id" "$target"
+	done < <(sources)
 
-swayosd-client \
-	--custom-message="$MESSAGE" \
-	--custom-icon="$ICON"
+	qs_ipc osd mic
+}
+
+case "${1:-toggle}" in
+	state) state ;;
+	toggle) toggle ;;
+	*)
+		echo "Usage: $0 {toggle|state}" >&2
+		exit 2
+		;;
+esac

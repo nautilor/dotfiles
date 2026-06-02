@@ -17,6 +17,31 @@ Scope {
 	property real level: 0.0 // 0..1 for the progress bar
 	property int percent: 0
 	property bool muted: false
+	property string messageText: ""
+	property string messageIcon: ""
+
+	readonly property int osdWidth: 340
+	readonly property int osdHeight: 64
+	readonly property int messageMaxWidth: 420
+	readonly property int messageMinWidth: 220
+	readonly property int messageIconSize: 30
+	readonly property int messageSpacing: 12
+	readonly property int messagePaddingX: 18
+
+	TextMetrics {
+		id: messageMetrics
+		text: osd.messageText
+		font.pixelSize: 14
+		font.weight: Font.DemiBold
+	}
+
+	readonly property int messagePillWidth: {
+		// icon + spacing + text, plus horizontal padding on both sides
+		const textWidth = messageMetrics.width || 0;
+		const contentWidth = messageIconSize + messageSpacing + textWidth;
+		const width = Math.ceil(contentWidth + (messagePaddingX * 2));
+		return Math.min(messageMaxWidth, Math.max(messageMinWidth, width));
+	}
 
 	property int brightnessPercent: 0
 	property bool brightnessReady: false
@@ -55,7 +80,17 @@ Scope {
 		hideTimer.restart();
 	}
 
+	function showMessage(iconName, text) {
+		mode = "message";
+		messageIcon = iconName || "";
+		messageText = text || "";
+		shouldShowOsd = true;
+		hideTimer.restart();
+	}
+
 	readonly property string iconName: {
+		if (mode === "message")
+			return messageIcon;
 		if (mode === "brightness")
 			return "display-brightness-symbolic";
 
@@ -139,6 +174,38 @@ Scope {
 		}
 	}
 
+	Process {
+		id: caffeineStateReader
+		command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/caffeine.sh" state 2>/dev/null || true']
+		stdout: StdioCollector {
+			onStreamFinished: {
+				const state = (this.text || "").trim();
+				if (state === "active")
+					osd.showMessage("caffeine", "Caffeine active");
+				else if (state === "inactive")
+					osd.showMessage("caffeine-off", "Caffeine inactive");
+				else
+					osd.showMessage("caffeine", "Caffeine");
+			}
+		}
+	}
+
+	Process {
+		id: micStateReader
+		command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/mic_toggle.sh" state 2>/dev/null || true']
+		stdout: StdioCollector {
+			onStreamFinished: {
+				const state = (this.text || "").trim();
+				if (state === "muted")
+					osd.showMessage("microphone-sensitivity-muted", "Microphone muted");
+				else if (state === "unmuted")
+					osd.showMessage("microphone-sensitivity-high", "Microphone unmuted");
+				else
+					osd.showMessage("microphone-sensitivity-high", "Microphone");
+			}
+		}
+	}
+
 	IpcHandler {
 		target: "osd"
 
@@ -150,6 +217,16 @@ Scope {
 		function brightness() {
 			if (!brightnessPokeReader.running)
 				brightnessPokeReader.running = true;
+		}
+
+		function caffeine() {
+			if (!caffeineStateReader.running)
+				caffeineStateReader.running = true;
+		}
+
+		function mic() {
+			if (!micStateReader.running)
+				micStateReader.running = true;
 		}
 	}
 
@@ -178,8 +255,9 @@ Scope {
 			margins.bottom: screen.height / 5
 			exclusiveZone: 0
 
-			implicitWidth: 420
-			implicitHeight: 56
+			// Ubuntu-like OSD: a bit taller and less wide.
+			implicitWidth: osd.mode === "message" ? osd.messagePillWidth : osd.osdWidth
+			implicitHeight: osd.osdHeight
 			color: "transparent"
 
 			// Prevent blocking mouse events behind the overlay
@@ -203,21 +281,47 @@ Scope {
 				border.color: Qt.rgba(1, 1, 1, 0.08)
 
 				RowLayout {
-					anchors {
-						fill: parent
-						leftMargin: 14
-						rightMargin: 16
-					}
-					spacing: 12
+					id: messageRow
+					visible: osd.mode === "message"
+					anchors.centerIn: parent
+					spacing: osd.messageSpacing
 
 					IconImage {
-						implicitSize: 26
+						implicitSize: osd.messageIconSize
+						source: Quickshell.iconPath(osd.iconName)
+					}
+
+					Text {
+						text: osd.messageText
+						color: theme.panelTextPrimary
+						font.pixelSize: 14
+						font.weight: Font.DemiBold
+						elide: Text.ElideRight
+						maximumLineCount: 1
+						verticalAlignment: Text.AlignVCenter
+
+						readonly property int maxW: osd.messageMaxWidth - (osd.messagePaddingX * 2) - osd.messageIconSize - osd.messageSpacing
+						Layout.preferredWidth: Math.min(implicitWidth, maxW)
+					}
+				}
+
+				RowLayout {
+					visible: osd.mode !== "message"
+					anchors {
+						fill: parent
+						leftMargin: 16
+						rightMargin: 18
+					}
+					spacing: 14
+
+					IconImage {
+						implicitSize: 30
 						source: Quickshell.iconPath(osd.iconName)
 					}
 
 					Rectangle {
 						Layout.fillWidth: true
-						implicitHeight: 10
+						implicitHeight: 8
 						radius: 20
 						color: theme.panelTrack
 
