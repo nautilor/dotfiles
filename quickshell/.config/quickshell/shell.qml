@@ -5,6 +5,7 @@ import qs.modules.corner
 import qs.modules.notifications
 import qs.modules.clipboard
 import qs.modules.windowswitcher
+import qs.modules.osd
 import Quickshell
 
 ShellRoot {
@@ -12,6 +13,7 @@ ShellRoot {
 	Launcher {}
 	Clipboard {}
 	WindowSwitcher {}
+	Osd {}
 	Variants {
 		model: Quickshell.screens
 
