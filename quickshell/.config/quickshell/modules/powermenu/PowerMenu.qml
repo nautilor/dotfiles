@@ -41,6 +41,7 @@ Scope {
 		readonly property int itemSize: 72
 		readonly property int iconSize: 30
 		readonly property int selectedCircleSize: 58
+		readonly property int shadowPadding: 16
 
 		property int currentIndex: 0
 		property var entries: [
@@ -50,8 +51,8 @@ Scope {
 			{ glyph: "󰑓", action: "reboot", label: "Reboot" },
 		]
 
-		implicitWidth: pillWidth
-		implicitHeight: (entries.length * itemSize) + (pillPadding * 2)
+		implicitWidth: pillWidth + (shadowPadding * 2)
+		implicitHeight: (entries.length * itemSize) + (pillPadding * 2) + (shadowPadding * 2)
 
 		HyprlandFocusGrab {
 			id: focusGrab
@@ -63,7 +64,7 @@ Scope {
 			powerMenu.visible = true;
 			powerMenu.currentIndex = 0;
 			focusGrab.active = true;
-			container.forceActiveFocus();
+			powerMenu.forceActiveFocus();
 		}
 
 		function closeMenu() {
@@ -107,6 +108,14 @@ Scope {
 			}
 		}
 
+		Keys.onPressed: event => {
+			if (event.key === Qt.Key_Escape) {
+				powerMenu.closeMenu();
+				event.accepted = true;
+				return;
+			}
+		}
+
 		Item {
 			anchors.fill: parent
 
@@ -122,6 +131,7 @@ Scope {
 			Rectangle {
 				id: container
 				anchors.fill: parent
+				anchors.margins: powerMenu.shadowPadding
 				color: powerMenu.bgPrimary
 				opacity: 0.96
 				radius: width / 2
