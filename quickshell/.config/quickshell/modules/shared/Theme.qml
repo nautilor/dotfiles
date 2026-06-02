@@ -3,15 +3,11 @@ import QtQuick
 QtObject {
     readonly property int floatingWindowWidth: 700
     readonly property int floatingWindowHeight: 400
-    readonly property int controlCenterWidth: 500
-    readonly property int controlCenterHeight: 550
     readonly property int notificationWidth: 360
 
     readonly property int floatingWindowMargin: 8
     readonly property int floatingWindowRadius: 16
-    readonly property int controlCenterWindowRadius: 22
     readonly property int floatingContentPadding: 24
-    readonly property int controlCenterScrollPadding: 16
     readonly property int cardPadding: 14
     readonly property int panelInset: 12
     readonly property int listItemPadding: 12

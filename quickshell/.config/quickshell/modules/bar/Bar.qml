@@ -347,10 +347,6 @@ Scope {
 				}
 			}
 
-			Process {
-				id: controlCenterToggleProcess
-				command: ["quickshell", "ipc", "call", "controlCenter", "toggle"]
-			}
 
 			Process {
 				id: microphoneStatusProcess
