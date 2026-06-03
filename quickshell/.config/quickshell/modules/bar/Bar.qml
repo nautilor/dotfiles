@@ -574,7 +574,7 @@ Scope {
 								StatusButton {
 									visible: barWindow.microphoneMuted
 									text: "󰍭"
-									foreground: textDisabled
+									foreground: error
 
 									onClicked: {
 										if (!microphoneToggleProcess.running)
@@ -780,6 +780,7 @@ Scope {
 
 				property string text: ""
 				property color foreground: barWindow.textPrimary
+				property color background: "transparent"
 				property bool clickable: true
 				signal clicked()
 				signal rightClicked()
@@ -791,7 +792,7 @@ Scope {
 				Rectangle {
 					anchors.fill: parent
 					radius: width / 2
-					color: statusMouse.containsMouse && statusButton.clickable ? Qt.alpha(barWindow.textPrimary, 0.08) : "transparent"
+					color: statusMouse.containsMouse && statusButton.clickable ? Qt.alpha(barWindow.textPrimary, 0.08) : statusButton.background
 
 					Behavior on color {
 						ColorAnimation { duration: 150 }
