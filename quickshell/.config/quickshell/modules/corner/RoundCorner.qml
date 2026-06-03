@@ -2,11 +2,15 @@ import QtQuick
 import QtQuick.Shapes
 import Quickshell.Io
 import Quickshell
+import "../shared" as Shared
 
 PanelWindow {
   id: root
 	visible: true
-  property color mColor: "#000"
+
+	Shared.Theme { id: theme }
+
+  property color mColor: theme.barBgPrimary
 	aboveWindows: false
 	margins {
 		left: 0
