@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 action="${1-}"
@@ -27,7 +27,7 @@ case "$action" in
 esac
 
 # No action provided: show the rofi menu (legacy)
-if pgrep -x rofi >/dev/null; then
+if pgrep -f rofi >/dev/null; then
 	pkill -x rofi
 	exit 0
 fi

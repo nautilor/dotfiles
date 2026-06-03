@@ -12,7 +12,7 @@ set_wallpaper() {
 }
 
 init() {
-	if ! pgrep -x "awww-daemon" > /dev/null
+	if ! pgrep -f "awww-daemon" > /dev/null
 	then
 			awww-daemon & disown
 	fi

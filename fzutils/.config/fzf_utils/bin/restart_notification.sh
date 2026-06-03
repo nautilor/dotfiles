@@ -6,7 +6,7 @@ then
 		exit 1
 fi
 
-if pgrep -x "swaync" > /dev/null
+if pgrep -f "swaync" > /dev/null
 then
 	pkill -x swaync
 fi

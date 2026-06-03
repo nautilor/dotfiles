@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-if ! pgrep -x "quickshell" >/dev/null 2>&1; then
+if ! pgrep -f "quickshell" >/dev/null 2>&1; then
     quickshell >/dev/null 2>&1 &
     disown
     sleep 0.5

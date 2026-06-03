@@ -19,6 +19,6 @@ else
 		hyprctl dispatch workspace $next_workspace
 fi
 
-if pgrep -x "waybar" >/dev/null 2>&1; then
+if pgrep -f "waybar" >/dev/null 2>&1; then
 		pkill -SIGRTMIN+2 waybar
 fi

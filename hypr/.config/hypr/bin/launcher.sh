@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Check if quickshell is running
-pgrep -x "quickshell" > /dev/null
+pgrep -f "quickshell" > /dev/null
 if [ $? -ne 0 ]; then
 	quickshell & disown
 	sleep 0.5
