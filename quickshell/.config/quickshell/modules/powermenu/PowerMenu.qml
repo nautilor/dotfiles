@@ -35,8 +35,8 @@ Scope {
 		readonly property color accentBright: theme.floatingAccent
 
 		readonly property int pillWidth: 92
-		readonly property int pillPadding: 10
-		readonly property int itemSize: 72
+		readonly property int pillPadding: 0
+		readonly property int itemSize: 80
 		readonly property int iconSize: 30
 		readonly property int selectedCircleSize: 58
 		readonly property int shadowPadding: 16
@@ -49,7 +49,7 @@ Scope {
 			{ glyph: "󰑓", action: "reboot", label: "Reboot" },
 		]
 
-		implicitWidth: pillWidth + (shadowPadding * 2)
+		implicitWidth: pillWidth + (shadowPadding)
 		implicitHeight: (entries.length * itemSize) + (pillPadding * 2) + (shadowPadding * 2)
 
 		HyprlandFocusGrab {
@@ -159,7 +159,6 @@ Scope {
 				Column {
 					anchors {
 						fill: parent
-						margins: powerMenu.pillPadding
 					}
 					spacing: 0
 
