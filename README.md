@@ -68,7 +68,6 @@ Full Wayland desktop environment built on [Hyprland](https://hyprland.org/).
 | `battery_info.sh` | Battery notification daemon |
 | `grayscale.sh` | Toggle grayscale shader |
 | `workspace_focus` / `workspace_move` | Named-workspace focus/move (Q W E R T) |
-| `rofi_sessions` | Session switcher via Rofi |
 | `xdg-portal-restart.sh` | Restart XDG desktop portal on login |
 
 **Key bindings (highlights):**
