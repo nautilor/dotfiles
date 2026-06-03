@@ -23,12 +23,10 @@ Scope {
 
 		anchors {
 			right: true
-			top: true
 		}
 
 		margins {
-			right: 5
-			top: Math.max(0, Math.round((screen.height - powerMenu.implicitHeight) / 2))
+			right: -5 
 		}
 
 		readonly property color bgPrimary: theme.floatingBgPrimary
