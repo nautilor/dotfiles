@@ -43,10 +43,10 @@ Scope {
 
 		property int currentIndex: 0
 		property var entries: [
-			{ glyph: "", action: "poweroff", label: "Power off" },
-			{ glyph: "", action: "lock", label: "Lock" },
-			{ glyph: "", action: "exit", label: "Exit" },
-			{ glyph: "󰑓", action: "reboot", label: "Reboot" },
+			{ glyph: "󰐥", action: "poweroff", label: "Power off" },
+			{ glyph: "󰌾", action: "lock", label: "Lock" },
+			{ glyph: "󰅖", action: "exit", label: "Exit" },
+			{ glyph: "󰜉", action: "reboot", label: "Reboot" },
 		]
 
 		implicitWidth: pillWidth + (shadowPadding)

@@ -271,7 +271,7 @@ Scope {
 							spacing: theme.mediumGap
 
 							Text {
-								text: ""
+								text: "󰍉"
 								font.pixelSize: 22
 								color: clipboardWindow.textMuted
 							}
