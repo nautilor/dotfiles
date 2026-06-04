@@ -270,7 +270,7 @@ PanelWindow {
 
 											height: theme.notificationActionHeight
 											implicitWidth: cardInner.width / card.modelData.actions.length - (2 * card.modelData.actions.length)
-											radius: theme.smallGap
+											radius: theme.largeGap
 											color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdSecondaryContainer
 											Behavior on color { ColorAnimation { duration: 150 } }
 
