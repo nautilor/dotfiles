@@ -212,7 +212,8 @@ Scope {
 				case UPowerDeviceState.FullyCharged:
 					return "󰁹";
 				default: {
-					const percentage = batteryDevice.percentage || 0;
+					const raw = batteryDevice.percentage || 0;
+					const percentage = raw <= 1 ? raw * 100 : raw;
 					if (percentage <= 10)
 						return "󰂃";
 					if (percentage <= 20)
@@ -244,9 +245,11 @@ Scope {
 
 				if (batteryDevice.state === UPowerDeviceState.Charging || batteryDevice.state === UPowerDeviceState.PendingCharge || batteryDevice.state === UPowerDeviceState.FullyCharged)
 					return accent;
-				if (batteryDevice.percentage <= 10)
+				const raw = batteryDevice.percentage || 0;
+				const percentage = raw <= 1 ? raw * 100 : raw;
+				if (percentage <= 10)
 					return error;
-				if (batteryDevice.percentage <= 30)
+				if (percentage <= 30)
 					return tertiary;
 				return textPrimary;
 			}
@@ -255,8 +258,11 @@ Scope {
 				if (!batteryVisible)
 					return "";
 
-				if (batteryAlt)
-					return `${Math.round(batteryDevice.percentage || 0)}%`;
+				if (batteryAlt) {
+					const raw = batteryDevice.percentage || 0;
+					const percent = raw <= 1 ? raw * 100 : raw;
+					return `${Math.round(percent)}%`;
+				}
 
 				return batteryIcon();
 			}
