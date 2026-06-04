@@ -600,6 +600,7 @@ Scope {
 								StatusButton {
 									visible: barWindow.batteryVisible
 									text: barWindow.batteryText()
+									pixelSize: barWindow.batteryAlt ? 14 : 16
 									foreground: barWindow.batteryColor()
 
 									onClicked: {
@@ -788,6 +789,7 @@ Scope {
 				property color foreground: barWindow.textPrimary
 				property color background: "transparent"
 				property bool clickable: true
+				property int pixelSize: 16
 				signal clicked()
 				signal rightClicked()
 
@@ -809,7 +811,7 @@ Scope {
 					anchors.centerIn: parent
 					text: statusButton.text
 					color: statusButton.foreground
-					font.pixelSize: 16
+					font.pixelSize: statusButton.pixelSize
 					font.weight: Font.Medium
 				}
 
