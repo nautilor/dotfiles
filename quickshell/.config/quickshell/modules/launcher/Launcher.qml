@@ -153,7 +153,7 @@ Scope {
 											// Open file
 											Qt.openUrlExternally("https://" + target);
 										}
-										Qt.quit();
+										launcher.resetLauncher();
 									}
 								}];
 							} 
@@ -187,7 +187,7 @@ Scope {
 										comment: "Result: " + formattedResult,
 										icon: "accessories-calculator",
 										execute: function() {
-											Qt.quit();
+											launcher.resetLauncher();
 										}
 									}];
 								} catch (e) {
@@ -216,7 +216,7 @@ Scope {
 									execute: function() {
 										const url = "https://www.google.com/search?q=" + encodeURIComponent(query);
 										Qt.openUrlExternally(url);
-										Qt.quit();
+										launcher.resetLauncher();
 									}
 								}];
 							}
@@ -237,7 +237,7 @@ Scope {
 									execute: function() {
 										const url = "https://www.youtube.com/results?search_query=" + encodeURIComponent(query);
 										Qt.openUrlExternally(url);
-										Qt.quit();
+										launcher.resetLauncher();
 									}
 								}];
 							}
@@ -313,7 +313,7 @@ Scope {
 									icon: "document-open",
 									execute: function() {										
 										Qt.openUrlExternally(url);
-										Qt.quit();
+										launcher.resetLauncher();
 									}
 								}];
 							}
@@ -324,7 +324,7 @@ Scope {
 								execute: function() {
 									const url = "https://www.google.com/search?q=" + encodeURIComponent(launcher.query);
 									Qt.openUrlExternally(url);
-									Qt.quit();
+									launcher.resetLauncher();
 								}
 							}];
 						} else {
