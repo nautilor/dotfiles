@@ -12,9 +12,13 @@ _detect_pm() {
 function nd() {
   [[ ! -f package.json ]] && echo "No package.json found" && return 1
   local pm=$(_detect_pm)
+	local command="start"
+	if jq -e ".scripts.dev" package.json > /dev/null; then
+		command="dev"
+	fi
   case $pm in
-    deno) deno run --allow-net --allow-read dev.ts ;;
-    *)    $pm run dev ;;
+    deno) deno run --allow-net --allow-read $command.ts ;;
+    *)    $pm run $command ;;
   esac
 }
 
