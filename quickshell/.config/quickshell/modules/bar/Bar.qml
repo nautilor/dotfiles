@@ -142,7 +142,7 @@ Scope {
 				if (!device || device.type !== DeviceType.Wifi || !activeWifiNetwork)
 					return "󰤭";
 
-				const strength = activeWifiNetwork.signalStrength || 0;
+				const strength = (activeWifiNetwork.signalStrength || 0) * 100;
 				if (strength >= 80)
 					return "󰤨";
 				if (strength >= 55)
