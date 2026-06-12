@@ -5,6 +5,9 @@ local M = {}
 
 local config = {
 	filename = ".task.md",
+	-- optional: override where per-project task files are stored
+	-- default: ~/.local/share/shadow-task
+	storage_dir = nil,
 	keys = {
 		open     = "<C-0>",
 		annotate = "<leader>ta",
@@ -13,7 +16,7 @@ local config = {
 		add      = "o",
 		above    = "O",
 		delete   = "dd",
-		jump     = "gx",
+		jump     = "gd",
 	},
 	float = {
 		width = 0.7,
@@ -39,17 +42,61 @@ local function project_name(root)
 	return vim.fn.fnamemodify(root, ":t")
 end
 
+local function project_hash(root)
+	-- prefer sha256, fallback to sha1
+	local ok = pcall(vim.fn.sha256, root)
+	if ok then return vim.fn.sha256(root) end
+	return vim.fn.sha1(root)
+end
+
+local function storage_root_dir()
+	if config.storage_dir and config.storage_dir ~= "" then
+		return vim.fn.expand(config.storage_dir)
+	end
+	return vim.fn.expand('~/.local/share/shadow-task')
+end
+
+local function storage_root(root)
+	return storage_root_dir() .. '/' .. project_hash(root)
+end
+
+local function storage_filename()
+	-- store without leading dot to avoid cluttering projects (e.g. task.md)
+	local s = config.filename:gsub('^%.', '')
+	return s
+end
+
+local function storage_task_path(root)
+	return storage_root(root) .. '/' .. storage_filename()
+end
+
+local function original_task_path(root)
+	return root .. '/' .. config.filename
+end
+
 local function task_path(root)
-	return root .. "/" .. config.filename
+	-- store per-project task file inside Neovim data (e.g. ~/.local/share/nvim/shadow-task/<hash>/.task.md)
+	return storage_task_path(root)
 end
 
 local function is_task_buf(bufnr)
 	local name = vim.api.nvim_buf_get_name(bufnr or 0)
-	return name:sub(- #config.filename) == config.filename
+	if name == "" then return false end
+	if name:sub(- #config.filename) == config.filename then return true end
+	local sfn = storage_filename()
+	if name:sub(- #sfn) == sfn then return true end
+	return false
 end
 
 local function task_root(bufnr)
-	local path = vim.api.nvim_buf_get_name(bufnr or 0)
+	bufnr = bufnr or 0
+	-- prefer explicit project root stored on buffer
+	local ok, proj = pcall(vim.api.nvim_buf_get_var, bufnr, 'task_project_root')
+	if ok and proj and proj ~= vim.NIL then
+		return proj
+	end
+
+	local path = vim.api.nvim_buf_get_name(bufnr)
 	if path == "" then return nil end
 	return vim.fn.fnamemodify(path, ":h")
 end
@@ -80,17 +127,33 @@ local function next_state(current)
 end
 
 local function ensure_task_file(root)
-	local path = task_path(root)
+	local orig = original_task_path(root)
+	local storage = task_path(root)
 
-	if vim.fn.filereadable(path) == 0 then
-		local f = io.open(path, "w")
+	-- if project contains a .task.md, move it into storage (unless storage already has one)
+	if vim.fn.filereadable(orig) == 1 then
+		-- ensure storage dir exists
+		vim.fn.mkdir(storage_root(root), "p")
+		if vim.fn.filereadable(storage) == 0 then
+			-- rename (move) original into storage
+			pcall(vim.fn.rename, orig, storage)
+		else
+			-- storage already has file; remove original to avoid committing
+			pcall(vim.fn.delete, orig)
+		end
+	end
+
+	-- ensure storage file exists
+	if vim.fn.filereadable(storage) == 0 then
+		vim.fn.mkdir(storage_root(root), "p")
+		local f = io.open(storage, "w")
 		if f then
 			f:write("\n- [ ] \n")
 			f:close()
 		end
 	end
 
-	return path
+	return storage
 end
 
 local function focus_first_task_line(win, bufnr)
@@ -400,6 +463,9 @@ function M.open_task_file()
 	local path = ensure_task_file(root)
 
 	vim.cmd("edit " .. vim.fn.fnameescape(path))
+	-- attach project root to buffer so task logic can resolve code links
+	local bufnr = vim.api.nvim_get_current_buf()
+	pcall(vim.api.nvim_buf_set_var, bufnr, 'task_project_root', root)
 	focus_first_task_line(0, 0)
 end
 
@@ -411,6 +477,8 @@ function M.open_task_float()
 
 	vim.fn.bufload(bufnr)
 	vim.bo[bufnr].bufhidden = "hide"
+	-- attach project root to buffer so task logic can resolve code links
+	pcall(vim.api.nvim_buf_set_var, bufnr, 'task_project_root', root)
 
 	local win = vim.api.nvim_open_win(bufnr, true, float_layout(root))
 	vim.w.task_origin_win = origin_win
@@ -522,7 +590,7 @@ function M.setup(opts)
 	vim.api.nvim_create_user_command("TaskJump", jump_to_code, { desc = "Jump from task to linked code" })
 
 	vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile", "BufWinEnter" }, {
-		pattern = { "*/" .. config.filename, config.filename },
+		pattern = { "*/" .. config.filename, "*/" .. storage_filename(), config.filename, storage_filename() },
 		callback = function(ev)
 			if not is_task_buf(ev.buf) then return end
 
