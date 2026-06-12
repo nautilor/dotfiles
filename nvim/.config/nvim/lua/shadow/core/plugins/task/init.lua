@@ -116,6 +116,7 @@ end
 
 local cycle_states = { " ", "-", "x" }
 local refresh_highlights
+local float_windows = {}
 
 local function next_state(current)
 	for i, s in ipairs(cycle_states) do
@@ -471,6 +472,18 @@ end
 
 function M.open_task_float()
 	local root = find_git_root() or vim.fn.getcwd()
+
+	-- toggle: if a float for this project is open, close it
+	local existing = float_windows[root]
+	if existing then
+		if vim.api.nvim_win_is_valid(existing) then
+			vim.api.nvim_win_close(existing, true)
+		else
+			float_windows[root] = nil
+		end
+		return
+	end
+
 	local path = ensure_task_file(root)
 	local origin_win = vim.api.nvim_get_current_win()
 	local bufnr = vim.fn.bufadd(path)
@@ -483,6 +496,19 @@ function M.open_task_float()
 	local win = vim.api.nvim_open_win(bufnr, true, float_layout(root))
 	vim.w.task_origin_win = origin_win
 	focus_first_task_line(win, bufnr)
+
+	-- remember mapping so subsequent calls toggle
+	float_windows[root] = win
+
+	-- clean mapping when window closes
+	vim.api.nvim_create_autocmd("WinClosed", {
+		callback = function(ev)
+			local closed = tonumber(ev.match)
+			if float_windows[root] == closed then
+				float_windows[root] = nil
+			end
+		end,
+	})
 
 	return win
 end
