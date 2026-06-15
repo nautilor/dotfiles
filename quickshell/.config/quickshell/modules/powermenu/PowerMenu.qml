@@ -205,6 +205,7 @@ Scope {
 								anchors.centerIn: parent
 								text: modelData.glyph
 								color: selected ? powerMenu.textPrimary : Qt.alpha(powerMenu.textPrimary, 0.5)
+								font.family: "JetBrainsMono Nerd Font Propo"
 								font.pixelSize: 30
 								font.weight: Font.DemiBold
 							}
