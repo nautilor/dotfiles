@@ -72,7 +72,7 @@ keymap.set("n", "<leader>bd", ":bd!<Return>", nopts)
 keymap.set("n", "<leader>/", ":nohlsearch<Return>", nopts)
 
 -- Code Diff current File
-keymap.set("n", "<leader>gd", ":CodeDiff file HEAD<Return>", nopts)
+keymap.set("n", "<leader>gd", ":CodeDiff HEAD<Return>", nopts)
 
 -- Split
 keymap.set("n", "sv", ":split<Return>", nopts)
