@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 current_path="$1"
-session="$(echo "$current_path" | md5sum | cut -c1-5)"
+session="$(echo "copilot-$current_path" | md5sum | cut -c1-5)"
 current_session="$(tmux display-message -p '#S' 2>/dev/null)"
 if ! tmux has-session -t "$session" 2>/dev/null; then
 	tmux new-session -d -s "$session" -c "#{pane_current_path}" "copilot"
