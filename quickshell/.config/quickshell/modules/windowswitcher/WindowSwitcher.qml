@@ -40,12 +40,16 @@ Scope {
             const count = Math.max(1, allWindows.length);
             return (switcherItemWidth * count) + (theme.listGap * Math.max(0, count - 1));
         }
-				readonly property int switcherMaxContentWidth: switcherColumns * switcherItemWidth + Math.max(0, switcherColumns - 1) * theme.listGap
+
+        // Calculate how many columns can actually fit on the screen to avoid going off-edge
+        readonly property int effectiveColumns: Math.max(1, Math.min(switcherColumns, Math.floor((screen.width - switcherFramePadding + theme.listGap) / (switcherItemWidth + theme.listGap))))
+
+        readonly property int switcherMaxContentWidth: effectiveColumns * switcherItemWidth + Math.max(0, effectiveColumns - 1) * theme.listGap
 
         visible: false
         color: "transparent"
 				implicitWidth: (windowSwitcher.allWindows.length > 0) ? Math.min(switcherContentWidth, switcherMaxContentWidth) : switcherItemWidth
-				implicitHeight: (windowSwitcher.allWindows.length > 0) ? Math.ceil(allWindows.length / switcherColumns) * switcherItemHeight : switcherItemHeight
+				implicitHeight: (windowSwitcher.allWindows.length > 0) ? Math.ceil(allWindows.length / windowSwitcher.effectiveColumns) * switcherItemHeight : switcherItemHeight
         exclusionMode: ExclusionMode.Normal
         focusable: true
 
@@ -344,7 +348,7 @@ Scope {
 											property int currentIndex: 0
 											readonly property int itemCount: windowSwitcher.allWindows.length
 											readonly property var currentItem: currentIndex >= 0 ? gridRepeater.itemAt(currentIndex) : null
-											columns: windowSwitcher.switcherColumns
+											columns: windowSwitcher.effectiveColumns
 											columnSpacing: theme.listGap
 
 											function moveHorizontally(step) {
