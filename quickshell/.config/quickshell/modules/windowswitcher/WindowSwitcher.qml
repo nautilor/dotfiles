@@ -30,8 +30,8 @@ Scope {
         readonly property color accentBright: theme.floatingAccentBright
         readonly property color success: theme.floatingSuccess
 
-        readonly property int previewWidth: 128 * 2
-        readonly property int previewHeight: 76 * 2
+        readonly property int previewWidth: 128 * 3
+        readonly property int previewHeight: 76 * 3
         readonly property int switcherItemWidth: previewWidth + (theme.listItemPadding * 2)
         readonly property int switcherItemHeight: previewHeight + (theme.listItemPadding * 2)
         readonly property int switcherColumns: 5
