@@ -489,6 +489,18 @@ Scope {
 															live: true
 														}
 
+														// Application icon badge to help distinguish windows
+														IconImage {
+															z: 3
+															anchors.left: parent.left
+															anchors.bottom: parent.bottom
+															anchors.margins: 8
+															implicitSize: Math.min(32, Math.max(20, windowSwitcher.previewHeight / 6))
+															// Best-effort icon lookup from className; fall back to lowercase title initials
+															source: Quickshell.iconPath((modelData.className || modelData.title || "").toString().toLowerCase().replace(/\s+/g, "-"), true)
+															visible: source !== ""
+														}
+
 														Column {
 															anchors.centerIn: parent
 															visible: !entry.matchedToplevel
