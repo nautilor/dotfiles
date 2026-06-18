@@ -307,6 +307,7 @@ Scope {
 					spacing: osd.messageSpacing
 
 					Item {
+						id: messageIconItem
 						implicitWidth: osd.messageIconSize
 						implicitHeight: osd.messageIconSize
 
@@ -315,8 +316,8 @@ Scope {
 
 						Text {
 							anchors.fill: parent
-							visible: glyph !== ""
-							text: glyph
+							visible: messageIconItem.glyph !== ""
+							text: messageIconItem.glyph
 							color: theme.panelTextPrimary
 							font.pixelSize: osd.messageIconSize
 							horizontalAlignment: Text.AlignHCenter
@@ -325,9 +326,9 @@ Scope {
 
 						IconImage {
 							anchors.fill: parent
-							visible: glyph === ""
+							visible: messageIconItem.glyph === ""
 							implicitSize: osd.messageIconSize
-							source: Quickshell.iconPath(iName)
+							source: Quickshell.iconPath(messageIconItem.iName)
 						}
 					}
 
@@ -355,6 +356,7 @@ Scope {
 					spacing: 14
 
 					Item {
+						id: volumeIconItem
 						implicitWidth: 30
 						implicitHeight: 30
 
@@ -363,8 +365,8 @@ Scope {
 
 						Text {
 							anchors.fill: parent
-							visible: glyph !== ""
-							text: glyph
+							visible: volumeIconItem.glyph !== ""
+							text: volumeIconItem.glyph
 							color: theme.panelTextPrimary
 							font.pixelSize: 30
 							horizontalAlignment: Text.AlignHCenter
@@ -373,9 +375,9 @@ Scope {
 
 						IconImage {
 							anchors.fill: parent
-							visible: glyph === ""
+							visible: volumeIconItem.glyph === ""
 							implicitSize: 30
-							source: Quickshell.iconPath(iName)
+							source: Quickshell.iconPath(volumeIconItem.iName)
 						}
 					}
 
