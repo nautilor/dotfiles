@@ -99,7 +99,7 @@ Scope {
 		case "microphone-sensitivity-muted":
 			return "󰍭"; // mic muted glyph (used in waybar)
 		case "microphone-sensitivity-high":
-			return "󰍰"; // mic (unmuted) - fallback glyph
+			return "󰍬"; // mic (unmuted) - fallback glyph
 		default:
 			return "";
 		}
