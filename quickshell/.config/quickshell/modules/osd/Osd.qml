@@ -88,6 +88,23 @@ Scope {
 		hideTimer.restart();
 	}
 
+	// Map certain message/icon names to Nerd Font glyphs so OSD doesn't rely on the icon theme.
+	function glyphFor(name) {
+		if (!name)
+			return "";
+		switch (name) {
+		case "caffeine":
+		case "caffeine-off":
+			return "󰅶"; // caffeine glyph used elsewhere in configs
+		case "microphone-sensitivity-muted":
+			return "󰍭"; // mic muted glyph (used in waybar)
+		case "microphone-sensitivity-high":
+			return "󰍰"; // mic (unmuted) - fallback glyph
+		default:
+			return "";
+		}
+	}
+
 	readonly property string iconName: {
 		if (mode === "message")
 			return messageIcon;
@@ -289,9 +306,29 @@ Scope {
 					anchors.centerIn: parent
 					spacing: osd.messageSpacing
 
-					IconImage {
-						implicitSize: osd.messageIconSize
-						source: Quickshell.iconPath(osd.iconName)
+					Item {
+						implicitWidth: osd.messageIconSize
+						implicitHeight: osd.messageIconSize
+
+						property string iName: osd.messageIcon
+						property string glyph: osd.glyphFor(iName)
+
+						Text {
+							anchors.fill: parent
+							visible: glyph !== ""
+							text: glyph
+							color: theme.panelTextPrimary
+							font.pixelSize: osd.messageIconSize
+							horizontalAlignment: Text.AlignHCenter
+							verticalAlignment: Text.AlignVCenter
+						}
+
+						IconImage {
+							anchors.fill: parent
+							visible: glyph === ""
+							implicitSize: osd.messageIconSize
+							source: Quickshell.iconPath(iName)
+						}
 					}
 
 					Text {
@@ -317,9 +354,29 @@ Scope {
 					}
 					spacing: 14
 
-					IconImage {
-						implicitSize: 30
-						source: Quickshell.iconPath(osd.iconName)
+					Item {
+						implicitWidth: 30
+						implicitHeight: 30
+
+						property string iName: osd.iconName
+						property string glyph: osd.glyphFor(iName)
+
+						Text {
+							anchors.fill: parent
+							visible: glyph !== ""
+							text: glyph
+							color: theme.panelTextPrimary
+							font.pixelSize: 30
+							horizontalAlignment: Text.AlignHCenter
+							verticalAlignment: Text.AlignVCenter
+						}
+
+						IconImage {
+							anchors.fill: parent
+							visible: glyph === ""
+							implicitSize: 30
+							source: Quickshell.iconPath(iName)
+						}
 					}
 
 					Rectangle {
