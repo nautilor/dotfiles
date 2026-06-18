@@ -35,7 +35,14 @@ Scope {
 		font.weight: Font.DemiBold
 	}
 
+	readonly property int messageIconPillWidth: 280
 	readonly property int messagePillWidth: {
+		// For caffeine and microphone messages, use a consistent fixed pill width so they
+		// always render the same size. Other messages keep dynamic sizing.
+		const iconMessages = ["caffeine", "caffeine-off", "microphone-sensitivity-muted", "microphone-sensitivity-high"];
+		if (mode === "message" && iconMessages.indexOf(messageIcon) !== -1)
+			return messageIconPillWidth;
+
 		// icon + spacing + text, plus horizontal padding on both sides
 		const textWidth = messageMetrics.width || 0;
 		const contentWidth = messageIconSize + messageSpacing + textWidth;
@@ -341,7 +348,7 @@ Scope {
 						maximumLineCount: 1
 						verticalAlignment: Text.AlignVCenter
 
-						readonly property int maxW: osd.messageMaxWidth - (osd.messagePaddingX * 2) - osd.messageIconSize - osd.messageSpacing
+						readonly property int maxW: osd.messagePillWidth - (osd.messagePaddingX * 2) - osd.messageIconSize - osd.messageSpacing
 						Layout.preferredWidth: Math.min(implicitWidth, maxW)
 					}
 				}
