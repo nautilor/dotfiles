@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
-OPTIONS=("Original" "Default")
+OPTIONS=("Original" "Zoomed")
+DEFAULT_MONITOR="eDP-1"
+MONITOR=$(hyprctl monitors -j | jq '.[] | select(.focused)')
+NAME=$(echo "$MONITOR" | jq -r '.name')
+POSITION=$([ $NAME == $DEFAULT_MONITOR ] && echo "0x0" || echo "auto-up")
 SELECTED=$(printf '%s\n' "${OPTIONS[@]}" | fzf --prompt="Select notification type: " --border)
-
 case $SELECTED in
 		"Original")
-			 hyprctl keyword monitor "eDP-1,highres@highrr,0x0,1"
+			 hyprctl keyword monitor "$NAME,highres@highrr,$POSITION,1"
 				;;
-		"Default")
-			 hyprctl keyword monitor "eDP-1,highres@highrr,0x0,2"
+		"Zoomed")
+			 hyprctl keyword monitor "$NAME,highres@highrr,$POSTION,2"
 				;;
 esac
