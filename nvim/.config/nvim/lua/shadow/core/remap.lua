@@ -89,7 +89,7 @@ keymap.set("n", "<C-l>", ":LazyGit<Return>", nopts)
 -- Snacks Picker
 keymap.set({ "i", "n" }, "<C-o>", function() require("snacks").picker.files() end, nopts)
 keymap.set({ "i", "n" }, "<C-f>", function() require("snacks").picker.grep({ toggle = true }) end, nopts)
-keymap.set({ "i", "n" }, "<C-b>", function() require("snacks").picker.buffers({ toggle = true }) end, nopts)
+keymap.set({ "n" }, "q", function() require("snacks").picker.buffers({ toggle = true }) end, nopts)
 
 -- LSP
 keymap.set("n", "gd", function() require("snacks").picker.lsp_definitions() end, nopts)
