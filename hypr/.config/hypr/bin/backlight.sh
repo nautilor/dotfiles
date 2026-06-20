@@ -15,10 +15,6 @@ function set() {
 	echo "$state" > "$TEMP_FILE"
 }
 
-function init() {
-	set "off"
-}
-
 current_state=$(cat "$TEMP_FILE" 2>/dev/null || echo "off")
 case "$current_state" in
 	off)
@@ -30,11 +26,8 @@ case "$current_state" in
 	med)
 		set "high"
 		;;
-	high)
-		set "off"
-		;;
 	*)
-		init
+		set "off"
 		;;
 esac
 

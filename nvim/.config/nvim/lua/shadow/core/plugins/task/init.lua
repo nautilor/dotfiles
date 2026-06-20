@@ -42,11 +42,10 @@ local function project_name(root)
 	return vim.fn.fnamemodify(root, ":t")
 end
 
+-- project_hash removed: use project_name(root) for storage directory names
 local function project_hash(root)
-	-- prefer sha256, fallback to sha1
-	local ok = pcall(vim.fn.sha256, root)
-	if ok then return vim.fn.sha256(root) end
-	return vim.fn.sha1(root)
+	-- kept for compatibility but returns the project name (no hashing)
+	return project_name(root)
 end
 
 local function storage_root_dir()
@@ -57,7 +56,8 @@ local function storage_root_dir()
 end
 
 local function storage_root(root)
-	return storage_root_dir() .. '/' .. project_hash(root)
+	-- use project name rather than a hash so stored projects are discoverable
+	return storage_root_dir() .. '/' .. project_name(root)
 end
 
 local function storage_filename()
@@ -147,12 +147,27 @@ local function ensure_task_file(root)
 	-- ensure storage file exists
 	if vim.fn.filereadable(storage) == 0 then
 		vim.fn.mkdir(storage_root(root), "p")
+		-- record original project root for later resolution (so listing/jump can work)
+		local meta = storage_root(root) .. '/.project_root'
+		pcall(function()
+			local mf = io.open(meta, "w")
+			if mf then mf:write(root .. "\n") mf:close() end
+		end)
 		local f = io.open(storage, "w")
 		if f then
 			f:write("\n- [ ] \n")
 			f:close()
 		end
 	end
+
+	-- ensure metadata exists even if original was moved in earlier branch
+	pcall(function()
+		local meta = storage_root(root) .. '/.project_root'
+		if vim.fn.filereadable(meta) == 0 then
+			local mf = io.open(meta, "w")
+			if mf then mf:write(root .. "\n") mf:close() end
+		end
+	end)
 
 	return storage
 end
@@ -513,10 +528,150 @@ function M.open_task_float()
 	return win
 end
 
-----------------------------------------------------------------------
+-- open task float for an arbitrary project root (used by TaskProjects)
+function M.open_task_float_for_root(root)
+	if not root or root == '' then return nil end
+
+	-- toggle: if a float for this project is open, close it
+	local existing = float_windows[root]
+	if existing then
+		if vim.api.nvim_win_is_valid(existing) then
+			vim.api.nvim_win_close(existing, true)
+		else
+			float_windows[root] = nil
+		end
+		return
+	end
+
+	-- ensure storage exists for this root
+	local path = ensure_task_file(root)
+	local origin_win = vim.api.nvim_get_current_win()
+	local bufnr = vim.fn.bufadd(path)
+
+	vim.fn.bufload(bufnr)
+	vim.bo[bufnr].bufhidden = "hide"
+	-- attach the provided project root so code links resolve
+	pcall(vim.api.nvim_buf_set_var, bufnr, 'task_project_root', root)
+
+	local win = vim.api.nvim_open_win(bufnr, true, float_layout(root))
+	vim.w.task_origin_win = origin_win
+	focus_first_task_line(win, bufnr)
+
+	-- remember mapping so subsequent calls toggle
+	float_windows[root] = win
+
+	-- clean mapping when window closes
+	vim.api.nvim_create_autocmd("WinClosed", {
+		callback = function(ev)
+			local closed = tonumber(ev.match)
+			if float_windows[root] == closed then
+				float_windows[root] = nil
+			end
+		end,
+	})
+
+	return win
+end
+
+--- Project listing and management
+local function list_projects()
+	local dir = storage_root_dir()
+	if vim.fn.isdirectory(dir) == 0 then return {} end
+	local entries = vim.fn.readdir(dir)
+	if type(entries) ~= 'table' then return {} end
+	table.sort(entries)
+	return entries
+end
+
+local function project_storage_root_by_name(name)
+	return storage_root_dir() .. '/' .. name
+end
+
+local function project_task_file_by_name(name)
+	return project_storage_root_by_name(name) .. '/' .. storage_filename()
+end
+
+local function project_meta_root(name)
+	local meta = project_storage_root_by_name(name) .. '/.project_root'
+	if vim.fn.filereadable(meta) == 0 then return nil end
+	local lines = vim.fn.readfile(meta)
+	return lines and lines[1] or nil
+end
+
+local function show_projects()
+	local projects = list_projects()
+	if #projects == 0 then
+		vim.notify("No projects with tasks found in " .. storage_root_dir(), vim.log.levels.INFO)
+		return
+	end
+
+	vim.ui.select(projects, { prompt = "Select project" }, function(choice)
+		if not choice then return end
+
+		local actions = { "Open tasks", "Delete tasks", "Show path", "Cancel" }
+		vim.ui.select(actions, { prompt = "Action for " .. choice }, function(action)
+			if not action or action == "Cancel" then return end
+			local path = project_task_file_by_name(choice)
+			if action == "Open tasks" then
+				local real_root = project_meta_root(choice)
+				-- prefer opening float attached to original project root when available
+				if real_root and vim.fn.isdirectory(real_root) == 1 then
+					M.open_task_float_for_root(real_root)
+					return
+				end
+				-- fallback: open stored task file in a floating window
+				if vim.fn.filereadable(path) == 0 then
+					vim.notify("Task file missing for " .. choice, vim.log.levels.ERROR)
+					return
+				end
+				local bufnr = vim.fn.bufadd(path)
+				vim.fn.bufload(bufnr)
+				vim.bo[bufnr].bufhidden = "hide"
+				-- attach storage-based project root so jumps do something sensible
+				pcall(vim.api.nvim_buf_set_var, bufnr, 'task_project_root', project_storage_root_by_name(choice))
+				local win = vim.api.nvim_open_win(bufnr, true, float_layout(project_storage_root_by_name(choice)))
+				vim.w.task_origin_win = vim.api.nvim_get_current_win()
+				focus_first_task_line(win, bufnr)
+				float_windows[project_storage_root_by_name(choice)] = win
+				vim.api.nvim_create_autocmd("WinClosed", {
+					callback = function(ev)
+						local closed = tonumber(ev.match)
+						if float_windows[project_storage_root_by_name(choice)] == closed then
+							float_windows[project_storage_root_by_name(choice)] = nil
+						end
+					end,
+				})
+			elseif action == "Delete tasks" then
+				vim.ui.select({"Yes", "No"}, { prompt = "Delete project tasks for " .. choice .. "? (irreversible)" }, function(confirm)
+					if confirm ~= "Yes" then return end
+					local dir = project_storage_root_by_name(choice)
+					if vim.fn.isdirectory(dir) == 0 then
+						vim.notify("Project storage not found: " .. dir, vim.log.levels.WARN)
+						return
+					end
+					-- remove recursively
+					local ok, err = pcall(function() vim.fn.delete(dir, "rf") end)
+					if not ok then
+						vim.notify("Failed to delete: " .. tostring(err), vim.log.levels.ERROR)
+					else
+						vim.notify("Deleted tasks for " .. choice, vim.log.levels.INFO)
+					end
+				end)
+			elseif action == "Show path" then
+				local real_root = project_meta_root(choice)
+				if real_root then
+					vim.notify("Original project root: " .. real_root, vim.log.levels.INFO)
+				else
+					vim.notify("Stored task path: " .. path, vim.log.levels.INFO)
+				end
+			end
+		end)
+	end)
+end
+
+---------------------------------------------------------------------
 -- buffer setup
 ----------------------------------------------------------------------
-
 local function setup_keymaps(bufnr)
 	local k = config.keys
 	local opts = { buffer = bufnr, silent = true }
@@ -603,6 +758,11 @@ function M.setup(opts)
 	vim.api.nvim_create_user_command("TaskFloat", function()
 		M.open_task_float()
 	end, { desc = "Open task file in floating window" })
+
+	-- list stored projects and manage their task files
+	vim.api.nvim_create_user_command("TaskProjects", function()
+		show_projects()
+	end, { desc = "List stored projects and open/delete task files" })
 
 	vim.api.nvim_create_user_command("TaskAnnotate", function(opts)
 		annotate_code({
