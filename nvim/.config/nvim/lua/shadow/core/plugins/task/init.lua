@@ -10,6 +10,7 @@ local config = {
 	storage_dir = nil,
 	keys = {
 		open     = "<C-0>",
+		projects = "<C-9>",
 		annotate = "<leader>ta",
 		toggle   = "<CR>",
 		cycle    = "<Tab>",
@@ -151,7 +152,10 @@ local function ensure_task_file(root)
 		local meta = storage_root(root) .. '/.project_root'
 		pcall(function()
 			local mf = io.open(meta, "w")
-			if mf then mf:write(root .. "\n") mf:close() end
+			if mf then
+				mf:write(root .. "\n")
+				mf:close()
+			end
 		end)
 		local f = io.open(storage, "w")
 		if f then
@@ -165,7 +169,10 @@ local function ensure_task_file(root)
 		local meta = storage_root(root) .. '/.project_root'
 		if vim.fn.filereadable(meta) == 0 then
 			local mf = io.open(meta, "w")
-			if mf then mf:write(root .. "\n") mf:close() end
+			if mf then
+				mf:write(root .. "\n")
+				mf:close()
+			end
 		end
 	end)
 
@@ -642,21 +649,22 @@ local function show_projects()
 					end,
 				})
 			elseif action == "Delete tasks" then
-				vim.ui.select({"Yes", "No"}, { prompt = "Delete project tasks for " .. choice .. "? (irreversible)" }, function(confirm)
-					if confirm ~= "Yes" then return end
-					local dir = project_storage_root_by_name(choice)
-					if vim.fn.isdirectory(dir) == 0 then
-						vim.notify("Project storage not found: " .. dir, vim.log.levels.WARN)
-						return
-					end
-					-- remove recursively
-					local ok, err = pcall(function() vim.fn.delete(dir, "rf") end)
-					if not ok then
-						vim.notify("Failed to delete: " .. tostring(err), vim.log.levels.ERROR)
-					else
-						vim.notify("Deleted tasks for " .. choice, vim.log.levels.INFO)
-					end
-				end)
+				vim.ui.select({ "Yes", "No" }, { prompt = "Delete project tasks for " .. choice .. "? (irreversible)" },
+					function(confirm)
+						if confirm ~= "Yes" then return end
+						local dir = project_storage_root_by_name(choice)
+						if vim.fn.isdirectory(dir) == 0 then
+							vim.notify("Project storage not found: " .. dir, vim.log.levels.WARN)
+							return
+						end
+						-- remove recursively
+						local ok, err = pcall(function() vim.fn.delete(dir, "rf") end)
+						if not ok then
+							vim.notify("Failed to delete: " .. tostring(err), vim.log.levels.ERROR)
+						else
+							vim.notify("Deleted tasks for " .. choice, vim.log.levels.INFO)
+						end
+					end)
 			elseif action == "Show path" then
 				local real_root = project_meta_root(choice)
 				if real_root then
@@ -743,6 +751,10 @@ function M.setup(opts)
 	-- global key to open task file
 	vim.keymap.set("n", config.keys.open, function()
 		M.open_task_float()
+	end, { silent = true, desc = "Task: open float" })
+
+	vim.keymap.set("n", config.keys.projects, function()
+		show_projects()
 	end, { silent = true, desc = "Task: open float" })
 
 	if config.keys.annotate then
