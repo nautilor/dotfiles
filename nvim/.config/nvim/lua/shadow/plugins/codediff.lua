@@ -10,7 +10,7 @@ return {
 				view = {
 					toggle_explorer = "<leader>e",
 					focus_explorer = "<leader>b",
-					close = "q",
+					close = "<leader>q",
 					switch_diff = "<tab>",
 					next_file = "]f",
 					prev_file = "[f",

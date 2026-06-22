@@ -43,12 +43,6 @@ local function project_name(root)
 	return vim.fn.fnamemodify(root, ":t")
 end
 
--- project_hash removed: use project_name(root) for storage directory names
-local function project_hash(root)
-	-- kept for compatibility but returns the project name (no hashing)
-	return project_name(root)
-end
-
 local function storage_root_dir()
 	if config.storage_dir and config.storage_dir ~= "" then
 		return vim.fn.expand(config.storage_dir)
@@ -443,8 +437,6 @@ end
 
 local function setup_highlights()
 	local normal = vim.api.nvim_get_hl(0, { name = "NormalFloat", link = false })
-	local title = vim.api.nvim_get_hl(0, { name = "FloatTitle", link = false })
-	local border = vim.api.nvim_get_hl(0, { name = "FloatBorder", link = false })
 	local title_bg = 0x87E2FC
 	local title_fg = normal.bg or 0x000000
 	vim.api.nvim_set_hl(0, "TaskDone", { link = "Comment" })
@@ -685,7 +677,7 @@ local function setup_keymaps(bufnr)
 	local opts = { buffer = bufnr, silent = true }
 
 	local function smart_insert_start()
-		local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+		local row, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
 		local line = vim.api.nvim_get_current_line()
 
 		-- match empty task line
@@ -698,7 +690,7 @@ local function setup_keymaps(bufnr)
 	end
 
 	local function smart_append()
-		local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+		local row, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
 		local line = vim.api.nvim_get_current_line()
 
 		if line:match("^%s*%- %[ %] $") then
