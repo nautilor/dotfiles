@@ -36,6 +36,7 @@ Scope {
 				classes: ["inactive"],
 			})
 			property bool microphoneMuted: false
+			property bool recording: false
 			property bool batteryAlt: false
 			property bool clockAlt: false
 			property date currentTime: new Date()
@@ -368,10 +369,30 @@ Scope {
 			Process {
 				id: microphoneToggleProcess
 				command: ["bash", "-lc", 'pactl set-source-mute @DEFAULT_SOURCE@ toggle']
-
+				
 				onRunningChanged: {
 					if (!running && !microphoneStatusProcess.running)
 						microphoneStatusProcess.running = true;
+				}
+			}
+
+			Process {
+				id: recorderStatusProcess
+				command: ["bash", "-lc", '[ -f /tmp/recorder_pid ] && echo "recording" || echo "stopped"']
+				stdout: StdioCollector {
+					onStreamFinished: {
+						barWindow.recording = this.text.trim() === "recording";
+					}
+				}
+			}
+
+			Process {
+				id: recorderToggleProcess
+				command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/recorder.sh"']
+				
+				onRunningChanged: {
+					if (!running && !recorderStatusProcess.running)
+						recorderStatusProcess.running = true;
 				}
 			}
 
@@ -398,6 +419,8 @@ Scope {
 						caffeineStatusProcess.running = true;
 					if (!microphoneStatusProcess.running)
 						microphoneStatusProcess.running = true;
+					if (!recorderStatusProcess.running)
+						recorderStatusProcess.running = true;
 				}
 			}
 
@@ -577,16 +600,26 @@ Scope {
 									}
 								}
 
-								StatusButton {
-									visible: barWindow.microphoneMuted
-									text: "󰍭"
-									foreground: error
-
-									onClicked: {
-										if (!microphoneToggleProcess.running)
-											microphoneToggleProcess.running = true;
+									StatusButton {
+										visible: barWindow.microphoneMuted
+										text: "󰍭"
+										foreground: error
+					
+										onClicked: {
+											if (!microphoneToggleProcess.running)
+												microphoneToggleProcess.running = true;
+										}
 									}
-								}
+
+									StatusButton {
+										text: barWindow.recording ? "●" : ""
+										foreground: barWindow.recording ? error : barWindow.textDisabled
+										pixelSize: 12
+										onClicked: {
+											if (!recorderToggleProcess.running)
+												recorderToggleProcess.running = true;
+										}
+									}
 
 								StatusButton {
 									text: barWindow.powerProfileIcon()
