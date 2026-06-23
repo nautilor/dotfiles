@@ -132,38 +132,10 @@ Scope {
 					}
 
 					function parseCommand(cmd) {
-						const parts = cmd.slice(1).split(" ").filter(p => p.trim() !== "");
-						const command = parts[0];
-						const args = parts.slice(1);
+						const command = cmd.slice(1).trim();
+						const args = command.split(/\s+/);
 
-						// Example commands
-						if (command === "open" || command === "o") {
-							// Open a URL or file
-							if (args.length > 0) {
-								const target = args.join(" ");
-								return [{
-									name: `Open ${target}`,
-									comment: `Open ${target} with default application`,
-									icon: "document-open",
-									execute: function() {
-										if (target.startsWith("http://") || target.startsWith("https://")) {
-											// Open URL
-											Qt.openUrlExternally(target);
-										} else {
-											// Open file
-											Qt.openUrlExternally("https://" + target);
-										}
-										launcher.resetLauncher();
-									}
-								}];
-							} 
-							return [{
-								name: "Open Command",
-								comment: "Usage: :open, :o <URL>",
-								icon: "document-open",
-								execute : function() {}
-							}];	
-						} else if (command === "calc" || command === "c") {
+						if (command !== "") {
 							if (args.length > 0) {
 								try {
 									const expression = args.join(" ");
@@ -201,255 +173,183 @@ Scope {
 							}
 							return [{
 								name: "Calculator Command",
-								comment: "Usage: :calc, :c <expression>",
+								comment: "Usage: :<expression>",
 								icon: "accessories-calculator",
 								execute : function() {}
 							}];
-						} else if (command === "google" || command === "g") {
-							// Google search
-							if (args.length > 0) {
-								const query = args.join(" ");
-								return [{
-									name: `Search Google for "${query}"`,
-									comment: `Open in web browser`,
-									icon: "internet-web-browser",
-									execute: function() {
-										const url = "https://www.google.com/search?q=" + encodeURIComponent(query);
-										Qt.openUrlExternally(url);
-										launcher.resetLauncher();
-									}
-								}];
-							}
-							return [{
-								name: "Google Search Command",
-								comment: "Usage: :google, :g <search terms>",
-								icon: "internet-web-browser",
-								execute : function() {}
-							}];
-						} else if (command === "youtube" || command === "y") {
-							// YouTube search
-							if (args.length > 0) {
-								const query = args.join(" ");
-								return [{
-									name: `Search YouTube for "${query}"`,
-									comment: `Open in web browser`,
-									icon: "applications-multimedia",
-									execute: function() {
-										const url = "https://www.youtube.com/results?search_query=" + encodeURIComponent(query);
-										Qt.openUrlExternally(url);
-										launcher.resetLauncher();
-									}
-								}];
-							}
-							return [{
-								name: "YouTube Search Command",
-								comment: "Usage: :youtube, :y <search terms>",
-								icon: "applications-multimedia",
-								execute : function() {}
-							}];
 						}
-						return [{
-							name: "Unknown command",
-							comment: `No such command: ${command}`,
-							icon: "dialog-error",
-							execute: function() {}
-						}];
 					}
 
-					values: {
-						const allEntries = [...DesktopEntries.applications.values];
-						const q = launcher.query.trim().toLowerCase();
-						if (q.startsWith(":")) {
-							if (q.length === 1) {
-								return [{
-									name: "Command Mode",
-									comment: "Enter a command to execute custom actions",
-									icon: "system-run",
-									execute: function() {}
-								},
-								{
-									name: "Calculator",
-									comment: "Examples: :calc 2+2 , :c sqrt(16)",
-									icon: "accessories-calculator",
-									execute: function() {}
-								},
-								{
-									name: "Open URL or File",
-									comment: "Examples: :open https://example.com , :o example.com",
-									icon: "document-open",
-									execute: function() {}
-								},
-								{
-									name: "Google Search",
-									comment: "Examples: :google cats , :g qt framework",
-									icon: "internet-web-browser",
-									execute: function() {}
-								},
-								{
-									name: "YouTube Search",
-									comment: "Examples: :youtube music videos , :y funny cats",
-									icon: "applications-multimedia",
-									execute: function() {}
-								}];
+						values: {
+							const allEntries = [...DesktopEntries.applications.values];
+							const q = launcher.query.trim().toLowerCase();
+							if (q.startsWith(":")) {
+								if (q.length === 1) {
+									return [{
+										name: "Calculator",
+										comment: "Examples: :2+2, :sqrt(16)",
+										icon: "accessories-calculator",
+										execute: function() {}
+									}];
+								}
+								return parseCommand(q);
 							}
-							return parseCommand(q);
-						}
-						allEntries.sort((a, b) => a.name.localeCompare(b.name));
+							allEntries.sort((a, b) => a.name.localeCompare(b.name));
 
-						if (q === "") {
-							return allEntries;
-						} else {
-							const entries = allEntries.filter(d => 
-							d.name && d.name.toLowerCase().includes(q) || d.exec && d.exec.toLowerCase().includes(q)
-						);
-						if (entries.length === 0) {
-							// check if query looks like a URL
-							const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-							if (urlPattern.test(q)) {
-								const url = q.startsWith("http://") || q.startsWith("https://") ? q : "https://" + q;
+							if (q === "") {
+								return allEntries;
+							} else {
+								const entries = allEntries.filter(d => 
+								d.name && d.name.toLowerCase().includes(q) || d.exec && d.exec.toLowerCase().includes(q)
+							);
+							if (entries.length === 0) {
+								// check if query looks like a URL
+								const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
+								if (urlPattern.test(q)) {
+									const url = q.startsWith("http://") || q.startsWith("https://") ? q : "https://" + q;
+									return [{
+										name: `Open ${url}`,
+										comment: `Open ${url} with default application`,
+										icon: "document-open",
+										execute: function() {										
+											Qt.openUrlExternally(url);
+											launcher.resetLauncher();
+										}
+									}];
+								}
 								return [{
-									name: `Open ${url}`,
-									comment: `Open ${url} with default application`,
-									icon: "document-open",
-									execute: function() {										
+									name: "Search the web",
+									comment: `No results found for "${launcher.query}", search the web instead`,
+									icon: "internet-web-browser",
+									execute: function() {
+										const url = "https://www.google.com/search?q=" + encodeURIComponent(launcher.query);
 										Qt.openUrlExternally(url);
 										launcher.resetLauncher();
 									}
 								}];
+							} else {
+								return entries;
 							}
-							return [{
-								name: "Search the web",
-								comment: `No results found for "${launcher.query}", search the web instead`,
-								icon: "internet-web-browser",
-								execute: function() {
-									const url = "https://www.google.com/search?q=" + encodeURIComponent(launcher.query);
-									Qt.openUrlExternally(url);
-									launcher.resetLauncher();
-								}
-							}];
-						} else {
-							return entries;
 						}
 					}
 				}
-			}
 
-			// Results list
-			ScrollView {
-				Layout.fillWidth: true
-				Layout.fillHeight: true
-				clip: true
-				ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-				ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+				// Results list
+				ScrollView {
+					Layout.fillWidth: true
+					Layout.fillHeight: true
+					clip: true
+					ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+					ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-				ListView {
-					id: list
-					model: filtered.values
-					currentIndex: filtered.values.length > 0 ? 0 : -1
-					spacing: theme.listGap
-					orientation: ListView.Vertical
-					keyNavigationWraps: false
-					preferredHighlightBegin: 0
-					preferredHighlightEnd: height
-					highlightRangeMode: ListView.ApplyRange
-					highlightMoveDuration: 150
-					highlightMoveVelocity: -1
+					ListView {
+						id: list
+						model: filtered.values
+						currentIndex: filtered.values.length > 0 ? 0 : -1
+						spacing: theme.listGap
+						orientation: ListView.Vertical
+						keyNavigationWraps: false
+						preferredHighlightBegin: 0
+						preferredHighlightEnd: height
+						highlightRangeMode: ListView.ApplyRange
+						highlightMoveDuration: 150
+						highlightMoveVelocity: -1
 
-					highlight: Rectangle {
-						radius: theme.listItemRadius
-						color: launcher.accent
-						opacity: 0.75
-
-						Behavior on y {
-							NumberAnimation { 
-								duration: 150
-								easing.type: Easing.OutCubic
-							}
-						}
-					}
-
-					delegate: Item {
-						id: entry
-						required property var modelData
-						required property int index
-						width: parent.width
-						height: 67
-
-						MouseArea {
-							anchors.fill: parent
-							hoverEnabled: true
-							cursorShape: Qt.PointingHandCursor
-
-							onClicked: list.currentIndex = entry.index
-							onDoubleClicked: launcher.launchSelected()
-						}
-						Rectangle {
-
-							color: "transparent"
+						highlight: Rectangle {
 							radius: theme.listItemRadius
-							width: parent.width
-							height: parent.height
+							color: launcher.accent
+							opacity: 0.75
 
-							RowLayout {
-								anchors.fill: parent
-								anchors.margins: theme.listItemPadding
-								spacing: 0
-
-								// Icon container
-								Rectangle {
-									width: parent.height
-									height: parent.height
-									radius: 10
-									color: "transparent"
-									Layout.alignment: Qt.AlignCenter
-
-									IconImage {
-										anchors.centerIn: parent
-										source: Quickshell.iconPath(modelData.icon, true)
-										width: parent.width - 8
-										height: parent.height - 8
-										smooth: true
-									}
-								}
-								ColumnLayout {
-									Layout.fillWidth: true
-									Layout.leftMargin: 6
-									Layout.rightMargin: 6
-									// App name
-									Text {
-										Layout.fillWidth: true
-										Layout.leftMargin: 4
-										Layout.rightMargin: 4
-										color: launcher.textPrimary
-										text: modelData.name
-										font.pixelSize: 14
-										font.weight: Font.Medium
-										elide: Text.ElideRight
-										verticalAlignment: Text.AlignVCenter
-										horizontalAlignment: Text.AlignLeft
-									}
-									Text {
-										Layout.fillWidth: true
-										Layout.leftMargin: 4
-										Layout.rightMargin: 4
-										color: launcher.textMuted
-										opacity: 0.8
-										text: modelData.comment
-										font.pixelSize: 12
-										font.weight: Font.Medium
-										elide: Text.ElideRight
-										verticalAlignment: Text.AlignVCenter
-										horizontalAlignment: Text.AlignLeft
-									}
+							Behavior on y {
+								NumberAnimation { 
+									duration: 150
+									easing.type: Easing.OutCubic
 								}
 							}
-
 						}
-					}
 
-					Keys.onReturnPressed: launcher.launchSelected()
+						delegate: Item {
+							id: entry
+							required property var modelData
+							required property int index
+							width: parent.width
+							height: 67
+
+							MouseArea {
+								anchors.fill: parent
+								hoverEnabled: true
+								cursorShape: Qt.PointingHandCursor
+
+								onClicked: list.currentIndex = entry.index
+								onDoubleClicked: launcher.launchSelected()
+							}
+							Rectangle {
+
+								color: "transparent"
+								radius: theme.listItemRadius
+								width: parent.width
+								height: parent.height
+
+								RowLayout {
+									anchors.fill: parent
+									anchors.margins: theme.listItemPadding
+									spacing: 0
+
+									// Icon container
+									Rectangle {
+										width: parent.height
+										height: parent.height
+										radius: 10
+										color: "transparent"
+										Layout.alignment: Qt.AlignCenter
+
+										IconImage {
+											anchors.centerIn: parent
+											source: Quickshell.iconPath(modelData.icon, true)
+											width: parent.width - 8
+											height: parent.height - 8
+											smooth: true
+										}
+									}
+									ColumnLayout {
+										Layout.fillWidth: true
+										Layout.leftMargin: 6
+										Layout.rightMargin: 6
+										// App name
+										Text {
+											Layout.fillWidth: true
+											Layout.leftMargin: 4
+											Layout.rightMargin: 4
+											color: launcher.textPrimary
+											text: modelData.name
+											font.pixelSize: 14
+											font.weight: Font.Medium
+											elide: Text.ElideRight
+											verticalAlignment: Text.AlignVCenter
+											horizontalAlignment: Text.AlignLeft
+										}
+										Text {
+											Layout.fillWidth: true
+											Layout.leftMargin: 4
+											Layout.rightMargin: 4
+											color: launcher.textMuted
+											opacity: 0.8
+											text: modelData.comment
+											font.pixelSize: 12
+											font.weight: Font.Medium
+											elide: Text.ElideRight
+											verticalAlignment: Text.AlignVCenter
+											horizontalAlignment: Text.AlignLeft
+										}
+									}
+								}
+
+							}
+						}
+
+						Keys.onReturnPressed: launcher.launchSelected()
+					}
 				}
-			}
 
 				Rectangle {
 					Layout.fillWidth: true
@@ -527,17 +427,17 @@ Scope {
 					}
 				}
 
+			}
 		}
 	}
-}
-IpcHandler {
-	target: "launcher"
-	function toggle() {
-		launcher.visible = !launcher.visible;
-		if (launcher.visible) {
-			input.focus = true;
-			input.selectAll();
+	IpcHandler {
+		target: "launcher"
+		function toggle() {
+			launcher.visible = !launcher.visible;
+			if (launcher.visible) {
+				input.focus = true;
+				input.selectAll();
+			}
 		}
 	}
-}
 }
