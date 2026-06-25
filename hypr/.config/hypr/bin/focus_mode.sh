@@ -22,6 +22,16 @@ enable_focus_mode() {
 			bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-toggle >/dev/null 2>&1 || true
 		fi
 	fi
+
+	# Hide QuickShell RoundCorner module if QuickShell is running (or start it)
+	if command -v qs >/dev/null 2>&1; then
+		if ! pgrep -f "quickshell" >/dev/null 2>&1; then
+			quickshell >/dev/null 2>&1 &
+			disown
+			sleep 0.2
+		fi
+		qs ipc --any-display --newest call root toggle >/dev/null 2>&1 || true
+	fi
 }
 
 disable_focus_mode() {
@@ -33,6 +43,16 @@ disable_focus_mode() {
 		if [[ "$(bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status)" == "on" ]]; then
 			bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-toggle >/dev/null 2>&1 || true
 		fi
+	fi
+
+	# Restore QuickShell RoundCorner module (toggle back)
+	if command -v qs >/dev/null 2>&1; then
+		if ! pgrep -f "quickshell" >/dev/null 2>&1; then
+			quickshell >/dev/null 2>&1 &
+			disown
+			sleep 0.2
+		fi
+		qs ipc --any-display --newest call root toggle >/dev/null 2>&1 || true
 	fi
 }
 
