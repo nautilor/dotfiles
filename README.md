@@ -10,7 +10,7 @@ git clone <repo-url> ~/.dotfiles
 cd ~/.dotfiles
 
 # Stow individual packages
-stow hypr kitty nvim tmux zsh waybar swayosd rofi \
+stow hypr kitty nvim tmux zsh waybar rofi \
      lazygit yazi zathura ideavim fd fzutils quickshell kvantum
 ```
 
@@ -90,7 +90,7 @@ Full Wayland desktop environment built on [Hyprland](https://hyprland.org/).
 | `Super + ,/.` | Brightness down/up |
 
 **Dependencies:** `hyprpm`, `hypridle`, `hyprlock`, `hyprsunset`, `waybar`,
-`swayosd`, `quickshell`, `rofi`, `kitty`, `clipse`, `wl-clip-persist`,
+`quickshell`, `rofi`, `kitty`, `clipse`, `wl-clip-persist`,
 `nm-applet`, `playerctl`, `brightnessctl`, `polkit-gnome`, `spotify-launcher`
 
 ---
@@ -288,10 +288,11 @@ Icon theme: `oomox-TokyoNight-Moon`, Font: Roboto 11.
 
 ---
 
-### `swayosd` — Volume / brightness OSD
+### `OSD` — Volume / brightness on-screen display
 
-On-screen display for volume and brightness changes.
-Styled with rounded pill shape, JetBrainsMono Nerd Font.
+Implemented via `hypr/bin/osd.sh` which sends OSD updates to QuickShell. Provides
+on-screen feedback for volume and brightness changes. Styled via QuickShell's
+theme and uses JetBrainsMono Nerd Font.
 
 ---
 
@@ -397,7 +398,7 @@ These scripts are invoked from the Hyprland `fzf_utilities.sh` launcher.
 ```
 # Wayland / Desktop
 hyprland hyprlock hypridle hyprsunset hyprpm
-waybar swayosd quickshell
+waybar quickshell
 rofi kitty clipse wl-clip-persist
 nm-applet playerctl brightnessctl
 polkit-gnome spotify-launcher
