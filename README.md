@@ -10,7 +10,7 @@ git clone <repo-url> ~/.dotfiles
 cd ~/.dotfiles
 
 # Stow individual packages
-stow hypr kitty nvim tmux zsh waybar swaync swayosd rofi \
+stow hypr kitty nvim tmux zsh waybar swayosd rofi \
      lazygit yazi zathura ideavim fd fzutils quickshell kvantum
 ```
 
@@ -31,7 +31,7 @@ Full Wayland desktop environment built on [Hyprland](https://hyprland.org/).
 | File / Directory | Purpose |
 |---|---|
 | `hyprland.conf` | Entry point; sources all sub-configs |
-| `config/autostart.conf` | Startup apps (waybar, swaync, hypridle, quickshell, clipse…) |
+| `config/autostart.conf` | Startup apps (waybar, quickshell, hypridle, clipse…) |
 | `config/binding.conf` | Keybindings (Super-based, vim-style navigation) |
 | `config/animation.conf` | Window animations |
 | `config/decoration.conf` | Blur, rounding, shadows |
@@ -90,7 +90,7 @@ Full Wayland desktop environment built on [Hyprland](https://hyprland.org/).
 | `Super + ,/.` | Brightness down/up |
 
 **Dependencies:** `hyprpm`, `hypridle`, `hyprlock`, `hyprsunset`, `waybar`,
-`swaync`, `swayosd`, `quickshell`, `rofi`, `kitty`, `clipse`, `wl-clip-persist`,
+`swayosd`, `quickshell`, `rofi`, `kitty`, `clipse`, `wl-clip-persist`,
 `nm-applet`, `playerctl`, `brightnessctl`, `polkit-gnome`, `spotify-launcher`
 
 ---
@@ -279,11 +279,12 @@ Icon theme: `oomox-TokyoNight-Moon`, Font: Roboto 11.
 
 ---
 
-### `swaync` — Notification center
+### `quickshell` — Notification center
 
+- Provided by QuickShell's notifications module (QML)
 - Positioned top-right
 - Notification timeout: 3s (critical: no auto-dismiss)
-- Custom Tokyo Night CSS styling
+- Styled via the quickshell theme for Tokyo Night
 
 ---
 
@@ -358,7 +359,7 @@ Source this in your shell to apply colors.
 | `select_bluetooth.sh` | FZF Bluetooth device selector |
 | `kill_tray.sh` | Kill a tray application |
 | `restart_network.sh` | Restart NetworkManager |
-| `restart_notification.sh` | Restart SwayNC |
+| `restart_notification.sh` | Restart QuickShell notifications (if applicable) |
 | `test_notification.sh` | Send a test notification |
 
 These scripts are invoked from the Hyprland `fzf_utilities.sh` launcher.
@@ -396,7 +397,7 @@ These scripts are invoked from the Hyprland `fzf_utilities.sh` launcher.
 ```
 # Wayland / Desktop
 hyprland hyprlock hypridle hyprsunset hyprpm
-waybar swaync swayosd quickshell
+waybar swayosd quickshell
 rofi kitty clipse wl-clip-persist
 nm-applet playerctl brightnessctl
 polkit-gnome spotify-launcher
