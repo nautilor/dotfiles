@@ -16,14 +16,24 @@ enable_focus_mode() {
 	hyprctl keyword decoration:dim_inactive true
 	hyprctl keyword animations:enabled false
 	update_wallpaper
-	swaync-client -dn
+	# Ensure QuickShell DnD is enabled when entering focus mode
+	if [[ -x "$HOME/.config/quickshell/bin/control-center.sh" ]]; then
+		if [[ "$(bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status)" != "on" ]]; then
+			bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-toggle >/dev/null 2>&1 || true
+		fi
+	fi
 }
 
 disable_focus_mode() {
 	rm "$FOCUS_MODE_ENABLED_FILE"
 	hyprctl reload
 	update_wallpaper
-	swaync-client -df
+	# Ensure QuickShell DnD is disabled when leaving focus mode
+	if [[ -x "$HOME/.config/quickshell/bin/control-center.sh" ]]; then
+		if [[ "$(bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status)" == "on" ]]; then
+			bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-toggle >/dev/null 2>&1 || true
+		fi
+	fi
 }
 
 [ -f "$FOCUS_MODE_ENABLED_FILE" ] && disable_focus_mode || enable_focus_mode
