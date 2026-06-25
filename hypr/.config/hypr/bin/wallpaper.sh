@@ -20,11 +20,47 @@ init() {
 }
 
 toggle_focus_mode() {
+	# Determine current displayed wallpaper basename
 	current_wallpaper=$(awww  query | sed 's/.*image://g' | head -n 1 | sed 's/.*\///g')
-	if [[ "$WALLPAPER" =~ "$current_wallpaper" ]]; then
-		set_wallpaper "$FOCUS_MODE_WALLPAPER"
-	else
+
+	cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/hypr"
+	mkdir -p "$cache_dir"
+	blurred="$cache_dir/wallpaper_blurred.png"
+
+	orig_base="$(basename "$WALLPAPER")"	
+	blur_base="$(basename "$blurred")"
+
+	# If the current wallpaper is the original, create (or refresh) a blurred copy and use it.
+	if [[ "$current_wallpaper" == "$orig_base" ]]; then
+		# Regenerate blurred image if missing or older than source
+		if [[ ! -f "$blurred" || "$blurred" -ot "$WALLPAPER" ]]; then
+			if command -v magick >/dev/null 2>&1; then
+				magick "$WALLPAPER" -resize 3840x2160\> -blur 0x10 "$blurred"
+			elif command -v convert >/dev/null 2>&1; then
+				convert "$WALLPAPER" -resize 3840x2160\> -blur 0x8 "$blurred"
+			else
+				echo "ImageMagick not found; cannot generate blurred wallpaper" >&2
+				return 1
+			fi
+		fi
+
+		set_wallpaper "$blurred"
+	# If the current wallpaper is already the blurred copy, restore the original
+	elif [[ "$current_wallpaper" == "$blur_base" ]]; then
 		set_wallpaper "$WALLPAPER"
+	# Fallback: if current is something else, switch to blurred version
+	else
+		if [[ ! -f "$blurred" || "$blurred" -ot "$WALLPAPER" ]]; then
+			if command -v magick >/dev/null 2>&1; then
+				magick "$WALLPAPER" -resize 3840x2160\> -blur 0x10 "$blurred"
+			elif command -v convert >/dev/null 2>&1; then
+				convert "$WALLPAPER" -resize 3840x2160\> -blur 0x8 "$blurred"
+			else
+				echo "ImageMagick not found; cannot generate blurred wallpaper" >&2
+				return 1
+			fi
+		fi
+		set_wallpaper "$blurred"
 	fi
 }
 
