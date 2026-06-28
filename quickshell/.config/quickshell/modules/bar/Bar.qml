@@ -52,6 +52,7 @@ Scope {
 			readonly property color tertiary: theme.barTertiary
 			readonly property color error: theme.barError
 			readonly property color onError: theme.barOnError
+			readonly property color panelSuccess: theme.barTertiary
 
 			readonly property var pomodoroClasses: normalizeClasses(pomodoroState.classes)
 			readonly property var caffeineClasses: normalizeClasses(caffeineState.classes)
@@ -245,7 +246,7 @@ Scope {
 					return textPrimary;
 
 				if (batteryDevice.state === UPowerDeviceState.Charging || batteryDevice.state === UPowerDeviceState.PendingCharge || batteryDevice.state === UPowerDeviceState.FullyCharged)
-					return accent;
+					return panelSuccess;
 				const raw = batteryDevice.percentage || 0;
 				const percentage = raw <= 1 ? raw * 100 : raw;
 				if (percentage <= 10)
