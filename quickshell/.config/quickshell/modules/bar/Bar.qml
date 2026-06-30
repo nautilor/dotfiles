@@ -297,7 +297,7 @@ Scope {
 
 			Process {
 				id: pomodoroProcess
-				command: ["bash", "-lc", 'exec "$HOME/.config/waybar/bin/pomodoro" --no-icons --no-work-icons']
+				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro" --no-icons --no-work-icons']
 				running: true
 				stdout: SplitParser {
 					splitMarker: "\n"
