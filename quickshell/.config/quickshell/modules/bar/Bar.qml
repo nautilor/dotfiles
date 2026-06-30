@@ -130,6 +130,8 @@ Scope {
 					return { background: accent, foreground: bgPrimary };
 				if (pomodoroClasses.indexOf("break") !== -1)
 					return { background: textSecondary, foreground: bgPrimary };
+				if (pomodoroClasses.indexOf("stopped") !== -1)
+					return { background: capsuleColor, foreground: textPrimary };
 				return { background: capsuleColor, foreground: textPrimary };
 			}
 
@@ -320,7 +322,7 @@ Scope {
 			Process {
 				id: pomodoroActionProcess
 				property string actionName: ""
-				command: ["bash", "-lc", 'exec "$HOME/.config/waybar/bin/pomodoro" "$1"', "_", actionName]
+				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro" "$1"', "_", actionName]
 
 				onRunningChanged: {
 					if (!running)
