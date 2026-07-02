@@ -1,0 +1,61 @@
+import QtQuick
+
+// Copy to CustomColors.qml and edit freely
+// CustomColors.qml is gitignored - your personal color overrides
+QtObject {
+	// Material Design color system
+	// NOTE: Use *Text suffix instead of on* prefix (on* conflicts with QML signal handlers)
+	
+	// Primary color - main brand color
+	property color primary: "#E290B2"
+	property color primaryText: "#FAEEF3"
+	property color primaryContainer: "#302833"
+	property color primaryContainerText: "#FAEEF3"
+	
+	// Secondary color - accents
+	property color secondary: "#C4B2BD"
+	property color secondaryText: "#111014"
+	property color secondaryContainer: "#241F29"
+	property color secondaryContainerText: "#F3E8EE"
+	
+	// Tertiary color - additional accents
+	property color tertiary: "#B79AD9"
+	property color tertiaryText: "#111014"
+	
+	// Error color
+	property color error: "#D97C95"
+	property color errorText: "#FFE7EC"
+	property color errorContainer: "#3A222B"
+	property color errorContainerText: "#FAEEF3"
+	
+	// Success color (non-Material, but useful)
+	property color success: "#9EB58A"
+	property color successText: "#111014"
+	
+	// Background colors
+	property color background: "#111014"
+	property color backgroundText: "#F3E8EE"
+	
+	// Surface colors
+	property color surface: "#1A171E"
+	property color surfaceText: "#F3E8EE"
+	property color surfaceVariant: "#241F29"
+	property color surfaceVariantText: "#C4B2BD"
+	property color surfaceContainerLowest: "#111014"
+	property color surfaceContainerLow: "#1A171E"
+	property color surfaceContainer: "#201B24"
+	property color surfaceContainerHigh: "#241F29"
+	
+	// Outline colors
+	property color outline: "#4B424F"
+	property color outlineVariant: "#342D38"
+	
+	// Inverse colors
+	property color inverseSurface: "#F3E8EE"
+	property color inverseSurfaceText: "#111014"
+	property color inversePrimary: "#302833"
+	
+	// Component-specific overrides (if needed)
+	property color track: "#454048"
+	property color thumb: "#E8D7DF"
+}

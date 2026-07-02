@@ -18,16 +18,16 @@ Scope {
 		property string scriptPath: "$HOME/.config/quickshell/bin/clipse-visual.sh"
 		property string query: ""
 
-		readonly property color bgPrimary: theme.floatingBgPrimary
-		readonly property color bgSecondary: theme.floatingBgSecondary
-		readonly property color bgHighlight: theme.floatingBgHighlight
-		readonly property color border: theme.floatingBorder
-		readonly property color textPrimary: theme.floatingTextPrimary
-		readonly property color textMuted: theme.floatingTextMuted
-		readonly property color accent: theme.floatingAccent
-		readonly property color accentBright: theme.floatingAccentBright
-		readonly property color success: theme.floatingSuccess
-		readonly property color danger: theme.floatingDanger
+		readonly property color bgPrimary: theme.background
+		readonly property color bgSecondary: theme.surface
+		readonly property color bgHighlight: theme.surfaceVariant
+		readonly property color border: theme.outline
+		readonly property color textPrimary: theme.surfaceText
+		readonly property color textMuted: theme.surfaceVariantText
+		readonly property color accent: theme.primaryContainer
+		readonly property color accentBright: theme.primary
+		readonly property color success: theme.success
+		readonly property color danger: theme.error
 
 		implicitWidth: theme.floatingWindowWidth
 		implicitHeight: theme.floatingWindowHeight

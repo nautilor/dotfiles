@@ -292,7 +292,7 @@ Scope {
 			RectangularShadow {
 				anchors.fill: container
 				radius: container.radius
-				color: Qt.darker(theme.panelBgPrimary, 1.6)
+				color: Qt.darker(theme.background, 1.6)
 				blur: 5
 				spread: 0.2
 				offset: Qt.point(0, 4)
@@ -303,7 +303,7 @@ Scope {
 				anchors.fill: parent
 				anchors.margins: shadowPadding
 				radius: height / 2
-				color: theme.panelBgPrimary
+				color: theme.background
 				border.width: 0
 				border.color: Qt.rgba(1, 1, 1, 0.08)
 
@@ -325,7 +325,7 @@ Scope {
 							anchors.fill: parent
 							visible: messageIconItem.glyph !== ""
 							text: messageIconItem.glyph
-							color: theme.panelTextPrimary
+							color: theme.surfaceText
 							font.pixelSize: osd.messageIconSize
 							horizontalAlignment: Text.AlignHCenter
 							verticalAlignment: Text.AlignVCenter
@@ -341,7 +341,7 @@ Scope {
 
 					Text {
 						text: osd.messageText
-						color: theme.panelTextPrimary
+						color: theme.surfaceText
 						font.pixelSize: 14
 						font.weight: Font.DemiBold
 						elide: Text.ElideRight
@@ -374,7 +374,7 @@ Scope {
 							anchors.fill: parent
 							visible: volumeIconItem.glyph !== ""
 							text: volumeIconItem.glyph
-							color: theme.panelTextPrimary
+							color: theme.surfaceText
 							font.pixelSize: 30
 							horizontalAlignment: Text.AlignHCenter
 							verticalAlignment: Text.AlignVCenter
@@ -392,7 +392,7 @@ Scope {
 						Layout.fillWidth: true
 						implicitHeight: 8
 						radius: 20
-						color: theme.panelTrack
+						color: theme.track
 
 						Rectangle {
 							anchors {
@@ -402,13 +402,13 @@ Scope {
 							}
 							width: parent.width * osd.level
 							radius: parent.radius
-							color: theme.panelAccent
+							color: theme.primary
 						}
 					}
 
 					Text {
 						text: `${osd.percent}%`
-						color: theme.panelTextPrimary
+						color: theme.surfaceText
 						font.pixelSize: 14
 						font.weight: Font.DemiBold
 						verticalAlignment: Text.AlignVCenter

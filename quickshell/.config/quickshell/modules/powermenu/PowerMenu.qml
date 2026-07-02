@@ -29,10 +29,10 @@ Scope {
 			right: -5 
 		}
 
-		readonly property color bgPrimary: theme.floatingBgPrimary
-		readonly property color border: theme.floatingBorder
-		readonly property color textPrimary: theme.floatingTextPrimary
-		readonly property color accentBright: theme.floatingAccent
+		readonly property color bgPrimary: theme.background
+		readonly property color border: theme.outline
+		readonly property color textPrimary: theme.surfaceText
+		readonly property color accentBright: theme.primaryContainer
 
 		readonly property int pillWidth: 92
 		readonly property int pillPadding: 0

@@ -41,18 +41,18 @@ Scope {
 			property bool clockAlt: false
 			property date currentTime: new Date()
 
-			readonly property color bgPrimary: theme.barBgPrimary
-			readonly property color capsuleColor: theme.barCapsule
-			readonly property color capsuleHoverColor: theme.barCapsuleHover
-			readonly property color textPrimary: theme.barTextPrimary
-			readonly property color textSecondary: theme.barTextSecondary
-			readonly property color textDisabled: theme.barTextDisabled
-			readonly property color accent: theme.barAccent
-			readonly property color accentContainer: theme.barAccentContainer
-			readonly property color tertiary: theme.barTertiary
-			readonly property color error: theme.barError
-			readonly property color onError: theme.barOnError
-			readonly property color panelSuccess: theme.barTertiary
+			readonly property color bgPrimary: theme.background
+			readonly property color capsuleColor: theme.surface
+			readonly property color capsuleHoverColor: theme.primaryContainer
+			readonly property color textPrimary: theme.backgroundText
+			readonly property color textSecondary: theme.surfaceVariantText
+			readonly property color textDisabled: theme.disabled
+			readonly property color accent: theme.primary
+			readonly property color accentContainer: theme.primaryContainer
+			readonly property color tertiary: theme.tertiary
+			readonly property color error: theme.error
+			readonly property color onError: theme.errorText
+			readonly property color panelSuccess: theme.tertiary
 
 			readonly property var pomodoroClasses: normalizeClasses(pomodoroState.classes)
 			readonly property var caffeineClasses: normalizeClasses(caffeineState.classes)

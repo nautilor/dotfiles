@@ -33,16 +33,16 @@ PanelWindow {
 	implicitHeight: notifColumn.implicitHeight + (theme.smallGap * 2)
 	exclusionMode: ExclusionMode.Normal
 
-	readonly property color mdSurfaceContainerHigh: theme.notificationSurface
-	readonly property color mdSurfaceContainerHighCritical: theme.notificationSurfaceCritical
-	readonly property color mdOnSurface: theme.notificationOnSurface
-	readonly property color mdOnSurfaceVariant: theme.notificationOnSurfaceVariant
-	readonly property color mdPrimary: theme.notificationPrimary
-	readonly property color mdSecondaryContainer: theme.notificationSecondaryContainer
-	readonly property color mdOnSecondaryContainer: theme.notificationOnSecondaryContainer
-	readonly property color mdError: theme.notificationError
-	readonly property color mdErrorContainer: theme.notificationErrorContainer
-	readonly property color mdOutlineVariant: theme.notificationOutlineVariant
+	readonly property color mdSurfaceContainerHigh: theme.surface
+	readonly property color mdSurfaceContainerHighCritical: theme.errorContainer
+	readonly property color mdOnSurface: theme.surfaceText
+	readonly property color mdOnSurfaceVariant: theme.surfaceVariantText
+	readonly property color mdPrimary: theme.primary
+	readonly property color mdSecondaryContainer: theme.primaryContainer
+	readonly property color mdOnSecondaryContainer: theme.primaryContainerText
+	readonly property color mdError: theme.error
+	readonly property color mdErrorContainer: theme.errorContainer
+	readonly property color mdOutlineVariant: theme.outline
 	anchors {
 		top: true
 		right: true
