@@ -2,8 +2,8 @@ import QtQuick
 
 QtObject {
 	// Load custom colors if exist, else use defaults
-	property QtObject customColors: {
-		var component = Qt.createComponent(Qt.resolvedUrl("CustomColors.qml"));
+	property QtObject matugen: {
+		var component = Qt.createComponent(Qt.resolvedUrl("Matugen.qml"));
 		if (component.status === Component.Ready) {
 			return component.createObject(this);
 		}
@@ -13,59 +13,59 @@ QtObject {
 	// ========== Material Design 3 Color System ==========
 	
 	// Primary - main brand color
-	readonly property color primary: customColors ? customColors.primary : "#E290B2"
-	readonly property color primaryText: customColors ? customColors.primaryText : "#FAEEF3"
-	readonly property color primaryContainer: customColors ? customColors.primaryContainer : "#302833"
-	readonly property color primaryContainerText: customColors ? customColors.primaryContainerText : "#FAEEF3"
+	readonly property color primary: matugen ? matugen.primary : "#E290B2"
+	readonly property color primaryText: matugen ? matugen.primaryText : "#FAEEF3"
+	readonly property color primaryContainer: matugen ? matugen.primaryContainer : "#302833"
+	readonly property color primaryContainerText: matugen ? matugen.primaryContainerText : "#FAEEF3"
 	
 	// Secondary - complementary accent
-	readonly property color secondary: customColors ? customColors.secondary : "#C4B2BD"
-	readonly property color secondaryText: customColors ? customColors.secondaryText : "#111014"
-	readonly property color secondaryContainer: customColors ? customColors.secondaryContainer : "#241F29"
-	readonly property color secondaryContainerText: customColors ? customColors.secondaryContainerText : "#F3E8EE"
+	readonly property color secondary: matugen ? matugen.secondary : "#C4B2BD"
+	readonly property color secondaryText: matugen ? matugen.secondaryText : "#111014"
+	readonly property color secondaryContainer: matugen ? matugen.secondaryContainer : "#241F29"
+	readonly property color secondaryContainerText: matugen ? matugen.secondaryContainerText : "#F3E8EE"
 	
 	// Tertiary - additional accent
-	readonly property color tertiary: customColors ? customColors.tertiary : "#B79AD9"
-	readonly property color tertiaryText: customColors ? customColors.tertiaryText : "#111014"
+	readonly property color tertiary: matugen ? matugen.tertiary : "#B79AD9"
+	readonly property color tertiaryText: matugen ? matugen.tertiaryText : "#111014"
 	
 	// Error
-	readonly property color error: customColors ? customColors.error : "#D97C95"
-	readonly property color errorText: customColors ? customColors.errorText : "#FFE7EC"
-	readonly property color errorContainer: customColors ? customColors.errorContainer : "#3A222B"
-	readonly property color errorContainerText: customColors ? customColors.errorContainerText : "#FAEEF3"
+	readonly property color error: matugen ? matugen.error : "#D97C95"
+	readonly property color errorText: matugen ? matugen.errorText : "#FFE7EC"
+	readonly property color errorContainer: matugen ? matugen.errorContainer : "#3A222B"
+	readonly property color errorContainerText: matugen ? matugen.errorContainerText : "#FAEEF3"
 	
 	// Success (non-Material extension)
-	readonly property color success: customColors ? customColors.success : "#9EB58A"
-	readonly property color successText: customColors ? customColors.successText : "#111014"
+	readonly property color success: matugen ? matugen.success : "#9EB58A"
+	readonly property color successText: matugen ? matugen.successText : "#111014"
 	
 	// Background
-	readonly property color background: customColors ? customColors.background : "#111014"
-	readonly property color backgroundText: customColors ? customColors.backgroundText : "#F3E8EE"
+	readonly property color background: matugen ? matugen.background : "#111014"
+	readonly property color backgroundText: matugen ? matugen.backgroundText : "#F3E8EE"
 	
 	// Surface - base for cards, sheets, menus
-	readonly property color surface: customColors ? customColors.surface : "#1A171E"
-	readonly property color surfaceText: customColors ? customColors.surfaceText : "#F3E8EE"
-	readonly property color surfaceVariant: customColors ? customColors.surfaceVariant : "#241F29"
-	readonly property color surfaceVariantText: customColors ? customColors.surfaceVariantText : "#C4B2BD"
+	readonly property color surface: matugen ? matugen.surface : "#1A171E"
+	readonly property color surfaceText: matugen ? matugen.surfaceText : "#F3E8EE"
+	readonly property color surfaceVariant: matugen ? matugen.surfaceVariant : "#241F29"
+	readonly property color surfaceVariantText: matugen ? matugen.surfaceVariantText : "#C4B2BD"
 	
 	// Surface containers (elevation tiers)
-	readonly property color surfaceContainerLowest: customColors ? customColors.surfaceContainerLowest : "#111014"
-	readonly property color surfaceContainerLow: customColors ? customColors.surfaceContainerLow : "#1A171E"
-	readonly property color surfaceContainer: customColors ? customColors.surfaceContainer : "#201B24"
-	readonly property color surfaceContainerHigh: customColors ? customColors.surfaceContainerHigh : "#241F29"
+	readonly property color surfaceContainerLowest: matugen ? matugen.surfaceContainerLowest : "#111014"
+	readonly property color surfaceContainerLow: matugen ? matugen.surfaceContainerLow : "#1A171E"
+	readonly property color surfaceContainer: matugen ? matugen.surfaceContainer : "#201B24"
+	readonly property color surfaceContainerHigh: matugen ? matugen.surfaceContainerHigh : "#241F29"
 	
 	// Outline
-	readonly property color outline: customColors ? customColors.outline : "#4B424F"
-	readonly property color outlineVariant: customColors ? customColors.outlineVariant : "#342D38"
+	readonly property color outline: matugen ? matugen.outline : "#4B424F"
+	readonly property color outlineVariant: matugen ? matugen.outlineVariant : "#342D38"
 	
 	// Inverse colors
-	readonly property color inverseSurface: customColors ? customColors.inverseSurface : "#F3E8EE"
-	readonly property color inverseSurfaceText: customColors ? customColors.inverseSurfaceText : "#111014"
-	readonly property color inversePrimary: customColors ? customColors.inversePrimary : "#302833"
+	readonly property color inverseSurface: matugen ? matugen.inverseSurface : "#F3E8EE"
+	readonly property color inverseSurfaceText: matugen ? matugen.inverseSurfaceText : "#111014"
+	readonly property color inversePrimary: matugen ? matugen.inversePrimary : "#302833"
 	
 	// Component-specific (non-Material)
-	readonly property color track: customColors ? customColors.track : "#454048"
-	readonly property color thumb: customColors ? customColors.thumb : "#E8D7DF"
+	readonly property color track: matugen ? matugen.track : "#454048"
+	readonly property color thumb: matugen ? matugen.thumb : "#E8D7DF"
 	readonly property color disabled: "#817682"
 	
 	// ========== Dimensions ==========

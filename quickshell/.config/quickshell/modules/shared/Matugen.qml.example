@@ -1,10 +1,6 @@
 import QtQuick
 
-// Copy to CustomColors.qml and edit freely
-// CustomColors.qml is gitignored - your personal color overrides
 QtObject {
-	// Material Design color system
-	// NOTE: Use *Text suffix instead of on* prefix (on* conflicts with QML signal handlers)
 	
 	// Primary color - main brand color
 	property color primary: "#E290B2"
