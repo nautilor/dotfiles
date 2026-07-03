@@ -4,4 +4,4 @@ sqlit/.config/sqlit/query_history.json.*
 sqlit/.config/sqlit/keymap.json
 sqlit/.config/sqlit/queries
 .task.md
-quickshell/.config/quickshell/modules/shared/CustomColors.qml
+quickshell/.config/quickshell/modules/shared/Matugen.qml
