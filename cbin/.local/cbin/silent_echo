@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
+#
+# Repeatedly prompt for input and echo it back.
+#
+set -euo pipefail
 
-while :
-do
-	read -sp ": " input
+while true; do
+	read -rsp ": " input
 	echo "$input"
 done

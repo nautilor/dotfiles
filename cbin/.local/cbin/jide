@@ -1,23 +1,30 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
+#
+# Open (or create) a tmux "IDE" session, launching nvim and a file-jump
+# helper, auto-incrementing the session name if one already exists.
+#
+set -euo pipefail
 
-SESSION_NAME="IDE"
+session_name="IDE"
 
-# check if a session named "IDE" already exists
-if tmux has-session -t $SESSION_NAME 2>/dev/null; then
-	# increment the session name until we find a unique one
+# Check if a session named "IDE" already exists.
+if tmux has-session -t "$session_name" 2>/dev/null; then
+	# Increment the session name until we find a unique one.
 	i=1
-	while tmux has-session -t "$SESSION_NAME-$i" 2>/dev/null; do
+	while tmux has-session -t "${session_name}-${i}" 2>/dev/null; do
 		((i++))
 	done
-	SESSION_NAME="$SESSION_NAME-$i"
+	session_name="${session_name}-${i}"
 fi
 
-tmux new-session -d -s "$SESSION_NAME" \; \
+tmux new-session -d -s "$session_name" \; \
 	new-window -c "#{pane_current_path}" \; \
-	select-window -t "$SESSION_NAME":0 \; \
-	send-keys -t "$SESSION_NAME":0 "nvim" Enter \; \
-	send-keys -t "$SESSION_NAME":0 C-t \;
-sleep .2
-tmux send-keys -t "$SESSION_NAME":0 "jd" Enter \; \
-	send-keys -t "$SESSION_NAME":0 C-t \; \
+	select-window -t "$session_name":0 \; \
+	send-keys -t "$session_name":0 "nvim" Enter \; \
+	send-keys -t "$session_name":0 C-t \;
+
+sleep 0.2
+
+tmux send-keys -t "$session_name":0 "jd" Enter \; \
+	send-keys -t "$session_name":0 C-t \; \
 	attach
