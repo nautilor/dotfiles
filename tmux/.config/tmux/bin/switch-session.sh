@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
+#
+# Fuzzy-pick an existing tmux session or create a new one by typing a name,
+# then attach or switch to it depending on whether we're already in tmux.
+#
+set -uo pipefail
 
 selection=$(tmux list-sessions -F "#{session_name}:#{pane_current_path}" | fzf --prompt="Session: " --print-query)
+[[ -z "$selection" ]] && exit 0
 
-[ -z "$selection" ] && exit 0
+query=$(head -n1 <<< "$selection")
+session=$(tail -n1 <<< "$selection")
 
-query=$(echo "$selection" | head -n1)
-session=$(echo "$selection" | tail -n1)
-
-if [ "$session" != "$query" ]; then
+if [[ "$session" != "$query" ]]; then
 	session_name="${session%%:*}"
 	session_path="${session#*:}"
-
-	if [ -z "$TMUX" ]; then
-		tmux attach-session -t "$session_name"
-	else
-		tmux switch-client -t "$session_name"
-	fi	
-else 
+else
 	session_name="$query"
 	session_path="$HOME"
 	tmux new-session -d -s "$session_name" -c "$session_path"
-	if [ -z "$TMUX" ]; then
-		tmux attach-session -t "$session_name"
-	else
-		tmux switch-client -t "$session_name"
-	fi
+fi
+
+if [[ -z "${TMUX:-}" ]]; then
+	tmux attach-session -t "$session_name"
+else
+	tmux switch-client -t "$session_name"
 fi
