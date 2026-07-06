@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-
+#
+# Wrapper around clipse's clipboard history for list/copy/delete/clear operations.
+#
 set -euo pipefail
+
+if ! command -v python3 &> /dev/null; then
+	echo "python3 could not be found. Please install python3 to use this script." >&2
+	exit 1
+fi
 
 mode="${1:-list}"
 entry_id="${2:-}"

@@ -299,7 +299,7 @@ Scope {
 
 			Process {
 				id: pomodoroProcess
-				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro" --no-icons --no-work-icons']
+				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro.sh" --no-icons --no-work-icons']
 				running: true
 				stdout: SplitParser {
 					splitMarker: "\n"
@@ -322,7 +322,7 @@ Scope {
 			Process {
 				id: pomodoroActionProcess
 				property string actionName: ""
-				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro" "$1"', "_", actionName]
+				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro.sh" "$1"', "_", actionName]
 
 				onRunningChanged: {
 					if (!running)
