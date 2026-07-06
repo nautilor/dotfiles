@@ -1,17 +1,29 @@
 #!/usr/bin/env bash
+#
+# Pick "Original" or "Zoomed" monitor scaling via fzf, applied to the
+# currently focused monitor.
+#
+set -euo pipefail
 
-options=("Original" "Zoomed")
-monitors=`hyprctl monitors -j`
-default_monitor=`echo $monitors | jq -r '.[] | select(.name | test("^(eDP|LVDS)")) | .name'`
-focused_monitor=`echo $monitors | jq -r '.[] | select(.focused) | .name'`
-position=$([ $focused_name == $default_monitor ] && echo "0x0" || echo "auto-up")
+readonly OPTIONS=("Original" "Zoomed")
 
-selected=$(printf '%s\n' "${options[@]}" | fzf --prompt="Select notification type: " --border)
-case $selected in
-		"Original")
-			 hyprctl keyword monitor "$name,highres@highrr,$position,1"
-				;;
-		"Zoomed")
-			 hyprctl keyword monitor "$name,highres@highrr,$position,2"
-				;;
+monitors=$(hyprctl monitors -j)
+default_monitor=$(jq -r '.[] | select(.name | test("^(eDP|LVDS)")) | .name' <<< "$monitors")
+focused_monitor=$(jq -r '.[] | select(.focused) | .name' <<< "$monitors")
+
+if [[ "$focused_monitor" == "$default_monitor" ]]; then
+	position="0x0"
+else
+	position="auto-up"
+fi
+
+selected=$(printf '%s\n' "${OPTIONS[@]}" | fzf --prompt="Select notification type: " --border)
+
+case "$selected" in
+	"Original")
+		hyprctl keyword monitor "$focused_monitor,highres@highrr,$position,1"
+		;;
+	"Zoomed")
+		hyprctl keyword monitor "$focused_monitor,highres@highrr,$position,2"
+		;;
 esac

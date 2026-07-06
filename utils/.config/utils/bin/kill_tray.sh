@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
+#
+# Force-kill selected chat/game apps via an fzf picker.
+#
+set -uo pipefail
 
-
-options=(
+readonly OPTIONS=(
 	"Steam"
 	"Telegram"
 	"WhatsApp"
 	"All"
 )
 
-selected=$(printf '%s\n' "${options[@]}" | $FZF_COMMAND)
+selected=$(printf '%s\n' "${OPTIONS[@]}" | ${FZF_COMMAND:-fzf})
 
-case $selected in
+case "$selected" in
 	"Steam")
 		pkill -9 steam
 		;;
@@ -26,4 +29,3 @@ case $selected in
 		pkill -9 zapzap
 		;;
 esac
-
