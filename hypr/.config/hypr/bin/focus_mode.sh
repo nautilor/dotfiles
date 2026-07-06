@@ -1,13 +1,37 @@
 #!/usr/bin/env bash
-FOCUS_MODE_ENABLED_FILE="/tmp/focus_mode_enabled_$USER"
-WALLPAPER_SCRIPT="$HOME/.config/hypr/bin/wallpaper.sh"
+#
+# Toggle "focus mode": strips visual clutter in Hyprland and syncs
+# QuickShell's Do Not Disturb + RoundCorner module state.
+#
+set -euo pipefail
 
-update_wallpaper() {
-	$WALLPAPER_SCRIPT focus_mode
+readonly FOCUS_MODE_ENABLED_FILE="/tmp/focus_mode_enabled_${USER}"
+readonly CONTROL_CENTER_SCRIPT="${HOME}/.config/quickshell/bin/control-center.sh"
+
+sync_dnd() {
+	local desired_state="$1"
+
+	if [[ -x "$CONTROL_CENTER_SCRIPT" ]]; then
+		if [[ "$(bash "$CONTROL_CENTER_SCRIPT" dnd-status)" != "$desired_state" ]]; then
+			bash "$CONTROL_CENTER_SCRIPT" dnd-toggle >/dev/null 2>&1 || true
+		fi
+	fi
+}
+
+toggle_quickshell_module() {
+	if command -v qs >/dev/null 2>&1; then
+		if ! pgrep -f "quickshell" >/dev/null 2>&1; then
+			quickshell >/dev/null 2>&1 &
+			disown
+			sleep 0.2
+		fi
+		qs ipc --any-display --newest call root toggle >/dev/null 2>&1 || true
+	fi
 }
 
 enable_focus_mode() {
 	touch "$FOCUS_MODE_ENABLED_FILE"
+
 	hyprctl keyword general:gaps_in 0
 	hyprctl keyword general:gaps_out 0
 	hyprctl keyword general:border_size 0
@@ -15,45 +39,27 @@ enable_focus_mode() {
 	hyprctl keyword decoration:shadow:enabled false
 	hyprctl keyword decoration:dim_inactive true
 	hyprctl keyword animations:enabled false
-	update_wallpaper
+
 	# Ensure QuickShell DnD is enabled when entering focus mode
-	if [[ -x "$HOME/.config/quickshell/bin/control-center.sh" ]]; then
-		if [[ "$(bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status)" != "on" ]]; then
-			bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-toggle >/dev/null 2>&1 || true
-		fi
-	fi
+	sync_dnd "on"
 
 	# Hide QuickShell RoundCorner module if QuickShell is running (or start it)
-	if command -v qs >/dev/null 2>&1; then
-		if ! pgrep -f "quickshell" >/dev/null 2>&1; then
-			quickshell >/dev/null 2>&1 &
-			disown
-			sleep 0.2
-		fi
-		qs ipc --any-display --newest call root toggle >/dev/null 2>&1 || true
-	fi
+	toggle_quickshell_module
 }
 
 disable_focus_mode() {
-	rm "$FOCUS_MODE_ENABLED_FILE"
+	rm -f "$FOCUS_MODE_ENABLED_FILE"
 	hyprctl reload
-	update_wallpaper
+
 	# Ensure QuickShell DnD is disabled when leaving focus mode
-	if [[ -x "$HOME/.config/quickshell/bin/control-center.sh" ]]; then
-		if [[ "$(bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status)" == "on" ]]; then
-			bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-toggle >/dev/null 2>&1 || true
-		fi
-	fi
+	sync_dnd "off"
 
 	# Restore QuickShell RoundCorner module (toggle back)
-	if command -v qs >/dev/null 2>&1; then
-		if ! pgrep -f "quickshell" >/dev/null 2>&1; then
-			quickshell >/dev/null 2>&1 &
-			disown
-			sleep 0.2
-		fi
-		qs ipc --any-display --newest call root toggle >/dev/null 2>&1 || true
-	fi
+	toggle_quickshell_module
 }
 
-[ -f "$FOCUS_MODE_ENABLED_FILE" ] && disable_focus_mode || enable_focus_mode
+if [[ -f "$FOCUS_MODE_ENABLED_FILE" ]]; then
+	disable_focus_mode
+else
+	enable_focus_mode
+fi

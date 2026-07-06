@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
+#
+# Switch workspace via qwert-key shortcut, respecting which monitor is
+# active (laptop panel vs external), and carry windows to a new monitor
+# when jumping from a workspace above 9.
+#
+set -euo pipefail
 
-CURRENT="$(hyprctl activeworkspace -j)"
-DEFAULT_MONITOR="eDP-1"
-CURRENT_MONITOR=$(jq -r '.monitor' <<< "$CURRENT")
-CURRENT_WORKSPACE=$(jq -r '.id' <<< "$CURRENT")
-
-if [[ "$DEFAULT_MONITOR" == "$CURRENT_MONITOR" ]] then
-		next_workspace=$(sed 'y/qwert/12345/' <<< "$1")
-		hyprctl dispatch workspace $next_workspace
-else
-		next_workspace=$(sed 'y/qwert/67899/' <<< "$1")
-		if (( CURRENT_WORKSPACE > 9 )); then
-			clients=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $CURRENT_WORKSPACE) | .address")
-			for client in $clients; do
-				hyprctl dispatch movetoworkspacesilent $next_workspace,address:$client
-			done
-		fi
-		hyprctl dispatch workspace $next_workspace
+if [[ -z "${1:-}" ]]; then
+	echo "Usage: $0 <q|w|e|r|t>" >&2
+	exit 1
 fi
 
-if pgrep -f "waybar" >/dev/null 2>&1; then
-		pkill -SIGRTMIN+2 waybar
+current=$(hyprctl activeworkspace -j)
+monitors=$(hyprctl monitors -j)
+
+default_monitor=$(jq -r '.[] | select(.name | test("^(eDP|LVDS)")) | .name' <<< "$monitors")
+current_monitor=$(jq -r '.monitor' <<< "$current")
+current_workspace=$(jq -r '.id' <<< "$current")
+
+if [[ "$default_monitor" == "$current_monitor" ]]; then
+	next_workspace=$(sed 'y/qwert/12345/' <<< "$1")
+	hyprctl dispatch workspace "$next_workspace"
+else
+	next_workspace=$(sed 'y/qwert/67899/' <<< "$1")
+
+	if (( current_workspace > 9 )); then
+		clients=$(jq -r ".[] | select(.workspace.id == ${current_workspace}) | .address" <<< "$(hyprctl clients -j)")
+		while read -r client; do
+			[[ -n "$client" ]] || continue
+			hyprctl dispatch movetoworkspacesilent "${next_workspace},address:${client}"
+		done <<< "$clients"
+	fi
+
+	hyprctl dispatch workspace "$next_workspace"
 fi

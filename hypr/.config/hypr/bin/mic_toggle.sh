@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 qs_ipc() {
@@ -47,7 +46,7 @@ toggle() {
 }
 
 case "${1:-toggle}" in
-	state) state ;;
+	state)  state ;;
 	toggle) toggle ;;
 	*)
 		echo "Usage: $0 {toggle|state}" >&2

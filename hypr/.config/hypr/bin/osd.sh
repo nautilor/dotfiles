@@ -5,6 +5,7 @@ qs_ipc() {
 	# If quickshell isn't running yet, don't fail the keybind.
 	qs ipc --newest call "$@" >/dev/null 2>&1 || true
 }
+
 volume_info() {
 	wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || printf 'Volume: 0.00\n'
 }
@@ -40,6 +41,7 @@ EOF
 
 main() {
 	local kind="${1:-}" action="${2:-}"
+
 	if [[ -z "$kind" || -z "$action" ]]; then
 		usage
 		exit 2
@@ -62,10 +64,8 @@ main() {
 					exit 2
 					;;
 			esac
-
 			qs_ipc osd volume
 			;;
-
 		brightness)
 			case "$action" in
 				raise)
@@ -79,10 +79,8 @@ main() {
 					exit 2
 					;;
 			esac
-
 			qs_ipc osd brightness
 			;;
-
 		*)
 			usage
 			exit 2
