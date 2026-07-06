@@ -63,6 +63,7 @@ return {
 			}
 		},
 		picker = {
+			hidden = true,
 			actions = {
 				java_explorer_add = function(picker)
 					require("shadow.core.java_core").explorer_add(picker)
@@ -116,8 +117,10 @@ return {
 			},
 			enabled = true,
 			sources = {
+				files = { hidden = true },
 				explorer = {
 					auto_close = true,
+					hidden = true,
 					win = {
 						list = {
 							keys = {
