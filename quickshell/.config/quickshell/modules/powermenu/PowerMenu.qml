@@ -96,7 +96,7 @@ Scope {
 		Process {
 			id: runAction
 			property string action: ""
-			command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/powermenu.sh" "$1"', "_", action]
+			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/powermenu.sh" "$1"', "_", action]
 
 			onRunningChanged: {
 				if (!running && action !== "") {
