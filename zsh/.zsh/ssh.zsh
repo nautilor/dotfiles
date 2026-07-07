@@ -1,3 +1,3 @@
 function ssh() {
-  TERM=xterm-256color /usr/bin/ssh "$@"
+  TERM=xterm-256color /run/current-system/sw/bin/ssh "$@"
 }
