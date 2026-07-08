@@ -200,7 +200,7 @@ Scope {
 
 	Process {
 		id: caffeineStateReader
-		command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/caffeine.sh" state 2>/dev/null || true']
+		command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/caffeine.sh" state 2>/dev/null || true']
 		stdout: StdioCollector {
 			onStreamFinished: {
 				const state = (this.text || "").trim();
@@ -216,7 +216,7 @@ Scope {
 
 	Process {
 		id: micStateReader
-		command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/mic_toggle.sh" state 2>/dev/null || true']
+		command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/mic_toggle.sh" state 2>/dev/null || true']
 		stdout: StdioCollector {
 			onStreamFinished: {
 				const state = (this.text || "").trim();

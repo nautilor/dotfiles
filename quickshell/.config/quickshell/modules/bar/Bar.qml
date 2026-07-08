@@ -391,7 +391,7 @@ Scope {
 
 			Process {
 				id: recorderToggleProcess
-				command: ["bash", "-lc", 'bash "$HOME/.config/hypr/bin/recorder.sh"']
+				command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/recorder.sh"']
 				
 				onRunningChanged: {
 					if (!running && !recorderStatusProcess.running)
