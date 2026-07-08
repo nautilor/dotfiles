@@ -35,7 +35,20 @@ Scope {
 		font.weight: Font.DemiBold
 	}
 
-	readonly property int messageIconPillWidth: 280
+	TextMetrics {
+		id: percentMetrics
+		text: "100%"
+		font.pixelSize: 14
+		font.weight: Font.DemiBold
+	}
+
+	readonly property int messageIconPillWidth: {
+		// icon + spacing + text, plus horizontal padding on both sides
+		const textWidth = messageMetrics.width || 0;
+		const contentWidth = messageIconSize + messageSpacing + textWidth;
+		const width = Math.ceil(contentWidth + (messagePaddingX * 2));
+		return Math.min(messageMaxWidth, Math.max(messageMinWidth, width));
+	}
 	readonly property int messagePillWidth: {
 		// For caffeine and microphone messages, use a consistent fixed pill width so they
 		// always render the same size. Other messages keep dynamic sizing.
@@ -205,9 +218,9 @@ Scope {
 			onStreamFinished: {
 				const state = (this.text || "").trim();
 				if (state === "active")
-					osd.showMessage("caffeine", "Caffeine active");
+					osd.showMessage("caffeine", "Enabled");
 				else if (state === "inactive")
-					osd.showMessage("caffeine-off", "Caffeine inactive");
+					osd.showMessage("caffeine-off", "Disabled");
 				else
 					osd.showMessage("caffeine", "Caffeine");
 			}
@@ -221,9 +234,9 @@ Scope {
 			onStreamFinished: {
 				const state = (this.text || "").trim();
 				if (state === "muted")
-					osd.showMessage("microphone-sensitivity-muted", "Microphone muted");
+					osd.showMessage("microphone-sensitivity-muted", "Disabled");
 				else if (state === "unmuted")
-					osd.showMessage("microphone-sensitivity-high", "Microphone unmuted");
+					osd.showMessage("microphone-sensitivity-high", "Enabled");
 				else
 					osd.showMessage("microphone-sensitivity-high", "Microphone");
 			}
@@ -307,16 +320,17 @@ Scope {
 				border.width: 0
 				border.color: Qt.rgba(1, 1, 1, 0.08)
 
-				RowLayout {
-					id: messageRow
+				Item {
 					visible: osd.mode === "message"
-					anchors.centerIn: parent
-					spacing: osd.messageSpacing
+					anchors.fill: parent
 
 					Item {
 						id: messageIconItem
-						implicitWidth: osd.messageIconSize
-						implicitHeight: osd.messageIconSize
+						anchors.left: parent.left
+						anchors.leftMargin: osd.messagePaddingX
+						anchors.verticalCenter: parent.verticalCenter
+						width: osd.messageIconSize
+						height: osd.messageIconSize
 
 						property string iName: osd.messageIcon
 						property string glyph: osd.glyphFor(iName)
@@ -340,16 +354,15 @@ Scope {
 					}
 
 					Text {
+						anchors.centerIn: parent
 						text: osd.messageText
 						color: theme.surfaceText
 						font.pixelSize: 14
 						font.weight: Font.DemiBold
 						elide: Text.ElideRight
 						maximumLineCount: 1
+						horizontalAlignment: Text.AlignHCenter
 						verticalAlignment: Text.AlignVCenter
-
-						readonly property int maxW: osd.messagePillWidth - (osd.messagePaddingX * 2) - osd.messageIconSize - osd.messageSpacing
-						Layout.preferredWidth: Math.min(implicitWidth, maxW)
 					}
 				}
 
@@ -412,6 +425,8 @@ Scope {
 						font.pixelSize: 14
 						font.weight: Font.DemiBold
 						verticalAlignment: Text.AlignVCenter
+						horizontalAlignment: Text.AlignRight
+						Layout.preferredWidth: percentMetrics.width
 					}
 				}
 			}
