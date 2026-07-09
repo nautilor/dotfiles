@@ -19,18 +19,22 @@ if ! DXVK_FILTER_DEVICE_NAME="NVIDIA" hyprshot --freeze -m region -f "$filename"
 	exit 1
 fi
 
-action=$(notify-send "Screenshot saved" "Saved to ${OUTPUT_DIR}/${filename}" \
-	-i "info" -t 5000 \
+image_path="${OUTPUT_DIR}/${filename}"
+
+action=$(notify-send \
+	-i "gnome-screenshot" \
+	-t 5000 \
+	"Screenshot saved" "Saved to ${image_path}" \
 	--action="view=View" \
 	--action="open=Open folder" \
 	--action="edit=Edit image")
 
 case "$action" in
 	view)
-		xdg-open "${OUTPUT_DIR}/${filename}"
+		xdg-open "${image_path}"
 		;;
 	edit)
-		satty --filename "${OUTPUT_DIR}/${filename}"
+		satty --filename "${image_path}"
 		;;
 	open)
 		xdg-open "$OUTPUT_DIR"
