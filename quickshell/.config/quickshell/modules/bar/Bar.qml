@@ -75,7 +75,6 @@ Scope {
 				const networks = device.networks.values || [];
 				return networks.find(network => network && network.connected) || null;
 			}
-			readonly property string workspaceModeIcon: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.hasFullscreen ? "󰄶" : "󰙀"
 			readonly property var trayItems: {
 				const items = SystemTray.items.values || [];
 				return items.filter(item => item && item.status !== Status.Passive);
@@ -444,8 +443,8 @@ Scope {
 							spacing: theme.microGap
 
 							IconText {
-								text: barWindow.workspaceModeIcon
-								color: textSecondary
+								text: ""
+								color: accent
 								font.weight: Font.Medium
 							}
 						}
