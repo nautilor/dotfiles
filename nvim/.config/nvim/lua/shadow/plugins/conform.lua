@@ -19,6 +19,7 @@ return {
 			},
 		},
 		formatters_by_ft = {
+			nix = { "nixfmt" },
 			java = { "intellij_java", lsp_format = "fallback" },
 			python = { "black" },
 			typescript = { 'prettierd', "prettier", stop_after_first = true },
