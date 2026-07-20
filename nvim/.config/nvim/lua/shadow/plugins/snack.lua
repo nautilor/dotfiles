@@ -64,7 +64,7 @@ return {
 		},
 		picker = {
 			layout = {
-				preset = "ivy",
+				preset = "vscode",
 			},
 			hidden = true,
 			actions = {
