@@ -20,10 +20,4 @@ readonly SOURCE_FILE="${HOME}/.config/utils/source.sh"
 mkdir -p "$BASE_PATH"
 touch "$SOURCE_FILE"
 
-kitty --class fzf_utils -e env BASE_PATH="$BASE_PATH" SOURCE_FILE="$SOURCE_FILE" bash -c '
-	source "$SOURCE_FILE"
-	selected=$(find "$BASE_PATH" -maxdepth 1 -type f -executable -printf "%f\n" | fzf --prompt="Select an option: " --border)
-	if [[ -n "$selected" ]]; then
-		"$BASE_PATH/$selected"
-	fi
-'
+kitty --class fzf_utils -e env BASE_PATH="$BASE_PATH" SOURCE_FILE="$SOURCE_FILE" bash -c "source \"\$SOURCE_FILE\"; selected=\$(find \"\$BASE_PATH\" -maxdepth 1 -type f -executable -printf '%f\n' | fzf --prompt='Select an option: ' --border); if [[ -n \"\$selected\" ]]; then \"\$BASE_PATH/\$selected\"; fi"
