@@ -16,7 +16,7 @@ start_recording() {
 	timestamp=$(date +"%Y%m%d_%H%M%S")
 	output_file="${OUTPUT_DIR}/recording_${timestamp}.mp4"
 
-	wf-recorder --audio="bluez_output.90:7A:58:EB:28:A2.monitor" -f "$output_file" &>"$FFMPEG_LOG" &
+	wf-recorder -c h264_nvenc -x yuv420p --audio="bluez_output.90_7A_58_EB_28_A2.monitor" -f "$output_file" &>"$FFMPEG_LOG" &
 	echo $! > "$PID_FILE"
 	echo "$output_file" > "$FILE_PATH_RECORD"
 
