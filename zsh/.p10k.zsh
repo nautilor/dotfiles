@@ -68,7 +68,6 @@
     # command_execution_time  # previous command duration
     # =========================[ Line #2 ]=========================
     newline                   # \n
-		nix_shell
     # virtualenv              # python virtual environment
     prompt_char               # prompt symbol
   )
@@ -76,15 +75,19 @@
   # Right prompt segments.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
-    command_execution_time    # previous command duration
+		newline
     virtualenv                # python virtual environment
-    context                   # user@host
+		nix_shell
     # time                    # current time
     # =========================[ Line #2 ]=========================
     newline                   # \n
   )
 
+	typeset -g POWERLEVEL9K_VIRTUALENV_CONTENT_EXPANSION="%F{$blue} %f"
 
+	typeset -g POWERLEVEL9K_NIX_SHELL_CONTENT_EXPANSION="%F{$magenta} %f"
+	typeset -g POWERLEVEL9K_NIX_SHELL_FOREGROUND=1
+	typeset -g POWERLEVEL9K_NIX_SHELL_BACKGROUND=0
 
 	# 2. Tell the engine that folders with '.git' are un-truncatable anchors
 	typeset -g POWERLEVEL9K_SHORTEN_FOLDER_MARKER='.git'
@@ -111,7 +114,7 @@
   # Red prompt symbol if the last command failed.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$red
   # Default prompt symbol.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='❯'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION=':'
   # Prompt symbol in command vi mode.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VICMD_CONTENT_EXPANSION='❮'
   # Prompt symbol in visual vi mode is the same as in command mode.
