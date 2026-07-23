@@ -46,16 +46,29 @@
   local cyan='6'
   local white='7'
 
+	function prompt_git_root() {
+		local root_dir
+
+		root_dir=$(git rev-parse --show-toplevel 2>/dev/null) || return
+		root_dir=${root_dir:t}
+		[[ $root_dir == $PWD:t || $root_dir == $PWD:h:t ]] && return
+		[[ ${#root_dir} -gt 20 ]] && root_dir=${root_dir[1,3]}...${root_dir[-3,-1]}
+
+		p10k segment -f 208 -i '' -t "$root_dir"
+	}
+
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
     # context                 # user@host
 		newline									  # \n
+		git_root				          # git root directory
     dir                       # current directory
     vcs                       # git status
     # command_execution_time  # previous command duration
     # =========================[ Line #2 ]=========================
     newline                   # \n
+		nix_shell
     # virtualenv              # python virtual environment
     prompt_char               # prompt symbol
   )
@@ -70,6 +83,17 @@
     # =========================[ Line #2 ]=========================
     newline                   # \n
   )
+
+
+
+	# 2. Tell the engine that folders with '.git' are un-truncatable anchors
+	typeset -g POWERLEVEL9K_SHORTEN_FOLDER_MARKER='.git'
+
+	# 3. Ensure the repo root (.git folder) is ALWAYS preserved and visible 
+	typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+
+	# 4. Use the "..." delimiter for hidden segments between the repo and the end
+	typeset -g POWERLEVEL9K_SHORTEN_DELIMITER="..."
 
   # Basic style options that define the overall prompt look.
   typeset -g POWERLEVEL9K_BACKGROUND=                            # transparent background
