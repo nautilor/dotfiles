@@ -3,5 +3,6 @@ sqlit/.config/sqlit/connections.json
 sqlit/.config/sqlit/query_history.json.*
 sqlit/.config/sqlit/keymap.json
 sqlit/.config/sqlit/queries
+sqlit/.config/sqlit/credentials.json
 .task.md
 quickshell/.config/quickshell/modules/shared/Matugen.qml
