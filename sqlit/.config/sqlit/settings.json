@@ -3,5 +3,6 @@
   "theme": "tokyo-dark",
   "custom_themes": [
     "tokyo-dark"
-  ]
+  ],
+  "allow_plaintext_credentials": true
 }
