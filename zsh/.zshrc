@@ -39,3 +39,4 @@ source ~/.zsh/java.zsh
 source ~/.zsh/ssh.zsh
 source ~/.zsh/nix.zsh
 source ~/.zsh/less.zsh
+source ~/.zsh/direnv.zsh
