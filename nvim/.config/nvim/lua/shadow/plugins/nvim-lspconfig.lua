@@ -29,7 +29,8 @@ return {
 			"qmlls",
 			"rust_analyzer",
 			"dartls",
-			"nil"
+			"nil",
+			"nixd"
 		})
 	end
 }
