@@ -30,7 +30,8 @@ return {
 			"rust_analyzer",
 			"dartls",
 			"nil",
-			"nixd"
+			"nixd",
+			"gopls"
 		})
 	end
 }
