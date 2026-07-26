@@ -70,53 +70,60 @@ QtObject {
 	
 	// ========== Dimensions ==========
 	
-	readonly property int floatingWindowWidth: 700
-	readonly property int floatingWindowHeight: 400
-	readonly property int notificationWidth: 360
+	// UI scale: automatic based on display DPI, clamped to reasonable range.
+	// Edit uiScale to override (e.g., 0.9 to make UI 10% smaller).
+	readonly property real uiScale: (Qt.application && Qt.application.primaryScreen && Qt.application.primaryScreen.logicalDotsPerInch)
+		? Math.max(0.6, Math.min(1.2, 96 / Qt.application.primaryScreen.logicalDotsPerInch))
+		: 1.0
+	
+	// Base dimensions are multiplied by uiScale so UI adapts to screen density.
+	readonly property int floatingWindowWidth: Math.round(700 * uiScale)
+	readonly property int floatingWindowHeight: Math.round(400 * uiScale)
+	readonly property int notificationWidth: Math.round(360 * uiScale)
 
-	readonly property int floatingWindowMargin: 8
-	readonly property int floatingWindowRadius: 16
-	readonly property int floatingContentPadding: 24
-	readonly property int cardPadding: 14
-	readonly property int panelInset: 12
-	readonly property int listItemPadding: 12
-	readonly property int searchFieldInset: 8
-	readonly property int searchFieldLeftPadding: 24
-	readonly property int searchFieldRightPadding: 24
-	readonly property int searchFieldCompactRightPadding: 16
+	readonly property int floatingWindowMargin: Math.round(8 * uiScale)
+	readonly property int floatingWindowRadius: Math.round(16 * uiScale)
+	readonly property int floatingContentPadding: Math.round(24 * uiScale)
+	readonly property int cardPadding: Math.round(14 * uiScale)
+	readonly property int panelInset: Math.round(12 * uiScale)
+	readonly property int listItemPadding: Math.round(12 * uiScale)
+	readonly property int searchFieldInset: Math.round(8 * uiScale)
+	readonly property int searchFieldLeftPadding: Math.round(24 * uiScale)
+	readonly property int searchFieldRightPadding: Math.round(24 * uiScale)
+	readonly property int searchFieldCompactRightPadding: Math.round(16 * uiScale)
 
-	readonly property int largeGap: 16
-	readonly property int mediumGap: 12
-	readonly property int smallGap: 8
-	readonly property int listGap: 6
-	readonly property int tightGap: 4
-	readonly property int microGap: 2
+	readonly property int largeGap: Math.round(16 * uiScale)
+	readonly property int mediumGap: Math.round(12 * uiScale)
+	readonly property int smallGap: Math.round(8 * uiScale)
+	readonly property int listGap: Math.round(6 * uiScale)
+	readonly property int tightGap: Math.round(4 * uiScale)
+	readonly property int microGap: Math.round(2 * uiScale)
 
-	readonly property int listItemRadius: 100
-	readonly property int listItemSmallRadius: 8
-	readonly property int searchFieldHeight: 56
-	readonly property int searchFieldRadius: 100
-	readonly property int cardRadius: 18
-	readonly property int notificationCardRadius: 16
-	readonly property int notificationCardPadding: 16
-	readonly property int notificationDismissSize: 28
-	readonly property int notificationDismissRadius: 14
-	readonly property int notificationActionHeight: 32
-	readonly property int sliderTrackHeight: 8
-	readonly property int sliderTrackRadius: 4
-	readonly property int sliderHandleSize: 18
-	readonly property int sliderHandleRadius: 9
-	readonly property int textFieldLeftPadding: 5
-	readonly property int barHeight: 56
-	readonly property int barHorizontalPadding: 12
-	readonly property int barVerticalPadding: 10
-	readonly property int barSectionGap: 6
-	readonly property int barCapsuleHorizontalPadding: 12
-	readonly property int barCapsuleVerticalPadding: 3
-	readonly property int barCapsuleRadius: 19
-	readonly property int barWorkspaceButtonSize: 24
-	readonly property int barStatusButtonSize: 26
-	readonly property int barTrayIconSize: 16
+	readonly property int listItemRadius: Math.round(100 * uiScale)
+	readonly property int listItemSmallRadius: Math.round(8 * uiScale)
+	readonly property int searchFieldHeight: Math.round(56 * uiScale)
+	readonly property int searchFieldRadius: Math.round(100 * uiScale)
+	readonly property int cardRadius: Math.round(18 * uiScale)
+	readonly property int notificationCardRadius: Math.round(16 * uiScale)
+	readonly property int notificationCardPadding: Math.round(16 * uiScale)
+	readonly property int notificationDismissSize: Math.round(28 * uiScale)
+	readonly property int notificationDismissRadius: Math.round(14 * uiScale)
+	readonly property int notificationActionHeight: Math.round(32 * uiScale)
+	readonly property int sliderTrackHeight: Math.round(8 * uiScale)
+	readonly property int sliderTrackRadius: Math.round(4 * uiScale)
+	readonly property int sliderHandleSize: Math.round(18 * uiScale)
+	readonly property int sliderHandleRadius: Math.round(9 * uiScale)
+	readonly property int textFieldLeftPadding: Math.round(5 * uiScale)
+	readonly property int barHeight: Math.round(56 * uiScale)
+	readonly property int barHorizontalPadding: Math.round(12 * uiScale)
+	readonly property int barVerticalPadding: Math.round(10 * uiScale)
+	readonly property int barSectionGap: Math.round(6 * uiScale)
+	readonly property int barCapsuleHorizontalPadding: Math.round(12 * uiScale)
+	readonly property int barCapsuleVerticalPadding: Math.round(3 * uiScale)
+	readonly property int barCapsuleRadius: Math.round(19 * uiScale)
+	readonly property int barWorkspaceButtonSize: Math.round(24 * uiScale)
+	readonly property int barStatusButtonSize: Math.round(26 * uiScale)
+	readonly property int barTrayIconSize: Math.round(16 * uiScale)
 
 	// ========== Legacy aliases (backward compat) ==========
 	// Floating window
