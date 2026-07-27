@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# wait for quickshell to run
+while ! pgrep -f "quickshell" > /dev/null; do
+		sleep 3
+done
+
+sleep 3
+
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}"
 STATE_FILE="$STATE_DIR/update-reminder.last"
 

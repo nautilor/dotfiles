@@ -40,3 +40,4 @@ source ~/.zsh/ssh.zsh
 source ~/.zsh/nix.zsh
 source ~/.zsh/less.zsh
 source ~/.zsh/direnv.zsh
+source ~/.zsh/git.zsh
