@@ -10,3 +10,6 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 vim.opt.conceallevel = 1
 vim.opt.cmdheight = 0
+vim.opt.list = true
+vim.opt.listchars = { tab = " ", trail = "·", extends = "", precedes = "", nbsp = "○" }
+vim.fn.matchadd("ErrorMsg", [[\s\+$]])
