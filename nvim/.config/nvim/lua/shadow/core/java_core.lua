@@ -1,3 +1,5 @@
+-- This module provides core functionality for managing Java projects in Neovim, including running applications, managing profiles, and handling build tools.
+
 local M = {}
 
 local states = {}

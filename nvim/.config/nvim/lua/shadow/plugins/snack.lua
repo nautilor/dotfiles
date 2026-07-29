@@ -1,3 +1,5 @@
+-- Plugin to provide a unified interface for various features like terminal, dashboard, picker, etc.
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,

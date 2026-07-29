@@ -1,3 +1,5 @@
+-- Colorscheme configuration for Neovim
+
 return {
 	"folke/tokyonight.nvim",
 	priority = 1000,

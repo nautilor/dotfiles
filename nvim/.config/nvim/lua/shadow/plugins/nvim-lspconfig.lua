@@ -1,3 +1,5 @@
+-- LSP configuration for Neovim
+
 return {
 	'neovim/nvim-lspconfig',
 	dependencies = { 'saghen/blink.cmp' },

@@ -1,3 +1,5 @@
+-- Plugin for auto-completion and snippets in Neovim
+
 return {
 	"saghen/blink.cmp",
 	dependencies = { 'rafamadriz/friendly-snippets' },

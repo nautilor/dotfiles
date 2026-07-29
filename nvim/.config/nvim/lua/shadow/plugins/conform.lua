@@ -1,3 +1,5 @@
+-- Formatter plugin for Neovim
+
 return {
 	'stevearc/conform.nvim',
 	opts = {

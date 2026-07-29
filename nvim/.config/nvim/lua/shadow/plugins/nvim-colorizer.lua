@@ -1,3 +1,6 @@
+-- Plugin to highlight color codes in the buffer
+-- If the plugin is working you should see this #FF0000 highlighted in red in the buffer
+
 return {
 	'brenoprata10/nvim-highlight-colors',
 	opts = {

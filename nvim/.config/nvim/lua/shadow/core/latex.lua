@@ -1,3 +1,5 @@
+-- This script automatically compiles LaTeX files using latexmk and opens the resulting PDF in mupdf.
+
 local is_latex_compiler_enabled = true
 local latex_augroup = vim.api.nvim_create_augroup("latex_compile", { clear = true })
 

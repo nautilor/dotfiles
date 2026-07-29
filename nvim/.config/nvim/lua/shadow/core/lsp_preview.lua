@@ -1,3 +1,5 @@
+-- This module provides a function to preview the type definition, definition, or hover information of the symbol under the cursor in a floating window. It uses Neovim's built-in LSP client to request information from the language server and displays it in a floating window.
+
 local M = {}
 
 local state = {

@@ -1,3 +1,5 @@
+-- Java support for Neovim
+
 return {
 	{
 		"nvim-java/nvim-java",

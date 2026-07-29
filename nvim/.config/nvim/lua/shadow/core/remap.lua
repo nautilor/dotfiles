@@ -1,3 +1,5 @@
+-- Remaps some keys to make them more convenient to use
+
 local keymap = vim.keymap
 local opts = { remap = true, silent = true }
 local nopts = { noremap = true, silent = true }

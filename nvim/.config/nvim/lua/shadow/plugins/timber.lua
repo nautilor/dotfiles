@@ -1,3 +1,5 @@
+-- Timber.nvim is a logging plugin for Neovim that allows you to easily log messages to a file or the console. It provides a simple API for logging messages, and it can be configured to log messages to different targets (e.g., file, console, etc.).
+
 -- glj -> insert log below
 -- glk -> insert log above
 -- glo -> insert plain log below

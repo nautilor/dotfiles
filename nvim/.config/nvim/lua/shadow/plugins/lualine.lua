@@ -1,3 +1,5 @@
+-- Plugin to show a status line at the bottom of the screen
+
 return {
 	'nvim-lualine/lualine.nvim',
 	dependencies = { 'nvim-tree/nvim-web-devicons' },

@@ -1,3 +1,5 @@
+-- Plugin to view and compare code changes in Neovim
+
 return {
 	"esmuellert/codediff.nvim",
 	cmd = "CodeDiff",

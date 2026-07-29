@@ -1,3 +1,5 @@
+-- Customize the ui of the snacks picker to match the Tokyo Night Moon color scheme
+
 local palette = {
 	-- Base (Tokyo Night Moon)
 	bg       = 0x1A1B26, -- base background (Moon)

@@ -1,3 +1,5 @@
+-- Basic Neovim configuration override
+
 vim.wo.number = true
 vim.opt.relativenumber = true
 vim.opt.swapfile = false

@@ -1,3 +1,5 @@
+-- Mini Move: Move lines and selections in any direction
+
 return {
 	'nvim-mini/mini.move',
 	version = '*',

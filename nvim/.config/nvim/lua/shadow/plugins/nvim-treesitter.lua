@@ -1,3 +1,5 @@
+-- Treesitter here is used to provide better syntax highlighting and code parsing for various programming languages in Neovim. It allows for more accurate and efficient code analysis, which can enhance the overall coding experience.
+
 return {
 	"nvim-treesitter/nvim-treesitter",
 	build = ":TSUpdate",

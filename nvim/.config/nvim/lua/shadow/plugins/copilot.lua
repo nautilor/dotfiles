@@ -1,3 +1,5 @@
+-- Copilot plugin integration for Neovim
+
 return {
 	"github/copilot.vim",
 	config = function()
