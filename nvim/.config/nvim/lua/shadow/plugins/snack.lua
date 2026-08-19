@@ -124,6 +124,9 @@ return {
 			sources = {
 				files = { hidden = true },
 				explorer = {
+					layout = {
+						preset = "vscode",
+					},
 					auto_close = true,
 					hidden = true,
 					win = {
