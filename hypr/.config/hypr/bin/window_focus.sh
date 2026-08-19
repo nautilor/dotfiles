@@ -25,7 +25,9 @@ if ! [[ "$window_to_focus" =~ ^[lr]$ ]]; then
 fi
 
 is_fullscreen=`hyprctl activewindow -j | jq -r '.fullscreen'`
-
+if [ -z "$is_fullscreen" ] || [ "$is_fullscreen" == "null" ]; then
+	is_fullscreen=1
+fi
 
 if [ "$is_fullscreen" -eq 1 ]; then
 	movecolumn
