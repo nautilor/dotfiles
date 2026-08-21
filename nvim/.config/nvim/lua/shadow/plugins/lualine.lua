@@ -1,72 +1,3 @@
--- Plugin to show a status line at the bottom of the screen
-local colors = {
-	red     = "#F7768E",
-	green   = "#9ECE6A",
-	blue    = "#7AA2F7",
-	cyan    = "#7DCFFF",
-	yellow  = "#E0AF68",
-	purple  = "#BB9AF7",
-
-	fg      = "#C0CAF5",
-	muted   = "#565F89",
-}
-
-local custom_theme = {
-	normal = {
-		a = { fg = colors.red, bg = "NONE", gui = "bold" },
-		b = { fg = colors.blue, bg = "NONE" },
-		c = { fg = colors.fg, bg = "NONE" },
-		x = { fg = colors.muted, bg = "NONE" },
-		y = { fg = colors.green, bg = "NONE" },
-		z = { fg = colors.green, bg = "NONE" },
-	},
-
-	insert = {
-		a = { fg = colors.green, bg = "NONE", gui = "bold" },
-		b = { fg = colors.blue, bg = "NONE" },
-		c = { fg = colors.fg, bg = "NONE" },
-		x = { fg = colors.muted, bg = "NONE" },
-		y = { fg = colors.green, bg = "NONE" },
-		z = { fg = colors.green, bg = "NONE" },
-	},
-
-	visual = {
-		a = { fg = colors.purple, bg = "NONE", gui = "bold" },
-		b = { fg = colors.blue, bg = "NONE" },
-		c = { fg = colors.fg, bg = "NONE" },
-		x = { fg = colors.muted, bg = "NONE" },
-		y = { fg = colors.green, bg = "NONE" },
-		z = { fg = colors.green, bg = "NONE" },
-	},
-
-	replace = {
-		a = { fg = colors.red, bg = "NONE", gui = "bold" },
-		b = { fg = colors.blue, bg = "NONE" },
-		c = { fg = colors.fg, bg = "NONE" },
-		x = { fg = colors.muted, bg = "NONE" },
-		y = { fg = colors.green, bg = "NONE" },
-		z = { fg = colors.green, bg = "NONE" },
-	},
-
-	command = {
-		a = { fg = colors.yellow, bg = "NONE", gui = "bold" },
-		b = { fg = colors.blue, bg = "NONE" },
-		c = { fg = colors.fg, bg = "NONE" },
-		x = { fg = colors.muted, bg = "NONE" },
-		y = { fg = colors.green, bg = "NONE" },
-		z = { fg = colors.green, bg = "NONE" },
-	},
-
-	inactive = {
-		a = { fg = colors.muted, bg = "NONE" },
-		b = { fg = colors.muted, bg = "NONE" },
-		c = { fg = colors.muted, bg = "NONE" },
-		x = { fg = colors.muted, bg = "NONE" },
-		y = { fg = colors.muted, bg = "NONE" },
-		z = { fg = colors.muted, bg = "NONE" },
-	},
-}
-
 return {
 	'nvim-lualine/lualine.nvim',
 	dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -76,8 +7,8 @@ return {
 	opts = {
 		options = {
 			component_separators = { left = "", right = "" },
-			section_separators = { left = "", right = "" },
-			theme = custom_theme,
+			section_separators = { left = "", right = "" },
+			theme = "tokyonight",
 		},
 		sections = {
 			lualine_a = {
@@ -102,7 +33,7 @@ return {
 				},
 				{
 					"diff",
-					separator = { right = "" }
+					separator = { right = "" }
 				}
 			},
 			lualine_c = {
@@ -142,7 +73,7 @@ return {
 					fmt = function(location)
 						return location:gsub("%s+", "")
 					end,
-					separator = { right = "", left = "" }
+					separator = { right = "", left = "" }
 				},
 			},
 		},

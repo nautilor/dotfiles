@@ -18,7 +18,7 @@ return {
 	config = function(_, opts)
 		require("tokyonight").setup(opts)
 		vim.cmd.colorscheme(opts.colorscheme)
-		vim.cmd 'hi StatusLine guibg=NONE ctermbg=NONE'
+		-- vim.cmd 'hi StatusLine guibg=NONE ctermbg=NONE'
 	end,
 
 }

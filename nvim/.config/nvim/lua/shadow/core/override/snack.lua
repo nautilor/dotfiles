@@ -1,26 +1,27 @@
 -- Customize the ui of the snacks picker to match the Tokyo Night Moon color scheme
 
+local colors = require("tokyonight.colors").setup()
+
 local palette = {
-	-- Base (Tokyo Night Moon)
-	bg       = 0x1A1B26, -- base background (Moon)
-	surface1 = 0x16161F, -- inset / darker panels
-	surface2 = 0x1F2030, -- raised surfaces
-	surface3 = 0x25263A, -- active / hover
+	-- Base
+	bg       = colors.bg,
+	surface1 = colors.bg_dark,
+	surface2 = colors.bg_float,
+	surface3 = colors.bg_highlight,
 
 	-- Foregrounds
-	fg       = 0xC8D3F5, -- Moon foreground
-	fg_muted = 0x545C7E, -- comments / muted text
+	fg       = colors.fg,
+	fg_muted = colors.fg_dark,
 
-	-- Accents (Moon-tuned)
-	primary  = 0x82AAFF, -- Moon blue
-	fun      = 0x86E1FC, -- cyan (functions)
-	special  = 0xFFC777, -- warm accent
+	-- Accents
+	primary  = colors.blue,
+	fun      = colors.cyan,
+	special  = colors.yellow,
 
 	-- UI
-	border   = 0x3B4261,
-	black    = 0x13131B,
+	border   = colors.border_highlight,
+	black    = colors.terminal.black,
 }
-
 
 local sethl = function(...)
 	vim.api.nvim_set_hl(0, ...)
