@@ -7,7 +7,7 @@ return {
 		colorscheme = "tokyonight-night",
 		transparent = true,
 		on_colors = function(colors)
-			colors.border = "#7AA2F7"
+			colors.border = colors.bg
 		end,
 		styles = {
 			sidebars = "transparent",
@@ -18,7 +18,6 @@ return {
 	config = function(_, opts)
 		require("tokyonight").setup(opts)
 		vim.cmd.colorscheme(opts.colorscheme)
-		-- vim.cmd 'hi StatusLine guibg=NONE ctermbg=NONE'
 	end,
 
 }
