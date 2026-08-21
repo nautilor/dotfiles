@@ -100,7 +100,10 @@
 
   # Basic style options that define the overall prompt look.
   typeset -g POWERLEVEL9K_BACKGROUND=                            # transparent background
-  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_{LEFT,RIGHT}_WHITESPACE=  # no surrounding whitespace
+	typeset -g POWERLEVEL9K_LEFT_LEFT_WHITESPACE=' '
+	typeset -g POWERLEVEL9K_LEFT_RIGHT_WHITESPACE=
+	typeset -g POWERLEVEL9K_RIGHT_LEFT_WHITESPACE=
+	typeset -g POWERLEVEL9K_RIGHT_RIGHT_WHITESPACE=
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR=' '  # separate segments with a space
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # no end-of-line symbol
   typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=           # no segment icons
