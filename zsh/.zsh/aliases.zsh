@@ -17,6 +17,11 @@ alias lt="ls -lt"
 alias lg=lazygit
 alias lt="nvim -c Task"
 
+# cd
+alias ..='cd ..'
+alias ...='cd ../..'
+alias cdr='cd $(git rev-parse --show-toplevel)'
+
 # Tmux
 alias ta='tmux a'
 alias tmux='tmux'
