@@ -8,7 +8,7 @@ return {
 		options = {
 			component_separators = { left = "", right = "" },
 			section_separators = { left = "", right = "" },
-			theme = "tokyonight",
+			theme = "onedark",
 		},
 		sections = {
 			lualine_a = {

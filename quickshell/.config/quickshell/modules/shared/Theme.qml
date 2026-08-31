@@ -9,76 +9,75 @@ QtObject {
 		}
 		return null;
 	}
-	
-	// ========== Material Design 3 Color System ==========
-	
-	// Primary - main brand color
-	readonly property color primary: matugen ? matugen.primary : "#E290B2"
-	readonly property color primaryText: matugen ? matugen.primaryText : "#FAEEF3"
-	readonly property color primaryContainer: matugen ? matugen.primaryContainer : "#302833"
-	readonly property color primaryContainerText: matugen ? matugen.primaryContainerText : "#FAEEF3"
-	
-	// Secondary - complementary accent
-	readonly property color secondary: matugen ? matugen.secondary : "#C4B2BD"
-	readonly property color secondaryText: matugen ? matugen.secondaryText : "#111014"
-	readonly property color secondaryContainer: matugen ? matugen.secondaryContainer : "#241F29"
-	readonly property color secondaryContainerText: matugen ? matugen.secondaryContainerText : "#F3E8EE"
-	
-	// Tertiary - additional accent
-	readonly property color tertiary: matugen ? matugen.tertiary : "#B79AD9"
-	readonly property color tertiaryText: matugen ? matugen.tertiaryText : "#111014"
-	
-	// Error
-	readonly property color error: matugen ? matugen.error : "#D97C95"
-	readonly property color errorText: matugen ? matugen.errorText : "#FFE7EC"
-	readonly property color errorContainer: matugen ? matugen.errorContainer : "#3A222B"
-	readonly property color errorContainerText: matugen ? matugen.errorContainerText : "#FAEEF3"
-	
-	// Success (non-Material extension)
-	readonly property color success: matugen ? matugen.success : "#9EB58A"
-	readonly property color successText: matugen ? matugen.successText : "#111014"
-	
-	// Background
-	readonly property color background: matugen ? matugen.background : "#111014"
-	readonly property color backgroundText: matugen ? matugen.backgroundText : "#F3E8EE"
-	
-	// Surface - base for cards, sheets, menus
-	readonly property color surface: matugen ? matugen.surface : "#1A171E"
-	readonly property color surfaceText: matugen ? matugen.surfaceText : "#F3E8EE"
-	readonly property color surfaceVariant: matugen ? matugen.surfaceVariant : "#241F29"
-	readonly property color surfaceVariantText: matugen ? matugen.surfaceVariantText : "#C4B2BD"
-	
-	// Surface containers (elevation tiers)
-	readonly property color surfaceContainerLowest: matugen ? matugen.surfaceContainerLowest : "#111014"
-	readonly property color surfaceContainerLow: matugen ? matugen.surfaceContainerLow : "#1A171E"
-	readonly property color surfaceContainer: matugen ? matugen.surfaceContainer : "#201B24"
-	readonly property color surfaceContainerHigh: matugen ? matugen.surfaceContainerHigh : "#241F29"
-	
-	// Outline
-	readonly property color outline: matugen ? matugen.outline : "#4B424F"
-	readonly property color outlineVariant: matugen ? matugen.outlineVariant : "#342D38"
-	
-	// Inverse colors
-	readonly property color inverseSurface: matugen ? matugen.inverseSurface : "#F3E8EE"
-	readonly property color inverseSurfaceText: matugen ? matugen.inverseSurfaceText : "#111014"
-	readonly property color inversePrimary: matugen ? matugen.inversePrimary : "#302833"
-	
-	// Component-specific (non-Material)
-	readonly property color track: matugen ? matugen.track : "#454048"
-	readonly property color thumb: matugen ? matugen.thumb : "#E8D7DF"
-	readonly property color disabled: "#817682"
-	
+// ========== Material Design 3 Color System ==========
+
+// Primary - main brand color
+readonly property color primary: matugen ? matugen.primary : "#6689D0"
+readonly property color primaryText: matugen ? matugen.primaryText : "#101017"
+readonly property color primaryContainer: matugen ? matugen.primaryContainer : "#252D46"
+readonly property color primaryContainerText: matugen ? matugen.primaryContainerText : "#B8C3E5"
+
+// Secondary - complementary accent
+readonly property color secondary: matugen ? matugen.secondary : "#67B5D1"
+readonly property color secondaryText: matugen ? matugen.secondaryText : "#101017"
+readonly property color secondaryContainer: matugen ? matugen.secondaryContainer : "#1E3038"
+readonly property color secondaryContainerText: matugen ? matugen.secondaryContainerText : "#B8C3E5"
+
+// Tertiary - additional accent
+readonly property color tertiary: matugen ? matugen.tertiary : "#9E82D5"
+readonly property color tertiaryText: matugen ? matugen.tertiaryText : "#101017"
+
+// Error
+readonly property color error: matugen ? matugen.error : "#D9687D"
+readonly property color errorText: matugen ? matugen.errorText : "#101017"
+readonly property color errorContainer: matugen ? matugen.errorContainer : "#382229"
+readonly property color errorContainerText: matugen ? matugen.errorContainerText : "#B8C3E5"
+
+// Success (non-Material extension)
+readonly property color success: matugen ? matugen.success : "#86B257"
+readonly property color successText: matugen ? matugen.successText : "#101017"
+
+// Background
+readonly property color background: matugen ? matugen.background : "#101017"
+readonly property color backgroundText: matugen ? matugen.backgroundText : "#B8C3E5"
+
+// Surface - base for cards, sheets, menus
+readonly property color surface: matugen ? matugen.surface : "#191A28"
+readonly property color surfaceText: matugen ? matugen.surfaceText : "#B8C3E5"
+readonly property color surfaceVariant: matugen ? matugen.surfaceVariant : "#1F2030"
+readonly property color surfaceVariantText: matugen ? matugen.surfaceVariantText : "#474E6B"
+
+// Surface containers (elevation tiers)
+readonly property color surfaceContainerLowest: matugen ? matugen.surfaceContainerLowest : "#101017"
+readonly property color surfaceContainerLow: matugen ? matugen.surfaceContainerLow : "#151621"
+readonly property color surfaceContainer: matugen ? matugen.surfaceContainer : "#191A28"
+readonly property color surfaceContainerHigh: matugen ? matugen.surfaceContainerHigh : "#1F2030"
+
+// Outline
+readonly property color outline: matugen ? matugen.outline : "#474E6B"
+readonly property color outlineVariant: matugen ? matugen.outlineVariant : "#303650"
+
+// Inverse colors
+readonly property color inverseSurface: matugen ? matugen.inverseSurface : "#B8C3E5"
+readonly property color inverseSurfaceText: matugen ? matugen.inverseSurfaceText : "#101017"
+readonly property color inversePrimary: matugen ? matugen.inversePrimary : "#82AAFF"
+
+// Component-specific (non-Material)
+readonly property color track: matugen ? matugen.track : "#303650"
+readonly property color thumb: matugen ? matugen.thumb : "#B8C3E5"
+readonly property color disabled: "#474E6B"
+
 	// ========== Dimensions ==========
-	
+
 	// UI scale: automatic based on display DPI, clamped to reasonable range.
 	// Edit uiScale to override (e.g., 0.9 to make UI 10% smaller).
 	readonly property real uiScale: (Qt.application && Qt.application.primaryScreen && Qt.application.primaryScreen.logicalDotsPerInch)
 		? Math.max(0.6, Math.min(1.2, 96 / Qt.application.primaryScreen.logicalDotsPerInch))
 		: 1.0
-	
+
 	// Base dimensions are multiplied by uiScale so UI adapts to screen density.
-	readonly property int floatingWindowWidth: Math.round(700 * uiScale)
-	readonly property int floatingWindowHeight: Math.round(400 * uiScale)
+	readonly property int floatingWindowWidth: Math.round(600 * uiScale)
+	readonly property int floatingWindowHeight: Math.round(700 * uiScale)
 	readonly property int notificationWidth: Math.round(360 * uiScale)
 
 	readonly property int floatingWindowMargin: Math.round(8 * uiScale)
@@ -126,6 +125,7 @@ QtObject {
 	readonly property int barTrayIconSize: Math.round(16 * uiScale)
 
 	// ========== Legacy aliases (backward compat) ==========
+
 	// Floating window
 	readonly property color floatingBgPrimary: background
 	readonly property color floatingBgSecondary: surface
@@ -180,5 +180,4 @@ QtObject {
 	readonly property color barTertiary: tertiary
 	readonly property color barError: error
 	readonly property color barOnError: errorText
-
 }

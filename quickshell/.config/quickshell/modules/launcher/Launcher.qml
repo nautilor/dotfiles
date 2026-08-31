@@ -35,7 +35,9 @@ Scope {
 		focusable: true
 
 		anchors {
-			top: true
+			bottom: true
+			left: true
+
 		}
 
 		margins {
@@ -334,7 +336,7 @@ Scope {
 											Layout.rightMargin: 4
 											color: launcher.textMuted
 											opacity: 0.8
-											text: modelData.comment
+											text: modelData.comment ? modelData.comment : "No description available"
 											font.pixelSize: 12
 											font.weight: Font.Medium
 											elide: Text.ElideRight

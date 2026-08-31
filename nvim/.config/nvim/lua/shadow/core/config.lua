@@ -14,5 +14,4 @@ vim.opt.conceallevel = 1
 vim.opt.cmdheight = 0
 vim.opt.list = true
 vim.opt.listchars = { tab = " ", trail = "·", extends = "", precedes = "", nbsp = "○" }
-vim.fn.matchadd("ErrorMsg", [[\s\+$]])
-vim.opt.fillchars:append({ eob = " " })
+vim.opt.fillchars:append({ eob = " ", vert = " ", horiz = " ", horizup = " ", horizdown = " ", verthoriz = " " })

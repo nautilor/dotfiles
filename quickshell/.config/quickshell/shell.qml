@@ -10,7 +10,7 @@ import qs.modules.powermenu
 import Quickshell
 
 ShellRoot {
-	Bar {}
+	// Bar {}
 	Launcher {}
 	Clipboard {}
 	WindowSwitcher {}

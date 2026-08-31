@@ -1,26 +1,26 @@
 -- Customize the ui of the snacks picker to match the Tokyo Night Moon color scheme
 
-local colors = require("tokyonight.colors").setup()
+local colorscheme = require("onedark.colors")
 
 local palette = {
 	-- Base
-	bg       = colors.bg,
-	surface1 = colors.bg_dark,
-	surface2 = colors.bg_float,
-	surface3 = colors.bg_highlight,
+	bg       = colorscheme.bg0,
+	surface1 = colorscheme.bg1,
+	surface2 = colorscheme.bg2,
+	surface3 = colorscheme.bg3,
 
 	-- Foregrounds
-	fg       = colors.fg,
-	fg_muted = colors.fg_dark,
+	fg       = colorscheme.fg,
+	fg_muted = colorscheme.grey,
 
 	-- Accents
-	primary  = colors.blue,
-	fun      = colors.cyan,
-	special  = colors.yellow,
+	primary  = colorscheme.blue,
+	fun      = colorscheme.cyan,
+	special  = colorscheme.yellow,
 
 	-- UI
-	border   = colors.border_highlight,
-	black    = colors.terminal.black,
+	border   = colorscheme.light_grey,
+	black    = colorscheme.black,
 }
 
 local sethl = function(...)
@@ -176,6 +176,10 @@ autocmd({ "ColorScheme", "VimEnter" }, {
 		sethl("SnacksInputBorder", {
 			bg = colors.pmenu,
 			fg = colors.pmenu,
+		})
+
+		sethl("SnacksWinSeparator", {
+			fg = colors.background
 		})
 
 		sethl("SnacksPickerListCursorLine", {
