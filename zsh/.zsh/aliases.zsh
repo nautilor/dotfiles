@@ -28,3 +28,29 @@ alias tmux='tmux'
 
 # Yazi
 alias y=yazi
+
+
+function csv {
+	if [[ -z "$1" ]]; then
+		echo "Usage: csv <file>"
+		return 1
+	fi
+	if [[ ! -f "$1" ]]; then
+		echo "File not found: $1"
+		return 1
+	fi
+	local first_line
+	first_line=$(head -n 1 "$1")
+	local delimiter
+	if [[ "$first_line" == *","* ]]; then
+		delimiter=","
+	elif [[ "$first_line" == *";"* ]]; then
+		delimiter=";"
+	elif [[ "$first_line" == *$'\t'* ]]; then
+		delimiter=$'\t'
+	else
+		echo "Could not determine delimiter for file: $1"
+		return 1
+	fi
+	csvlens -d "$delimiter" "$1"
+}
