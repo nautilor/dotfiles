@@ -33,7 +33,7 @@ PanelWindow {
 	implicitHeight: notifColumn.implicitHeight + (theme.smallGap * 2)
 	exclusionMode: ExclusionMode.Normal
 
-	readonly property color mdSurfaceContainerHigh: theme.surface
+	readonly property color mdSurfaceContainerHigh: theme.surfaceContainerHigh
 	readonly property color mdSurfaceContainerHighCritical: theme.errorContainer
 	readonly property color mdOnSurface: theme.surfaceText
 	readonly property color mdOnSurfaceVariant: theme.surfaceVariantText
@@ -142,13 +142,13 @@ PanelWindow {
 						implicitHeight: cardInner.implicitHeight + 20
 						radius: theme.notificationCardRadius
 						color: isUrgent ? notifWindow.mdSurfaceContainerHighCritical : notifWindow.mdSurfaceContainerHigh
-						border.width: 0
-						border.color: notifWindow.mdOutlineVariant
+						border.width: 1
+						border.color: Qt.alpha(notifWindow.mdOutlineVariant, 0.28)
 
 						RectangularShadow {
 							anchors.fill: cardRect
 							radius: cardRect.radius
-							blur: 5
+							blur: 6
 							spread: 0.2
 							color: Qt.darker(cardRect.color, 1.6)
 						}	
@@ -158,7 +158,7 @@ PanelWindow {
 							anchors.fill: parent
 							radius: parent.radius
 							color: notifWindow.mdOnSurface
-							opacity: cardHover.containsMouse ? 0.04 : 0
+							opacity: cardHover.containsMouse ? 0.05 : 0
 							Behavior on opacity { NumberAnimation { duration: 150 } }
 						}
 
@@ -270,8 +270,8 @@ PanelWindow {
 
 											height: theme.notificationActionHeight
 											implicitWidth: cardInner.width / card.modelData.actions.length - (2 * card.modelData.actions.length)
-											radius: theme.largeGap
-											color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdSecondaryContainer
+											radius: height / 2
+											color: cardRect.isUrgent ? Qt.alpha(notifWindow.mdError, 0.14) : notifWindow.mdSecondaryContainer
 											Behavior on color { ColorAnimation { duration: 150 } }
 
 											// State layer
@@ -286,7 +286,7 @@ PanelWindow {
 												id: btnLabel
 												anchors.centerIn: parent
 												text: modelData.text
-												color: cardRect.isUrgent ? notifWindow.mdSurfaceContainerHigh : notifWindow.mdOnSurface
+												color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSecondaryContainer
 												font.pixelSize: 13; font.weight: Font.Medium
 												font.letterSpacing: 0.1
 											}

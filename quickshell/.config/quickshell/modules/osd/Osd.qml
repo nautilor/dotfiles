@@ -439,8 +439,9 @@ Scope {
 								visible: messageIconItem.glyph !== ""
 								text: messageIconItem.glyph
 								color: osd.messageAccentText
-								font.pixelSize: 28
+								font.pixelSize: 20
 								font.weight: Font.DemiBold
+								font.family: "JetBrainsMono Nerd Font Propo"
 								horizontalAlignment: Text.AlignHCenter
 								verticalAlignment: Text.AlignVCenter
 							}

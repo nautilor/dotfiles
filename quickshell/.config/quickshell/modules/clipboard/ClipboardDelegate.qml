@@ -36,6 +36,14 @@ Item {
         width: parent.width
         height: parent.height
 
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.12) : "transparent"
+            border.width: 1
+            border.color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.12) : "transparent"
+        }
+
         RowLayout {
             anchors.fill: parent
             anchors.margins: theme.listItemPadding
@@ -46,7 +54,9 @@ Item {
                 width: entry.modelData.imagePath !== "" ? 68 : 44
                 height: entry.modelData.imagePath !== "" ? 68 : 44
                 radius: theme.listItemRadius
-                color: entry.ListView.isCurrentItem ? Qt.rgba(1, 1, 1, 0.10) : clipboardWindow.bgSecondary
+                color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.18) : theme.surfaceVariant
+                border.width: 1
+                border.color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.22) : Qt.alpha(theme.outline, 0.12)
                 clip: true
 
                 Image {
