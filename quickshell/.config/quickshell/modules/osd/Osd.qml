@@ -21,12 +21,14 @@ Scope {
 	property string messageIcon: ""
 
 	readonly property int osdWidth: 340
-	readonly property int osdHeight: 64
-	readonly property int messageMaxWidth: 420
-	readonly property int messageMinWidth: 220
+	readonly property int osdHeight: 72
+	readonly property int messageMaxWidth: 440
+	readonly property int messageMinWidth: 240
 	readonly property int messageIconSize: 30
+	readonly property int messageBubbleSize: 40
 	readonly property int messageSpacing: 12
-	readonly property int messagePaddingX: 18
+	readonly property int messagePaddingX: 16
+	readonly property int messagePaddingY: 12
 
 	TextMetrics {
 		id: messageMetrics
@@ -36,32 +38,107 @@ Scope {
 	}
 
 	TextMetrics {
+		id: messageTitleMetrics
+		text: osd.messageTitle
+		font.pixelSize: 14
+		font.weight: Font.DemiBold
+	}
+
+	TextMetrics {
+		id: messageSubtitleMetrics
+		text: osd.messageText
+		font.pixelSize: 12
+		font.weight: Font.Medium
+	}
+
+	TextMetrics {
 		id: percentMetrics
 		text: "100%"
 		font.pixelSize: 14
 		font.weight: Font.DemiBold
 	}
 
+	function isToggleMessage(name) {
+		return ["caffeine", "caffeine-off", "microphone-sensitivity-muted", "microphone-sensitivity-high"].indexOf(name) !== -1;
+	}
+
+	function messageTitleFor(name) {
+		switch (name) {
+		case "caffeine":
+		case "caffeine-off":
+			return "Caffeine";
+		case "microphone-sensitivity-muted":
+		case "microphone-sensitivity-high":
+			return "Microphone";
+		default:
+			return messageText;
+		}
+	}
+
+	function accentContainerFor(name) {
+		switch (name) {
+		case "caffeine":
+			return theme.primaryContainer;
+		case "caffeine-off":
+			return theme.surfaceVariant;
+		case "microphone-sensitivity-muted":
+			return theme.errorContainer;
+		case "microphone-sensitivity-high":
+			return theme.secondaryContainer;
+		default:
+			return theme.primaryContainer;
+		}
+	}
+
+	function accentTextFor(name) {
+		switch (name) {
+		case "caffeine":
+			return theme.primaryContainerText;
+		case "caffeine-off":
+			return theme.surfaceVariantText;
+		case "microphone-sensitivity-muted":
+			return theme.errorContainerText;
+		case "microphone-sensitivity-high":
+			return theme.secondaryContainerText;
+		default:
+			return theme.primaryContainerText;
+		}
+	}
+
+	readonly property bool messageToggle: mode === "message" && isToggleMessage(messageIcon)
+
+	readonly property string messageTitle: {
+		if (mode !== "message")
+			return "";
+		return messageToggle ? messageTitleFor(messageIcon) : messageText;
+	}
+
+	readonly property color messageAccentContainer: accentContainerFor(messageIcon)
+	readonly property color messageAccentText: accentTextFor(messageIcon)
+
 	readonly property int messageIconPillWidth: {
-		// icon + spacing + text, plus horizontal padding on both sides
 		const textWidth = messageMetrics.width || 0;
 		const contentWidth = messageIconSize + messageSpacing + textWidth;
+		const width = Math.ceil(contentWidth + (messagePaddingX * 2));
+		return Math.min(messageMaxWidth, Math.max(messageMinWidth, width));
+	}
+	readonly property int messageTogglePillWidth: {
+		const textWidth = Math.max(messageTitleMetrics.width || 0, messageSubtitleMetrics.width || 0);
+		const contentWidth = messageBubbleSize + messageSpacing + textWidth;
 		const width = Math.ceil(contentWidth + (messagePaddingX * 2));
 		return Math.min(messageMaxWidth, Math.max(messageMinWidth, width));
 	}
 	readonly property int messagePillWidth: {
-		// For caffeine and microphone messages, use a consistent fixed pill width so they
-		// always render the same size. Other messages keep dynamic sizing.
-		const iconMessages = ["caffeine", "caffeine-off", "microphone-sensitivity-muted", "microphone-sensitivity-high"];
-		if (mode === "message" && iconMessages.indexOf(messageIcon) !== -1)
-			return messageIconPillWidth;
+		if (mode === "message" && messageToggle)
+			return messageTogglePillWidth;
 
-		// icon + spacing + text, plus horizontal padding on both sides
 		const textWidth = messageMetrics.width || 0;
 		const contentWidth = messageIconSize + messageSpacing + textWidth;
 		const width = Math.ceil(contentWidth + (messagePaddingX * 2));
 		return Math.min(messageMaxWidth, Math.max(messageMinWidth, width));
 	}
+
+	readonly property int messagePillHeight: mode === "message" && messageToggle ? 76 : 72
 
 	property int brightnessPercent: 0
 	property bool brightnessReady: false
@@ -218,9 +295,9 @@ Scope {
 			onStreamFinished: {
 				const state = (this.text || "").trim();
 				if (state === "active")
-					osd.showMessage("caffeine", "Enabled");
+					osd.showMessage("caffeine", "On");
 				else if (state === "inactive")
-					osd.showMessage("caffeine-off", "Disabled");
+					osd.showMessage("caffeine-off", "Off");
 				else
 					osd.showMessage("caffeine", "Caffeine");
 			}
@@ -234,9 +311,9 @@ Scope {
 			onStreamFinished: {
 				const state = (this.text || "").trim();
 				if (state === "muted")
-					osd.showMessage("microphone-sensitivity-muted", "Disabled");
+					osd.showMessage("microphone-sensitivity-muted", "Muted");
 				else if (state === "unmuted")
-					osd.showMessage("microphone-sensitivity-high", "Enabled");
+					osd.showMessage("microphone-sensitivity-high", "On");
 				else
 					osd.showMessage("microphone-sensitivity-high", "Microphone");
 			}
@@ -293,10 +370,11 @@ Scope {
 			exclusiveZone: 0
 
 			readonly property int shadowPadding: 16
+			readonly property color surfaceTint: Qt.alpha(theme.primary, 0.08)
 
-			// Ubuntu-like OSD: a bit taller and less wide.
+			// Android-like OSD: rounded pill with a softer elevated surface.
 			implicitWidth: (osd.mode === "message" ? osd.messagePillWidth : osd.osdWidth) + (shadowPadding * 2)
-			implicitHeight: osd.osdHeight + (shadowPadding * 2)
+			implicitHeight: (osd.mode === "message" ? osd.messagePillHeight : osd.osdHeight) + (shadowPadding * 2)
 			color: "transparent"
 
 			// Prevent blocking mouse events behind the overlay
@@ -316,53 +394,93 @@ Scope {
 				anchors.fill: parent
 				anchors.margins: shadowPadding
 				radius: height / 2
-				color: theme.background
-				border.width: 0
-				border.color: Qt.rgba(1, 1, 1, 0.08)
+				color: theme.surfaceContainerHigh
+				opacity: 0.98
+				border.width: 1
+				border.color: Qt.alpha(theme.outline, 0.35)
+				clip: true
+
+				Rectangle {
+					anchors.fill: parent
+					radius: parent.radius
+					color: surfaceTint
+				}
 
 				Item {
 					visible: osd.mode === "message"
 					anchors.fill: parent
 
-					Item {
-						id: messageIconItem
-						anchors.left: parent.left
+					RowLayout {
+						anchors.fill: parent
 						anchors.leftMargin: osd.messagePaddingX
-						anchors.verticalCenter: parent.verticalCenter
-						width: osd.messageIconSize
-						height: osd.messageIconSize
+						anchors.rightMargin: osd.messagePaddingX
+						anchors.topMargin: osd.messagePaddingY
+						anchors.bottomMargin: osd.messagePaddingY
+						spacing: osd.messageSpacing
 
-						property string iName: osd.messageIcon
-						property string glyph: osd.glyphFor(iName)
+						Item {
+							id: messageIconItem
+							Layout.preferredWidth: osd.messageBubbleSize
+							Layout.preferredHeight: osd.messageBubbleSize
 
-						Text {
-							anchors.fill: parent
-							visible: messageIconItem.glyph !== ""
-							text: messageIconItem.glyph
-							color: theme.surfaceText
-							font.pixelSize: osd.messageIconSize
-							horizontalAlignment: Text.AlignHCenter
-							verticalAlignment: Text.AlignVCenter
+							property string iName: osd.messageIcon
+							property string glyph: osd.glyphFor(iName)
+
+							Rectangle {
+								anchors.fill: parent
+								radius: width / 2
+								color: Qt.alpha(osd.messageAccentContainer, osd.messageToggle ? 1.0 : 0.65)
+								border.width: 1
+								border.color: Qt.alpha(osd.messageAccentContainer, 0.32)
+							}
+
+							Text {
+								anchors.fill: parent
+								visible: messageIconItem.glyph !== ""
+								text: messageIconItem.glyph
+								color: osd.messageAccentText
+								font.pixelSize: 28
+								font.weight: Font.DemiBold
+								horizontalAlignment: Text.AlignHCenter
+								verticalAlignment: Text.AlignVCenter
+							}
+
+							IconImage {
+								anchors.fill: parent
+								visible: messageIconItem.glyph === ""
+								implicitSize: osd.messageIconSize
+								source: Quickshell.iconPath(messageIconItem.iName)
+							}
 						}
 
-						IconImage {
-							anchors.fill: parent
-							visible: messageIconItem.glyph === ""
-							implicitSize: osd.messageIconSize
-							source: Quickshell.iconPath(messageIconItem.iName)
-						}
-					}
+						ColumnLayout {
+							Layout.fillWidth: true
+							Layout.alignment: Qt.AlignVCenter
+							spacing: 1
 
-					Text {
-						anchors.centerIn: parent
-						text: osd.messageText
-						color: theme.surfaceText
-						font.pixelSize: 14
-						font.weight: Font.DemiBold
-						elide: Text.ElideRight
-						maximumLineCount: 1
-						horizontalAlignment: Text.AlignHCenter
-						verticalAlignment: Text.AlignVCenter
+							Text {
+								Layout.fillWidth: true
+								text: osd.messageTitle
+								color: theme.surfaceText
+								font.pixelSize: 14
+								font.weight: Font.DemiBold
+								elide: Text.ElideRight
+								maximumLineCount: 1
+								verticalAlignment: Text.AlignVCenter
+							}
+
+							Text {
+								visible: osd.messageToggle
+								Layout.fillWidth: true
+								text: osd.messageText
+								color: theme.surfaceVariantText
+								font.pixelSize: 12
+								font.weight: Font.Medium
+								elide: Text.ElideRight
+								maximumLineCount: 1
+								verticalAlignment: Text.AlignVCenter
+							}
+						}
 					}
 				}
 
@@ -371,24 +489,33 @@ Scope {
 					anchors {
 						fill: parent
 						leftMargin: 16
-						rightMargin: 18
+						rightMargin: 16
 					}
-					spacing: 14
+					spacing: 12
 
 					Item {
 						id: volumeIconItem
-						implicitWidth: 30
-						implicitHeight: 30
+						implicitWidth: 40
+						implicitHeight: 40
 
 						property string iName: osd.iconName
 						property string glyph: osd.glyphFor(iName)
+
+						Rectangle {
+							anchors.fill: parent
+							radius: width / 2
+							color: Qt.alpha(theme.primaryContainer, 0.8)
+							border.width: 1
+							border.color: Qt.alpha(theme.primaryContainer, 0.28)
+						}
 
 						Text {
 							anchors.fill: parent
 							visible: volumeIconItem.glyph !== ""
 							text: volumeIconItem.glyph
-							color: theme.surfaceText
-							font.pixelSize: 30
+							color: theme.primaryContainerText
+							font.pixelSize: 26
+							font.weight: Font.DemiBold
 							horizontalAlignment: Text.AlignHCenter
 							verticalAlignment: Text.AlignVCenter
 						}
@@ -396,14 +523,14 @@ Scope {
 						IconImage {
 							anchors.fill: parent
 							visible: volumeIconItem.glyph === ""
-							implicitSize: 30
+							implicitSize: 26
 							source: Quickshell.iconPath(volumeIconItem.iName)
 						}
 					}
 
 					Rectangle {
 						Layout.fillWidth: true
-						implicitHeight: 8
+						implicitHeight: 10
 						radius: 20
 						color: theme.track
 
@@ -419,14 +546,22 @@ Scope {
 						}
 					}
 
-					Text {
-						text: `${osd.percent}%`
-						color: theme.surfaceText
-						font.pixelSize: 14
-						font.weight: Font.DemiBold
-						verticalAlignment: Text.AlignVCenter
-						horizontalAlignment: Text.AlignRight
-						Layout.preferredWidth: percentMetrics.width
+					Rectangle {
+						implicitWidth: percentMetrics.width + 18
+						implicitHeight: 28
+						radius: height / 2
+						color: theme.surfaceVariant
+						border.width: 0
+
+						Text {
+							anchors.centerIn: parent
+							text: `${osd.percent}%`
+							color: theme.surfaceText
+							font.pixelSize: 13
+							font.weight: Font.DemiBold
+							verticalAlignment: Text.AlignVCenter
+							horizontalAlignment: Text.AlignRight
+						}
 					}
 				}
 			}
