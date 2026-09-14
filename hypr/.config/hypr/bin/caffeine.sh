@@ -14,10 +14,6 @@ is_active() {
 	[[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null
 }
 
-notify_waybar() {
-	pkill -x -SIGRTMIN+1 waybar >/dev/null 2>&1 || true
-}
-
 start() {
 	if is_active; then
 		qs_ipc osd caffeine
@@ -31,7 +27,6 @@ start() {
 		sleep infinity &
 	echo $! > "$PIDFILE"
 
-	notify_waybar
 	qs_ipc osd caffeine
 }
 
@@ -41,7 +36,6 @@ stop() {
 		rm -f "$PIDFILE"
 	fi
 
-	notify_waybar
 	qs_ipc osd caffeine
 }
 
