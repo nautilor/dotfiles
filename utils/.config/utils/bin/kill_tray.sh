@@ -15,7 +15,8 @@ selected=$(printf '%s\n' "${OPTIONS[@]}" | ${FZF_COMMAND:-fzf})
 
 case "$selected" in
 	"Steam")
-		pkill -9 steam
+		# pkill -9 steam
+		steam -shutdown
 		;;
 	"Telegram")
 		pkill -9 Telegram
@@ -24,7 +25,8 @@ case "$selected" in
 		pkill -9 zapzap
 		;;
 	"All")
-		pkill -9 steam
+		# pkill -9 steam
+		steam -shutdown
 		pkill -9 Telegram
 		pkill -9 zapzap
 		;;
