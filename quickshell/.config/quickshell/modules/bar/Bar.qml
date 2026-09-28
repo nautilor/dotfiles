@@ -301,6 +301,8 @@ PanelWindow {
 		function toggle() {
 			bar.focusable = !bar.launcherPanelOpen
 			bar.launcherPanelOpen = !bar.launcherPanelOpen
+			bar.quickPanelOpen = false
+			bar.clipboardPanelOpen = false
 		}
 	}
 
@@ -316,19 +318,43 @@ PanelWindow {
 		target: "osd"
 
 		function volume() {
+			if (somethingOpen) {
+				launcherPanelOpen = false
+				clipboardPanelOpen = false
+				quickPanelOpen = false
+				bar.focusable = false
+			}
 			volumeOsd.showVolume()
 		}
 
 		function brightness() {
+			if (somethingOpen) {
+				launcherPanelOpen = false
+				clipboardPanelOpen = false
+				quickPanelOpen = false
+				bar.focusable = false
+			}
 			brightnessOsd.refreshBrightness()
 		}
 
 		function caffeine() {
-			caffeineOsd.showCaffeine()
+			if (launcherPanelOpen || clipboardPanelOpen) {
+				launcherPanelOpen = false
+				clipboardPanelOpen = false
+				bar.focusable = false
+			}
+			if (!quickPanelOpen)
+				caffeineOsd.showCaffeine()
 		}
 
 		function microphone() {
-			microphoneOsd.showMicrophone()
+			if (launcherPanelOpen || clipboardPanelOpen) {
+				launcherPanelOpen = false
+				clipboardPanelOpen = false
+				bar.focusable = false
+			}
+			if (!quickPanelOpen)
+				microphoneOsd.showMicrophone()
 		}
 
 		function mic() {
