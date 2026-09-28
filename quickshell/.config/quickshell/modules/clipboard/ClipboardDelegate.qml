@@ -1,110 +1,130 @@
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
-import "../shared" as Shared
+import Quickshell.Widgets
 
 Item {
-    id: entry
-    Shared.Theme { id: theme }
-    required property var modelData
-    required property int index
+	id: entry
 
-    width: parent.width
-    height: modelData.imagePath !== "" ? 92 : 68
+	required property var modelData
+	required property int index
+	property var clipboard: null
 
-    function select() {
-        copyToClipboard.selectedItem = modelData.raw;
-        copyToClipboard.running = true;
-    }
+	width: ListView.view.width
+	height: 60
 
-    function remove() {
-        deleteEntry.targetId = modelData.raw;
-        deleteEntry.running = true;
-    }
+	MouseArea {
+		anchors.fill: parent
+		hoverEnabled: true
+		cursorShape: Qt.PointingHandCursor
+		onClicked: {
+			if (clipboard)
+				clipboard.selectedIndex = entry.index
+		}
+		onDoubleClicked: {
+			if (clipboard) {
+				clipboard.selectedIndex = entry.index
+				clipboard.copySelected()
+			}
+		}
+	}
 
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+	function thumbnailSource() {
+		const path = String(modelData.imagePath || "")
+		if (path === "" || path === "/" || path.endsWith("/"))
+			return ""
 
-        onEntered: entry.ListView.view.currentIndex = entry.index
-        onClicked: entry.select()
-    }
+		return path.startsWith("file:") ? path : `file://${path}`
+	}
 
-    Rectangle {
-        color: "transparent"
-        radius: theme.listItemRadius
-        width: parent.width
-        height: parent.height
+	Rectangle {
+		anchors.fill: parent
+		radius: 18
+		color: clipboard && clipboard.selectedIndex === entry.index
+		? Qt.rgba(clipboard.accent.r, clipboard.accent.g, clipboard.accent.b, 0.20)
+		: "transparent"
+		border.width: 0
 
-        Rectangle {
-            anchors.fill: parent
-            radius: parent.radius
-            color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.12) : "transparent"
-            border.width: 1
-            border.color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.12) : "transparent"
-        }
+		RowLayout {
+			anchors.fill: parent
+			anchors.margins: 10
+			spacing: 10
 
-        RowLayout {
-            anchors.fill: parent
-            anchors.margins: theme.listItemPadding
-            spacing: theme.mediumGap
+			Rectangle {
+				Layout.preferredWidth: 40
+				Layout.preferredHeight: 40
+				radius: 12
+				color: Qt.rgba(1, 1, 1, 0.06)
 
-            Rectangle {
-                Layout.alignment: Qt.AlignVCenter
-                width: entry.modelData.imagePath !== "" ? 68 : 44
-                height: entry.modelData.imagePath !== "" ? 68 : 44
-                radius: theme.listItemRadius
-                color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.18) : theme.surfaceVariant
-                border.width: 1
-                border.color: entry.ListView.isCurrentItem ? Qt.alpha(clipboardWindow.accent, 0.22) : Qt.alpha(theme.outline, 0.12)
-                clip: true
+				Image {
+					anchors.centerIn: parent
+					width: 24
+					height: 24
+					visible: thumbnailSource() !== ""
+					source: thumbnailSource()
+					fillMode: Image.PreserveAspectFit
+					asynchronous: true
+					cache: false
+				}
 
-                Image {
-                    anchors.fill: parent
-                    visible: entry.modelData.imagePath !== ""
-                    source: entry.modelData.imagePath !== "" ? "file://" + entry.modelData.imagePath : ""
-                    fillMode: Image.PreserveAspectCrop
-                    horizontalAlignment: Image.AlignHCenter
-                    verticalAlignment: Image.AlignVCenter
-                    asynchronous: true
-                }
+				Text {
+					anchors.centerIn: parent
+					text: "󰭷"
+					color: clipboard ? clipboard.textMuted : "#B0B0B0"
+					font.pixelSize: 20
+					visible: modelData.imagePath === ""
+				}
+			}
 
-                Text {
-                    anchors.centerIn: parent
-                    visible: entry.modelData.imagePath === ""
-                    text: "TXT"
-                    color: clipboardWindow.textMuted
-                    font.pixelSize: 11
-                    font.weight: Font.Medium
-                }
-            }
+			ColumnLayout {
+				Layout.fillWidth: true
+				spacing: 2
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
-                spacing: 2
+				Text {
+					Layout.fillWidth: true
+					text: modelData.display
+					color: clipboard ? clipboard.textPrimary : "#FFFFFF"
+					font.pixelSize: 14
+					font.weight: Font.Medium
+					elide: Text.ElideRight
+				}
 
-                Text {
-                    Layout.fillWidth: true
-                    color: clipboardWindow.textPrimary
-                    text: entry.modelData.display !== "" ? entry.modelData.display : "Clipboard item"
-                    font.pixelSize: 14
-                    font.weight: Font.Medium
-                    elide: Text.ElideRight
-                    verticalAlignment: Text.AlignVCenter
-                }
+				Text {
+					Layout.fillWidth: true
+					text: modelData.imagePath ? "Image clipboard entry" : "Clipboard text"
+					color: clipboard ? clipboard.textMuted : "#B0B0B0"
+					opacity: 0.9
+					font.pixelSize: 12
+					elide: Text.ElideRight
+				}
+			}
 
-                Text {
-                    Layout.fillWidth: true
-                    color: clipboardWindow.textMuted
-                    opacity: 0.8
-                    text: entry.modelData.imagePath !== "" ? `Image • ${entry.modelData.recorded}` : entry.modelData.recorded
-                    font.pixelSize: 12
-                    font.weight: Font.Medium
-                    elide: Text.ElideRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-        }
-    }
+			Rectangle {
+				Layout.preferredWidth: 30
+				Layout.preferredHeight: 30
+				radius: 15
+				color: removeHover.containsMouse ? (clipboard ? clipboard.bgSecondary : "transparent") : "transparent"
+				opacity: removeHover.containsMouse ? 1 : 0.75
+				Behavior on color { ColorAnimation { duration: 120 } }
+
+				Text {
+					anchors.centerIn: parent
+					text: "󰆴"
+					color: clipboard ? clipboard.textMuted : "#B0B0B0"
+					font.pixelSize: 20
+				}
+
+				MouseArea {
+					id: removeHover
+					anchors.fill: parent
+					hoverEnabled: true
+					cursorShape: Qt.PointingHandCursor
+					onClicked: {
+						if (clipboard)
+							clipboard.removeEntry(entry.modelData)
+					}
+				}
+			}
+		}
+	}
 }

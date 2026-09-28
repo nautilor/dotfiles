@@ -1,872 +1,338 @@
+import Quickshell
 import QtQuick
 import QtQuick.Effects
-import QtQuick.Layouts
-import Quickshell
-import Quickshell.Bluetooth
-import Quickshell.Hyprland
 import Quickshell.Io
-import Quickshell.Networking
-import Quickshell.Services.Pipewire
-import Quickshell.Services.SystemTray
-import Quickshell.Services.UPower
+import Quickshell.Wayland
 import Quickshell.Widgets
-import "../shared" as Shared
+import qs.modules.clipboard
+import qs.modules.colors
+import qs.modules.launcher
+import qs.modules.notifications
+import qs.modules.osd as OSD
+import qs.modules.quickpanel
+import qs.modules.bar.components
 
-Scope {
-	id: barScope
+PanelWindow {
+	id: bar
+	focusable: false
+	WlrLayershell.keyboardFocus: bar.launcherPanelOpen || bar.clipboardPanelOpen
 
-	Variants {
-		model: Quickshell.screens
+	property bool quickPanelOpen: false
+	property bool launcherPanelOpen: false
+	property bool clipboardPanelOpen: false
+	property bool somethingOpen: quickPanelOpen || launcherPanelOpen || clipboardPanelOpen || notificationPanel.opacity > 0 || volumeOsd.opacity > 0 || brightnessOsd.opacity > 0 || caffeineOsd.opacity > 0 || microphoneOsd.opacity > 0
+	property bool osdOpen: volumeOsd.opacity > 0 || brightnessOsd.opacity > 0 || caffeineOsd.opacity > 0 || microphoneOsd.opacity > 0
 
-		PanelWindow {
-			id: barWindow
-			required property var modelData
+	readonly property int maxHeight: 700
+	readonly property int maxWidth: 700
 
-			screen: modelData
-			Shared.Theme { id: theme }
+	readonly property int minHeight: 400
 
-			property var pomodoroState: ({
-				text: "25:00",
-				tooltip: "",
-				classes: [],
-				alt: "",
-			})
-			property var caffeineState: ({
-				text: "󰅶",
-				classes: ["inactive"],
-			})
-			property bool microphoneMuted: false
-			property bool recording: false
-			property bool batteryAlt: false
-			property bool clockAlt: false
-			property date currentTime: new Date()
+	readonly property int quickPanelHeight: 240
+	readonly property int quickPanelWidth: 590
 
-			readonly property color bgPrimary: theme.background
-			readonly property color capsuleColor: theme.surface
-			readonly property color capsuleHoverColor: theme.primaryContainer
-			readonly property color textPrimary: theme.backgroundText
-			readonly property color textSecondary: theme.surfaceVariantText
-			readonly property color textDisabled: theme.disabled
-			readonly property color accent: theme.primary
-			readonly property color accentContainer: theme.primaryContainer
-			readonly property color tertiary: theme.tertiary
-			readonly property color error: theme.error
-			readonly property color onError: theme.errorText
-			readonly property color panelSuccess: theme.tertiary
+	readonly property int launcherPanelHeight: 285
+	readonly property int launcherPanelWidth: 590
 
-			readonly property var pomodoroClasses: normalizeClasses(pomodoroState.classes)
-			readonly property var caffeineClasses: normalizeClasses(caffeineState.classes)
-			readonly property bool caffeineActive: caffeineClasses.indexOf("active") !== -1
-			readonly property var batteryDevice: UPower.displayDevice
-			readonly property bool batteryVisible: batteryDevice && batteryDevice.ready && batteryDevice.isPresent && batteryDevice.isLaptopBattery
-			readonly property int connectedBluetoothCount: {
-				const devices = Bluetooth.devices.values || [];
-				return devices.filter(device => device && device.connected).length;
-			}
-			readonly property var activeNetworkDevice: {
-				const devices = Networking.devices.values || [];
-				return devices.find(device => device && device.connected) || null;
-			}
-			readonly property var activeWifiNetwork: {
-				const device = activeNetworkDevice;
-				if (!device || device.type !== DeviceType.Wifi)
-					return null;
+	readonly property int clipboardPanelHeight: 460
+	readonly property int clipboardPanelWidth: 590
 
-				const networks = device.networks.values || [];
-				return networks.find(network => network && network.connected) || null;
-			}
-			readonly property var trayItems: {
-				const items = SystemTray.items.values || [];
-				return items.filter(item => item && item.status !== Status.Passive);
-			}
-			readonly property var workspaceIds: {
-				const ids = [1, 2, 3];
-				const workspaces = Hyprland.workspaces.values || [];
+	readonly property int normalHeight: 45
+	readonly property int normalWidth: 100
 
-				for (const workspace of workspaces) {
-					if (!workspace || workspace.id < 1)
-						continue;
-					if ((workspace.name || "").startsWith("special:"))
-						continue;
-					if (ids.indexOf(workspace.id) === -1)
-						ids.push(workspace.id);
-				}
+	readonly property int normalRadius: 50
+	readonly property int openRadius: 24
+	readonly property int osdRadius: 100
 
-				ids.sort((left, right) => left - right);
-				return ids;
-			}
+	Colors {
+		id: colors
+	}
 
-			function normalizeClasses(value) {
-				if (Array.isArray(value))
-					return value;
-				if (typeof value === "string" && value !== "")
-					return [value];
-				return [];
-			}
+	readonly property int exclusiveZoneHeight: 45
+	readonly property int shadowOffset: 2
 
-			function parseJsonLine(line, sourceName) {
-				const trimmed = (line || "").trim();
-				if (trimmed === "")
-					return null;
+	function activeOsd() {
+		if (volumeOsd.opacity > 0)
+			return volumeOsd
+		if (brightnessOsd.opacity > 0)
+			return brightnessOsd
+		if (caffeineOsd.opacity > 0)
+			return caffeineOsd
+		if (microphoneOsd.opacity > 0)
+			return microphoneOsd
+		return null
+	}
 
-				try {
-					return JSON.parse(trimmed);
-				} catch (error) {
-					console.warn(`bar: failed to parse ${sourceName}: ${error}`);
-					return null;
-				}
-			}
+	function panelHeight() {
+		const osd = activeOsd()
+		if (osd) {
+			return osd.implicitHeight
+		} else if (notificationPanel.opacity > 0) {
+			return notificationPanel.implicitHeight
+		} else if (bar.clipboardPanelOpen) {
+			return bar.clipboardPanelHeight
+		} else if (bar.quickPanelOpen) {
+			return bar.quickPanelHeight
+		} else if (bar.launcherPanelOpen) {
+			return bar.launcherPanelHeight
+		} else {
+			return bar.normalHeight
+		}
+	}
 
-			function workspaceForId(workspaceId) {
-				const workspaces = Hyprland.workspaces.values || [];
-				return workspaces.find(workspace => workspace && workspace.id === workspaceId) || null;
-			}
+	function panelWidth() {
+		const osd = activeOsd()
+		if (osd) {
+			return osd.implicitWidth
+		} else if (notificationPanel.opacity > 0) {
+			return notificationPanel.implicitWidth
+		} else if (bar.clipboardPanelOpen) {
+			return bar.clipboardPanelWidth
+		} else if (bar.quickPanelOpen) {
+			return bar.quickPanelWidth
+		} else if (bar.launcherPanelOpen) {
+			return bar.launcherPanelWidth
+		} else {
+			return bar.normalWidth
+		}
+	}
 
-			function pomodoroColors() {
-				if (pomodoroClasses.indexOf("pause") !== -1)
-				return { background: tertiary, foreground: bgPrimary };
-				if (pomodoroClasses.indexOf("work") !== -1)
-					return { background: accent, foreground: bgPrimary };
-				if (pomodoroClasses.indexOf("break") !== -1)
-					return { background: textSecondary, foreground: bgPrimary };
-				if (pomodoroClasses.indexOf("stopped") !== -1)
-					return { background: capsuleColor, foreground: textPrimary };
-				return { background: capsuleColor, foreground: textPrimary };
-			}
+	function closeQuickPanel() {
+		bar.quickPanelOpen = false
+		bar.focusable = false
+	}
 
-			function networkIcon() {
-				const device = activeNetworkDevice;
-				if (device && device.type === DeviceType.Wired)
-					return "󰈀";
+	anchors {
+		top: true
+	}
 
-				if (!Networking.wifiEnabled || !Networking.wifiHardwareEnabled)
-					return "󰤮";
+	margins {
+		top: 10
+	}
 
-				if (!device || device.type !== DeviceType.Wifi || !activeWifiNetwork)
-					return "󰤭";
+	exclusionMode: ExclusionMode.Normal
+	exclusiveZone: bar.exclusiveZoneHeight
 
-				const strength = (activeWifiNetwork.signalStrength || 0) * 100;
-				if (strength >= 80)
-					return "󰤨";
-				if (strength >= 55)
-					return "󰤥";
-				if (strength >= 30)
-					return "󰤢";
-				if (strength > 0)
-					return "󰤟";
-				return "󰤯";
-			}
+	implicitHeight: maxHeight + shadowOffset
+	implicitWidth: maxWidth + shadowOffset
 
-			function networkColor() {
-				if (activeNetworkDevice && activeNetworkDevice.connected)
-					return textPrimary;
-				return textDisabled;
-			}
+	mask: Region {
+		item: barContent
+	}
 
-			function bluetoothIcon() {
-				const adapter = Bluetooth.defaultAdapter;
-				if (!adapter || !adapter.enabled)
-					return "󰂲";
-				return "󰂯";
-			}
+	color: "transparent"
 
-			function bluetoothColor() {
-				if (connectedBluetoothCount > 0)
-					return accent;
-				if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled)
-					return textPrimary;
-				return textDisabled;
-			}
+	RectangularShadow {
+		anchors.fill: barContent
+		radius: bar.somethingOpen ? openRadius : normalRadius
+		blur: 8
+		spread: 0
+		offset: Qt.point(0, 2)
+		color: Qt.rgba(0, 0, 0, 0.25)
+	}
 
-			function powerProfileIcon() {
-				switch (PowerProfiles.profile) {
-				case PowerProfile.Performance:
-					return "󰈸";
-				case PowerProfile.PowerSaver:
-					return "󰌪";
-				default:
-					return "󰗑";
+	Rectangle {
+		id: barContent
+
+		anchors.horizontalCenter: parent.horizontalCenter
+		height: bar.panelHeight()
+		width: bar.panelWidth()
+		radius: bar.somethingOpen ? (osdOpen ? osdRadius : openRadius) : normalRadius
+		color: colors.background
+
+		MouseArea {
+			anchors.fill: parent
+			enabled: volumeOsd.opacity === 0 && brightnessOsd.opacity === 0 && caffeineOsd.opacity === 0 && microphoneOsd.opacity === 0
+			onClicked: {
+				if (bar.launcherPanelOpen) {
+					bar.launcherPanelOpen = false
+					bar.focusable = false
+				} else if (bar.clipboardPanelOpen) {
+					bar.clipboardPanelOpen = false
+					bar.focusable = false
+				} else {
+					bar.quickPanelOpen = !bar.quickPanelOpen
 				}
 			}
+		}
 
-			function cyclePowerProfile() {
-				switch (PowerProfiles.profile) {
-				case PowerProfile.PowerSaver:
-					PowerProfiles.profile = PowerProfile.Balanced;
-					break;
-				case PowerProfile.Balanced:
-					PowerProfiles.profile = PowerProfiles.hasPerformanceProfile ? PowerProfile.Performance : PowerProfile.PowerSaver;
-					break;
-				case PowerProfile.Performance:
-				default:
-					PowerProfiles.profile = PowerProfile.PowerSaver;
-					break;
+		Item {
+			anchors.centerIn: parent
+			width: clock.implicitWidth
+			height: clock.implicitHeight
+			visible: !bar.somethingOpen
+
+			WorkspaceIndicator {
+				anchors.right: clock.left
+				anchors.rightMargin: 60
+				anchors.verticalCenter: clock.verticalCenter
+			}
+
+			Clock {
+				id: clock
+				anchors.centerIn: parent
+			}
+
+			BatteryIndicator {
+				anchors.left: clock.right
+				anchors.leftMargin: 60
+				anchors.verticalCenter: clock.verticalCenter
+			}
+		}
+
+		Clipboard {
+			id: clipboardPanel
+			barWindow: bar
+			opacity: bar.clipboardPanelOpen ? 1 : 0
+			visible: bar.clipboardPanelOpen || opacity > 0
+			anchors.fill: parent
+			onCloseRequested: {
+				bar.clipboardPanelOpen = false
+				bar.focusable = false
+			}
+
+			Behavior on opacity {
+				NumberAnimation {
+					duration: bar.clipboardPanelOpen ? 150 : 250
+					easing.type: bar.clipboardPanelOpen
+					? Easing.OutCubic
+					: Easing.InCubic
 				}
 			}
+		}
 
-			function batteryIcon() {
-				if (!batteryVisible)
-					return "";
+		Launcher {
+			id: launcherPanel
+			barWindow: bar
+			opacity: bar.launcherPanelOpen ? 1 : 0
+			visible: bar.launcherPanelOpen || opacity > 0
+			anchors.fill: parent
+			onCloseRequested: {
+				bar.launcherPanelOpen = false
+				bar.focusable = false
+			}
 
-				switch (batteryDevice.state) {
-				case UPowerDeviceState.Charging:
-				case UPowerDeviceState.PendingCharge:
-					return "󰂄";
-				case UPowerDeviceState.FullyCharged:
-					return "󰁹";
-				default: {
-					const raw = batteryDevice.percentage || 0;
-					const percentage = raw <= 1 ? raw * 100 : raw;
-					if (percentage <= 10)
-						return "󰂃";
-					if (percentage <= 20)
-						return "󰁺";
-					if (percentage <= 20)
-						return "󰁻";
-					if (percentage <= 30)
-						return "󰁼";
-					if (percentage <= 40)
-						return "󰁽";
-					if (percentage <= 50)
-						return "󰁾";
-					if (percentage <= 60)
-						return "󰁿";
-					if (percentage <= 70)
-						return "󰂀";
-					if (percentage <= 80)
-						return "󰂁";
-					if (percentage <= 90)
-						return "󰂂";
-					return "󰁹";
-				}
+			Behavior on opacity {
+				NumberAnimation {
+					duration: bar.launcherPanelOpen ? 150 : 250
+					easing.type: bar.launcherPanelOpen
+					? Easing.OutCubic
+					: Easing.InCubic
 				}
 			}
+		}
 
-			function batteryColor() {
-				if (!batteryVisible)
-					return textPrimary;
+		QuickPanel {
+			id: quickPanel
+			barWindow: bar
+			opacity: bar.quickPanelOpen ? 1 : 0
+			visible: bar.quickPanelOpen || opacity > 0
+			anchors.fill: parent
+			onCloseRequested: bar.closeQuickPanel()
 
-				if (batteryDevice.state === UPowerDeviceState.Charging || batteryDevice.state === UPowerDeviceState.PendingCharge || batteryDevice.state === UPowerDeviceState.FullyCharged)
-					return panelSuccess;
-				const raw = batteryDevice.percentage || 0;
-				const percentage = raw <= 1 ? raw * 100 : raw;
-				if (percentage <= 10)
-					return error;
-				if (percentage <= 30)
-					return tertiary;
-				return textPrimary;
-			}
-
-			function batteryText() {
-				if (!batteryVisible)
-					return "";
-
-				if (batteryAlt) {
-					const raw = batteryDevice.percentage || 0;
-					const percent = raw <= 1 ? raw * 100 : raw;
-					return `${Math.round(percent)}%`;
-				}
-
-				return batteryIcon();
-			}
-
-			function trayItemClick(item, point, alternate) {
-				if (!item)
-					return;
-
-				if (item.hasMenu) {
-					item.display(barWindow, point.x, point.y);
-					return;
-				}
-
-				if (alternate)
-					item.secondaryActivate();
-				else
-					item.activate();
-			}
-
-			visible: true
-			color: bgPrimary
-			implicitHeight: theme.barHeight
-			exclusionMode: ExclusionMode.Auto
-
-			anchors {
-				top: true
-				left: true
-				right: true
-			}
-
-			Process {
-				id: pomodoroProcess
-				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro.sh" --no-icons --no-work-icons']
-				running: true
-				stdout: SplitParser {
-					splitMarker: "\n"
-
-					onRead: data => {
-						const parsed = barWindow.parseJsonLine(data, "pomodoro");
-						if (!parsed)
-							return;
-
-						barWindow.pomodoroState = {
-							text: parsed.text || "",
-							tooltip: parsed.tooltip || "",
-							classes: barWindow.normalizeClasses(parsed.class),
-							alt: parsed.alt || "",
-						};
-					}
+			Behavior on opacity {
+				NumberAnimation {
+					duration: bar.quickPanelOpen ? 150 : 250
+					easing.type: bar.quickPanelOpen
+					? Easing.OutCubic
+					: Easing.InCubic
 				}
 			}
+		}
 
-			Process {
-				id: pomodoroActionProcess
-				property string actionName: ""
-				command: ["bash", "-lc", 'exec "$HOME/.config/quickshell/bin/pomodoro.sh" "$1"', "_", actionName]
+		Notifications {
+			id: notificationPanel
+			barWindow: bar
+			opacity: notificationPanel.active ? 1 : 0
+			visible: notificationPanel.active || opacity > 0
+			anchors.fill: parent
 
-				onRunningChanged: {
-					if (!running)
-						actionName = "";
+			Behavior on opacity {
+				NumberAnimation {
+					duration: notificationPanel.active ? 150 : 250
+					easing.type: notificationPanel.active
+					? Easing.OutCubic
+					: Easing.InCubic
 				}
 			}
+		}
 
-			Process {
-				id: caffeineStatusProcess
-				command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/caffeine.sh" icon']
-				stdout: StdioCollector {
-					onStreamFinished: {
-						const parsed = barWindow.parseJsonLine(this.text, "caffeine");
-						if (!parsed)
-							return;
+		OSD.Volume {
+			id: volumeOsd
+			anchors.fill: parent
+		}
 
-						barWindow.caffeineState = {
-							text: parsed.text || "󰅶",
-							classes: barWindow.normalizeClasses(parsed.class),
-						};
-					}
-				}
+		OSD.Brightness {
+			id: brightnessOsd
+			anchors.fill: parent
+		}
+
+		OSD.Caffeine {
+			id: caffeineOsd
+			anchors.fill: parent
+		}
+
+		OSD.Micprone {
+			id: microphoneOsd
+			anchors.fill: parent
+		}
+
+		Behavior on width {
+			NumberAnimation {
+				duration: 250
+				easing.type: bar.somethingOpen
+				? Easing.OutCubic
+				: Easing.InCubic
 			}
+		}
 
-			Process {
-				id: caffeineToggleProcess
-				command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/caffeine.sh" toggle']
-
-				onRunningChanged: {
-					if (!running && !caffeineStatusProcess.running)
-						caffeineStatusProcess.running = true;
-				}
+		Behavior on height {
+			NumberAnimation {
+				duration: 250
+				easing.type: bar.somethingOpen
+				? Easing.OutCubic
+				: Easing.InCubic
 			}
-
-
-			Process {
-				id: microphoneStatusProcess
-				command: ["bash", "-lc", 'pactl get-source-mute @DEFAULT_SOURCE@']
-				stdout: StdioCollector {
-					onStreamFinished: {
-						const output = this.text.trim().toLowerCase();
-						barWindow.microphoneMuted = output.endsWith("yes");
-					}
-				}
-			}
-
-			Process {
-				id: microphoneToggleProcess
-				command: ["bash", "-lc", 'pactl set-source-mute @DEFAULT_SOURCE@ toggle']
-				
-				onRunningChanged: {
-					if (!running && !microphoneStatusProcess.running)
-						microphoneStatusProcess.running = true;
-				}
-			}
-
-			Process {
-				id: recorderStatusProcess
-				command: ["bash", "-lc", '[ -f /tmp/recorder_pid ] && echo "recording" || echo "stopped"']
-				stdout: StdioCollector {
-					onStreamFinished: {
-						barWindow.recording = this.text.trim() === "recording";
-					}
-				}
-			}
-
-			Process {
-				id: recorderToggleProcess
-				command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/recorder.sh"']
-				
-				onRunningChanged: {
-					if (!running && !recorderStatusProcess.running)
-						recorderStatusProcess.running = true;
-				}
-			}
-
-			Process {
-				id: networkEditorProcess
-				command: ["nm-connection-editor"]
-			}
-
-			Process {
-				id: bluetoothManagerProcess
-				command: ["blueman-manager"]
-			}
-
-			Timer {
-				interval: 2000
-				running: true
-				repeat: true
-				triggeredOnStart: true
-
-				onTriggered: {
-					if (!pomodoroProcess.running)
-						pomodoroProcess.running = true;
-					if (!caffeineStatusProcess.running)
-						caffeineStatusProcess.running = true;
-					if (!microphoneStatusProcess.running)
-						microphoneStatusProcess.running = true;
-					if (!recorderStatusProcess.running)
-						recorderStatusProcess.running = true;
-				}
-			}
-
-			Item {
-				id: content
-				anchors.fill: parent
-
-				RowLayout {
-					anchors.fill: parent
-					anchors.leftMargin: theme.barHorizontalPadding
-					anchors.rightMargin: theme.barHorizontalPadding
-					anchors.topMargin: theme.barVerticalPadding
-					anchors.bottomMargin: theme.barVerticalPadding
-					spacing: theme.barSectionGap
-
-					BarCapsule {
-						RowLayout {
-							spacing: theme.microGap
-
-							IconText {
-								text: ""
-								color: accent
-								font.weight: Font.Medium
-							}
-						}
-					}
-
-					BarCapsule {
-						RowLayout {
-							spacing: theme.microGap
-
-							Repeater {
-								model: barWindow.workspaceIds
-
-								delegate: Rectangle {
-									required property var modelData
-
-									readonly property int workspaceId: Number(modelData)
-									readonly property var workspace: barWindow.workspaceForId(workspaceId)
-
-									color: workspace && workspace.active ? accentContainer : (workspaceButtonHover.containsMouse ? Qt.alpha(textPrimary, 0.08) : "transparent")
-									radius: theme.barWorkspaceButtonSize / 2
-									implicitWidth: theme.barWorkspaceButtonSize
-									implicitHeight: theme.barWorkspaceButtonSize
-
-									Behavior on color {
-										ColorAnimation { duration: 150 }
-									}
-
-									Text {
-										anchors.centerIn: parent
-										text: workspaceId
-										color: workspace && workspace.active && workspace.focused ? textPrimary : (workspace && workspace.urgent ? error : (workspace && workspace.toplevels && workspace.toplevels.values.length === 0 ? Qt.alpha(textSecondary, 0.65) : textDisabled))
-										font.pixelSize: 14
-										font.weight: Font.DemiBold
-									}
-
-									MouseArea {
-										id: workspaceButtonHover
-										anchors.fill: parent
-										hoverEnabled: true
-										cursorShape: Qt.PointingHandCursor
-										onClicked: Hyprland.dispatch(`workspace ${parent.workspaceId}`)
-									}
-								}
-							}
-						}
-					}
-
-					Item {
-						Layout.fillWidth: true
-						Layout.preferredWidth: 1
-
-						BarCapsule {
-							anchors.centerIn: parent
-							width: Math.min(implicitWidth, parent.width)
-							visible: false
-
-							RowLayout {
-								width: parent.width - (theme.barCapsuleHorizontalPadding * 2)
-
-								Text {
-									Layout.fillWidth: true
-									text: ""
-									color: textPrimary
-									font.pixelSize: 13
-									elide: Text.ElideRight
-									horizontalAlignment: Text.AlignHCenter
-									verticalAlignment: Text.AlignVCenter
-								}
-							}
-						}
-					}
-
-					RowLayout {
-						spacing: theme.barSectionGap
-
-						BarCapsule {
-							id: pomodoroCapsule
-							readonly property var pomodoroColors: barWindow.pomodoroColors()
-							color: pomodoroColors.background
-
-							Item {
-								implicitWidth: pomodoroContent.implicitWidth
-								implicitHeight: pomodoroContent.implicitHeight
-
-								RowLayout {
-									id: pomodoroContent
-									anchors.centerIn: parent
-									spacing: theme.tightGap
-
-									Text {
-										text: barWindow.pomodoroState.text || "25:00"
-										color: pomodoroCapsule.pomodoroColors.foreground
-										font.pixelSize: 13
-										font.weight: Font.DemiBold
-									}
-								}
-
-								MouseArea {
-									anchors.fill: parent
-									acceptedButtons: Qt.LeftButton | Qt.RightButton
-									cursorShape: Qt.PointingHandCursor
-
-									onClicked: mouse => {
-										if (pomodoroActionProcess.running)
-											return;
-
-										pomodoroActionProcess.actionName = mouse.button === Qt.RightButton ? "reset" : "toggle";
-										pomodoroActionProcess.running = true;
-									}
-								}
-							}
-						}
-
-						BarCapsule {
-							RowLayout {
-								spacing: theme.microGap
-
-								StatusButton {
-									text: barWindow.networkIcon()
-									foreground: barWindow.networkColor()
-
-									onClicked: {
-										Networking.wifiEnabled = !Networking.wifiEnabled;
-									}
-
-									onRightClicked: {
-										if (!networkEditorProcess.running)
-											networkEditorProcess.running = true;
-									}
-								}
-
-								StatusButton {
-									visible: barWindow.caffeineActive
-									text: barWindow.caffeineState.text || "󰅶"
-									foreground: accent
-
-									onClicked: {
-										if (!caffeineToggleProcess.running)
-											caffeineToggleProcess.running = true;
-									}
-								}
-
-								StatusButton {
-									text: barWindow.bluetoothIcon()
-									foreground: barWindow.bluetoothColor()
-
-									onClicked: {
-										if (Bluetooth.defaultAdapter)
-											Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled;
-									}
-
-									onRightClicked: {
-										if (!bluetoothManagerProcess.running)
-											bluetoothManagerProcess.running = true;
-									}
-								}
-
-									StatusButton {
-										visible: barWindow.microphoneMuted
-										text: "󰍭"
-										foreground: error
-					
-										onClicked: {
-											if (!microphoneToggleProcess.running)
-												microphoneToggleProcess.running = true;
-										}
-									}
-
-									StatusButton {
-										text: barWindow.recording ? "●" : ""
-										foreground: barWindow.recording ? error : barWindow.textDisabled
-										pixelSize: 12
-										onClicked: {
-											if (!recorderToggleProcess.running)
-												recorderToggleProcess.running = true;
-										}
-									}
-
-								StatusButton {
-									text: barWindow.powerProfileIcon()
-									foreground: textPrimary
-
-									onClicked: {
-										barWindow.cyclePowerProfile();
-									}
-								}
-
-								StatusButton {
-									visible: barWindow.batteryVisible
-									text: barWindow.batteryText()
-									pixelSize: barWindow.batteryAlt ? 14 : 16
-									foreground: barWindow.batteryColor()
-
-									onClicked: {
-										barWindow.batteryAlt = !barWindow.batteryAlt;
-									}
-								}
-							}
-						}
-
-						BarCapsule {
-							Item {
-								implicitWidth: clockContent.implicitWidth
-								implicitHeight: clockContent.implicitHeight
-
-								RowLayout {
-									id: clockContent
-									anchors.centerIn: parent
-
-									Text {
-										text: barWindow.clockAlt ? Qt.formatDateTime(barWindow.currentTime, "HH:mm dd/MM/yyyy") : Qt.formatDateTime(barWindow.currentTime, "HH:mm")
-										color: textPrimary
-										font.pixelSize: 13
-										font.weight: Font.Medium
-									}
-								}
-
-								MouseArea {
-									anchors.fill: parent
-									acceptedButtons: Qt.LeftButton
-									cursorShape: Qt.PointingHandCursor
-									onClicked: barWindow.clockAlt = !barWindow.clockAlt
-								}
-							}
-
-							Timer {
-								interval: 1000
-								running: true
-								repeat: true
-								onTriggered: barWindow.currentTime = new Date()
-							}
-						}
-
-						BarCapsule {
-							id: trayCapsule
-							property bool trayExpanded: false
-
-							Item {
-								width: implicitWidth
-								height: implicitHeight
-								implicitWidth: trayMenuButton.implicitWidth
-									+ (trayCapsule.trayExpanded ? theme.smallGap + trayIcons.implicitWidth : 0)
-								implicitHeight: Math.max(trayMenuButton.implicitHeight, trayIcons.implicitHeight)
-								clip: true
-
-								Row {
-									anchors.centerIn: parent
-									spacing: theme.smallGap
-
-									StatusButton {
-										id: trayMenuButton
-										text: trayCapsule.trayExpanded ? "󰅂" : "󰅁"
-										foreground: textPrimary
-
-										onClicked: {
-											if (barWindow.trayItems.length === 0)
-												return;
-
-											trayCapsule.trayExpanded = !trayCapsule.trayExpanded;
-										}
-									}
-
-									Item {
-										width: trayCapsule.trayExpanded ? trayIcons.implicitWidth : 0
-										height: trayIcons.implicitHeight
-										clip: true
-										opacity: trayCapsule.trayExpanded ? 1 : 0
-										visible: barWindow.trayItems.length > 0
-
-										MouseArea {
-											anchors.fill: parent
-											acceptedButtons: Qt.LeftButton
-											cursorShape: Qt.PointingHandCursor
-
-											onClicked: mouse => {
-												if (barWindow.trayItems.length === 0)
-													return;
-
-												trayCapsule.trayExpanded = !trayCapsule.trayExpanded;
-											}
-										}
-
-										Behavior on opacity {
-											NumberAnimation {
-												duration: 250
-												easing.type: Easing.Linear
-											}
-										}
-
-										Row {
-											id: trayIcons
-											anchors.verticalCenter: parent.verticalCenter
-											spacing: theme.tightGap
-
-											Repeater {
-												model: barWindow.trayItems
-
-												delegate: Item {
-													required property var modelData
-
-													implicitWidth: theme.barStatusButtonSize
-													implicitHeight: theme.barStatusButtonSize
-
-													Rectangle {
-														anchors.fill: parent
-														radius: width / 2
-														color: trayMouse.containsMouse ? Qt.alpha(textPrimary, 0.08) : "transparent"
-
-														Behavior on color {
-															ColorAnimation { duration: 150 }
-														}
-													}
-
-													IconImage {
-														anchors.centerIn: parent
-														implicitSize: theme.barTrayIconSize
-														source: modelData.icon
-													}
-
-													MouseArea {
-														id: trayMouse
-														anchors.fill: parent
-														acceptedButtons: Qt.LeftButton | Qt.RightButton
-														hoverEnabled: true
-														cursorShape: Qt.PointingHandCursor
-
-														onClicked: mouse => {
-															const point = mapToItem(content, 0, height);
-															barWindow.trayItemClick(modelData, point, mouse.button === Qt.RightButton);
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			component BarCapsule: Rectangle {
-				id: capsule
-
-				default property alias contentData: capsuleLayout.data
-
-				implicitWidth: capsuleLayout.implicitWidth + (theme.barCapsuleHorizontalPadding * 2)
-				implicitHeight: theme.barHeight - (theme.barVerticalPadding * 2)
-				radius: theme.barCapsuleRadius
-				color: barWindow.capsuleColor
-
-				Rectangle {
-					anchors.fill: parent
-					radius: parent.radius
-					color: "transparent"
-				}
-
-				RowLayout {
-					id: capsuleLayout
-					anchors.centerIn: parent
-					spacing: theme.smallGap
-				}
-			}
-
-			component IconText: Text {
-				color: barWindow.textPrimary
-				font.pixelSize: 15
-				font.weight: Font.Medium
-				verticalAlignment: Text.AlignVCenter
-			}
-
-			component StatusButton: Item {
-				id: statusButton
-
-				property string text: ""
-				property color foreground: barWindow.textPrimary
-				property color background: "transparent"
-				property bool clickable: true
-				property int pixelSize: 16
-				signal clicked()
-				signal rightClicked()
-
-				visible: text !== ""
-				implicitWidth: theme.barStatusButtonSize
-				implicitHeight: theme.barStatusButtonSize
-
-				Rectangle {
-					anchors.fill: parent
-					radius: width / 2
-					color: statusMouse.containsMouse && statusButton.clickable ? Qt.alpha(barWindow.textPrimary, 0.08) : statusButton.background
-
-					Behavior on color {
-						ColorAnimation { duration: 150 }
-					}
-				}
-
-				Text {
-					anchors.centerIn: parent
-					text: statusButton.text
-					color: statusButton.foreground
-					font.pixelSize: statusButton.pixelSize
-					font.weight: Font.Medium
-				}
-
-				MouseArea {
-					id: statusMouse
-					anchors.fill: parent
-					acceptedButtons: Qt.LeftButton | Qt.RightButton
-					hoverEnabled: true
-					cursorShape: statusButton.clickable ? Qt.PointingHandCursor : Qt.ArrowCursor
-
-					onClicked: mouse => {
-						if (!statusButton.clickable)
-							return;
-						if (mouse.button === Qt.RightButton)
-							statusButton.rightClicked();
-						else
-							statusButton.clicked();
-					}
-				}
-			}
+		}
+	}
+
+	IpcHandler {
+		target: "launcher"
+		function toggle() {
+			bar.focusable = !bar.launcherPanelOpen
+			bar.launcherPanelOpen = !bar.launcherPanelOpen
+		}
+	}
+
+	IpcHandler {
+		target: "clipboard"
+		function toggle() {
+			bar.focusable = !bar.clipboardPanelOpen
+			bar.clipboardPanelOpen = !bar.clipboardPanelOpen
+		}
+	}
+
+	IpcHandler {
+		target: "osd"
+
+		function volume() {
+			volumeOsd.showVolume()
+		}
+
+		function brightness() {
+			brightnessOsd.refreshBrightness()
+		}
+
+		function caffeine() {
+			caffeineOsd.showCaffeine()
+		}
+
+		function microphone() {
+			microphoneOsd.showMicrophone()
+		}
+
+		function mic() {
+			microphone()
 		}
 	}
 }

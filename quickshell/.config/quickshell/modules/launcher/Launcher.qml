@@ -3,443 +3,226 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Io
-import "../shared" as Shared
+import Quickshell.Widgets
+import qs.modules.colors
 
-Scope {
-	id: launcherScope
+Item {
+	id: root
 
-	PanelWindow {
-		id: launcher
-		Shared.Theme { id: theme }
+	signal closeRequested()
 
-		function resetLauncher() {
-			launcher.visible = false;
-			launcher.query = "";
-			input.text = "";
-		}
+	property var barWindow: null
+	property string query: ""
 
-		function launchSelected() {
-			if (list.currentItem && list.currentItem.modelData) {
-				list.currentItem.modelData.execute();
-				launcher.resetLauncher();
-			}
-		}
+	Colors {
+		id: colors
+	}
 
-		visible: false
-		color: "transparent"
-		implicitWidth: theme.floatingWindowWidth
-		implicitHeight: theme.floatingWindowHeight
-		exclusionMode: ExclusionMode.Normal
-		focusable: true
+	readonly property color bgPrimary: colors.windowBackground
+	readonly property color bgSecondary: colors.quickToggleBackground
+	readonly property color textPrimary: colors.windowForeground
+	readonly property color textMuted: Qt.rgba(
+		colors.windowForeground.r,
+		colors.windowForeground.g,
+		colors.windowForeground.b,
+		0.65
+	)
+	readonly property color accent: colors.quickToggleActiveBackground
+	readonly property color accentForeground: colors.quickToggleActiveForeground
 
-		anchors {
-			top: true
-			left: true
+	Functions {
+		id: functions
+		root: root
+		input: input
+		listView: listView
+	}
 
-		}
+	anchors.fill: parent
 
-		margins {
-		}
+	Rectangle {
+		id: panel
+		anchors.fill: parent
+		anchors.margins: 12
+		color: root.bgPrimary
+		radius: 24
 
-		readonly property color bgPrimary: theme.background
-		readonly property color bgSecondary: theme.surface
-		readonly property color bgHighlight: theme.surfaceVariant
-		readonly property color border: theme.outline
-		readonly property color textPrimary: theme.surfaceText
-		readonly property color textMuted: theme.surfaceVariantText
-		readonly property color accent: theme.primaryContainer
-		readonly property color accentBright: theme.primary
-		readonly property color success: theme.success
-
-		property string query: ""
-
-		Item {
+		ColumnLayout {
 			anchors.fill: parent
-
-			RectangularShadow {
-				anchors.fill: mainWindow
-				radius: theme.floatingWindowRadius
-				bottomRightRadius: theme.floatingWindowRadius
-				bottomLeftRadius: theme.floatingWindowRadius
-				blur: 5
-				spread: 0.2
-				offset: Qt.point(0, 4)
-				color: Qt.darker(mainWindow.color, 1.6)
-			}	
+			spacing: 12
 
 			Rectangle {
-				id: mainWindow
-				anchors.fill: parent
-				color: launcher.bgPrimary
-				anchors.centerIn: parent
-				anchors.margins: theme.floatingWindowMargin
-				opacity: 1
-				radius: theme.floatingWindowRadius
-				bottomRightRadius: theme.floatingWindowRadius
-				bottomLeftRadius: theme.floatingWindowRadius
-				border.width: 0
-				border.color: launcher.border
+				Layout.fillWidth: true
+				Layout.preferredHeight: 50
+				radius: 50
+				color: root.bgSecondary
 
-				layer.enabled: true
+				RowLayout {
+					anchors.fill: parent
+					anchors.leftMargin: 14
+					anchors.rightMargin: 14
+					spacing: 10
+
+					Text {
+						text: "󰍉"
+						color: root.textMuted
+						font.pixelSize: 20
+						font.weight: Font.Medium
+					}
+
+					TextField {
+						id: input
+						Layout.fillWidth: true
+						placeholderText: "Search applications..."
+						font.pixelSize: 16
+						color: root.textPrimary
+						selectionColor: root.accent
+						selectedTextColor: root.bgPrimary
+						placeholderTextColor: root.textMuted
+						focus: true
+
+						background: Rectangle {
+							color: "transparent"
+							border.width: 0
+						}
+
+						onTextChanged: {
+							root.query = text
+							listView.currentIndex = filtered.values.length > 0 ? 0 : -1
+						}
+
+						Keys.onEscapePressed: {
+							functions.resetLauncher()
+						}
+
+						Keys.onPressed: event => {
+							const ctrl = event.modifiers & Qt.ControlModifier
+							if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && ctrl)) {
+								event.accepted = true
+								if (listView.currentIndex > 0)
+									listView.currentIndex--
+							} else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && ctrl)) {
+								event.accepted = true
+								if (listView.currentIndex < listView.count - 1)
+									listView.currentIndex++
+							} else if ([Qt.Key_Return, Qt.Key_Enter].includes(event.key)) {
+								event.accepted = true
+								functions.launchSelected()
+							} else if (event.key === Qt.Key_C && ctrl) {
+								event.accepted = true
+								functions.resetLauncher()
+							}
+						}
+					}
+				}
 			}
 
-			ColumnLayout {
-				anchors.fill: parent
-				anchors.margins: theme.floatingContentPadding
-				spacing: theme.largeGap
+			ScrollView {
+				Layout.fillWidth: true
+				Layout.fillHeight: true
+				clip: true
+				ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+				ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
+				ListView {
+					id: listView
+					model: filtered.values
+					currentIndex: filtered.values.length > 0 ? 0 : -1
+					spacing: 8
+					keyNavigationWraps: false
+					preferredHighlightBegin: 0
+					preferredHighlightEnd: height
+					highlightRangeMode: ListView.ApplyRange
+					highlightMoveDuration: 150
 
-
-				ScriptModel {
-					id: filtered
-
-					function safeMathEval(expr) {
-						expr = expr.replace(/\s+/g, '');
-
-						const replacements = {
-							'sqrt': 'Math.sqrt',
-							'sin': 'Math.sin',
-							'cos': 'Math.cos',
-							'tan': 'Math.tan',
-							'asin': 'Math.asin',
-							'acos': 'Math.acos',
-							'atan': 'Math.atan',
-							'log': 'Math.log',
-							'ln': 'Math.log',
-							'log10': 'Math.log10',
-							'abs': 'Math.abs',
-							'ceil': 'Math.ceil',
-							'floor': 'Math.floor',
-							'round': 'Math.round',
-							'exp': 'Math.exp',
-							'pow': 'Math.pow',
-							'min': 'Math.min',
-							'max': 'Math.max',
-							'pi': 'Math.PI',
-							'e': 'Math.E'
-						};
-
-						// Replace function names
-						for (let key in replacements) {
-							let regex = new RegExp('\\b' + key + '\\b', 'gi');
-							expr = expr.replace(regex, replacements[key]);
-						}
-
-						// Replace ^ with ** for exponentiation
-						expr = expr.replace(/\^/g, '**');
-
-						return Function('"use strict"; return (' + expr + ')')();
+					highlight: Rectangle {
+						radius: 18
+						color: root.accent
+						opacity: 0.75
 					}
 
-					function parseCommand(cmd) {
-						const command = cmd.slice(1).trim();
-						const args = command.split(/\s+/);
+					delegate: Item {
+						id: entry
+						required property var modelData
+						required property int index
 
-						if (command !== "") {
-							if (args.length > 0) {
-								try {
-									const expression = args.join(" ");
-									const result = safeMathEval(expression);
+						width: ListView.view.width
+						height: 60
 
-									// Format the result nicely
-									let formattedResult;
-									if (typeof result === 'number') {
-										if (Number.isInteger(result)) {
-											formattedResult = result.toString();
-										} else {
-											// Remove trailing zeros
-											formattedResult = parseFloat(result.toFixed(10)).toString();
-										}
-									} else {
-										formattedResult = result.toString();
-									}
-
-									return [{
-										name: "Calculate: " + expression,
-										comment: "Result: " + formattedResult,
-										icon: "accessories-calculator",
-										execute: function() {
-											launcher.resetLauncher();
-										}
-									}];
-								} catch (e) {
-									return [{
-										name: "Invalid expression",
-										comment: "Error: " + e.message,
-										icon: "dialog-error",
-										execute: function() {}
-									}];
-								}
-							}
-							return [{
-								name: "Calculator Command",
-								comment: "Usage: :<expression>",
-								icon: "accessories-calculator",
-								execute : function() {}
-							}];
-						}
-					}
-
-						values: {
-							const allEntries = [...DesktopEntries.applications.values];
-							const q = launcher.query.trim().toLowerCase();
-							if (q.startsWith(":")) {
-								if (q.length === 1) {
-									return [{
-										name: "Calculator",
-										comment: "Examples: :2+2, :sqrt(16)",
-										icon: "accessories-calculator",
-										execute: function() {}
-									}];
-								}
-								return parseCommand(q);
-							}
-							allEntries.sort((a, b) => a.name.localeCompare(b.name));
-
-							if (q === "") {
-								return allEntries;
-							} else {
-								const entries = allEntries.filter(d => 
-								d.name && d.name.toLowerCase().includes(q) || d.exec && d.exec.toLowerCase().includes(q)
-							);
-							if (entries.length === 0) {
-								// check if query looks like a URL
-								const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-								if (urlPattern.test(q)) {
-									const url = q.startsWith("http://") || q.startsWith("https://") ? q : "https://" + q;
-									return [{
-										name: `Open ${url}`,
-										comment: `Open ${url} with default application`,
-										icon: "document-open",
-										execute: function() {										
-											Qt.openUrlExternally(url);
-											launcher.resetLauncher();
-										}
-									}];
-								}
-								return [{
-									name: "Search the web",
-									comment: `No results found for "${launcher.query}", search the web instead`,
-									icon: "internet-web-browser",
-									execute: function() {
-										const url = "https://www.google.com/search?q=" + encodeURIComponent(launcher.query);
-										Qt.openUrlExternally(url);
-										launcher.resetLauncher();
-									}
-								}];
-							} else {
-								return entries;
-							}
-						}
-					}
-				}
-
-				// Results list
-				ScrollView {
-					Layout.fillWidth: true
-					Layout.fillHeight: true
-					clip: true
-					ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-					ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-
-					ListView {
-						id: list
-						model: filtered.values
-						currentIndex: filtered.values.length > 0 ? 0 : -1
-						spacing: theme.listGap
-						orientation: ListView.Vertical
-						keyNavigationWraps: false
-						preferredHighlightBegin: 0
-						preferredHighlightEnd: height
-						highlightRangeMode: ListView.ApplyRange
-						highlightMoveDuration: 150
-						highlightMoveVelocity: -1
-
-						highlight: Rectangle {
-							radius: theme.listItemRadius
-							color: launcher.accent
-							opacity: 0.75
-
-							Behavior on y {
-								NumberAnimation { 
-									duration: 150
-									easing.type: Easing.OutCubic
-								}
-							}
+						MouseArea {
+							anchors.fill: parent
+							hoverEnabled: true
+							cursorShape: Qt.PointingHandCursor
+							onClicked: listView.currentIndex = entry.index
+							onDoubleClicked: functions.launchSelected()
 						}
 
-						delegate: Item {
-							id: entry
-							required property var modelData
-							required property int index
-							width: parent.width
-							height: 67
+						Rectangle {
+							anchors.fill: parent
+							radius: 18
+							color: listView.currentIndex === entry.index
+							? Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.20)
+							: "transparent"
+							border.width: 0
 
-							MouseArea {
+							RowLayout {
 								anchors.fill: parent
-								hoverEnabled: true
-								cursorShape: Qt.PointingHandCursor
+								anchors.margins: 10
+								spacing: 10
 
-								onClicked: list.currentIndex = entry.index
-								onDoubleClicked: launcher.launchSelected()
-							}
-							Rectangle {
+								Rectangle {
+									Layout.preferredWidth: 40
+									Layout.preferredHeight: 40
+									radius: 12
+									color: Qt.rgba(1, 1, 1, 0.06)
 
-								color: "transparent"
-								radius: theme.listItemRadius
-								width: parent.width
-								height: parent.height
-
-								RowLayout {
-									anchors.fill: parent
-									anchors.margins: theme.listItemPadding
-									spacing: 0
-
-									// Icon container
-									Rectangle {
-										width: parent.height
-										height: parent.height
-										radius: 10
-										color: "transparent"
-										Layout.alignment: Qt.AlignCenter
-
-										IconImage {
-											anchors.centerIn: parent
-											source: Quickshell.iconPath(modelData.icon, true)
-											width: parent.width - 8
-											height: parent.height - 8
-											smooth: true
-										}
+									IconImage {
+										anchors.centerIn: parent
+										implicitSize: 24
+										source: Quickshell.iconPath(modelData.icon, true)
 									}
-									ColumnLayout {
+								}
+
+								ColumnLayout {
+									Layout.fillWidth: true
+									spacing: 2
+
+									Text {
 										Layout.fillWidth: true
-										Layout.leftMargin: 6
-										Layout.rightMargin: 6
-										// App name
-										Text {
-											Layout.fillWidth: true
-											Layout.leftMargin: 4
-											Layout.rightMargin: 4
-											color: launcher.textPrimary
-											text: modelData.name
-											font.pixelSize: 14
-											font.weight: Font.Medium
-											elide: Text.ElideRight
-											verticalAlignment: Text.AlignVCenter
-											horizontalAlignment: Text.AlignLeft
-										}
-										Text {
-											Layout.fillWidth: true
-											Layout.leftMargin: 4
-											Layout.rightMargin: 4
-											color: launcher.textMuted
-											opacity: 0.8
-											text: modelData.comment ? modelData.comment : "No description available"
-											font.pixelSize: 12
-											font.weight: Font.Medium
-											elide: Text.ElideRight
-											verticalAlignment: Text.AlignVCenter
-											horizontalAlignment: Text.AlignLeft
-										}
+										text: modelData.name
+										color: root.textPrimary
+										font.pixelSize: 14
+										font.weight: Font.Medium
+										elide: Text.ElideRight
+									}
+
+									Text {
+										Layout.fillWidth: true
+										text: modelData.comment ? modelData.comment : "No description available"
+										color: root.textMuted
+										opacity: 0.9
+										font.pixelSize: 12
+										elide: Text.ElideRight
 									}
 								}
-
 							}
 						}
-
-						Keys.onReturnPressed: launcher.launchSelected()
 					}
+
+					Keys.onReturnPressed: functions.launchSelected()
 				}
-
-				Rectangle {
-					Layout.fillWidth: true
-					height: theme.searchFieldHeight
-					color: launcher.bgSecondary
-					radius: theme.searchFieldRadius
-					border.width: 0
-					border.color: launcher.accent
-
-					Behavior on border.color {
-						ColorAnimation { duration: 200 }
-					}
-
-					RowLayout {
-						anchors.fill: parent
-						anchors.margins: theme.searchFieldInset
-						anchors.leftMargin: theme.searchFieldLeftPadding
-						anchors.rightMargin: theme.searchFieldRightPadding
-						spacing: theme.mediumGap
-
-						Text {
-							text: "󰍉"
-							font.pixelSize: 22
-							color: launcher.textMuted
-						}
-
-						TextField {
-							id: input
-							Layout.fillWidth: true
-							placeholderText: "Search applications..."
-							font.pixelSize: 16
-							color: launcher.textPrimary
-							selectionColor: launcher.accent
-							selectedTextColor: launcher.bgPrimary
-							focus: true
-							leftPadding: theme.textFieldLeftPadding
-							rightPadding: 0
-							topPadding: 0
-							bottomPadding: 0
-
-							placeholderTextColor: launcher.textMuted
-
-							onTextChanged: {
-								launcher.query = text;
-								list.currentIndex = filtered.values.length > 0 ? 0 : -1;
-							}
-
-							background: Rectangle {
-								color: "transparent"
-								border.width: 0
-							}
-
-							Keys.onEscapePressed: {
-								launcher.resetLauncher();
-							}
-							Keys.onPressed: event => {
-								const ctrl = event.modifiers & Qt.ControlModifier;
-								if (event.key == Qt.Key_Up || event.key == Qt.Key_P && ctrl) {
-									event.accepted = true;
-									if (list.currentIndex > 0)
-									list.currentIndex--;
-								} else if (event.key == Qt.Key_Down || event.key == Qt.Key_N && ctrl) {
-									event.accepted = true;
-									if (list.currentIndex < list.count - 1)
-									list.currentIndex++;
-								} else if ([Qt.Key_Return, Qt.Key_Enter].includes(event.key)) {
-									event.accepted = true;
-									launcher.launchSelected();
-								} else if (event.key == Qt.Key_C && ctrl) {
-									event.accepted = true;
-									launcher.resetLauncher();
-								}
-							}
-						}
-					}
-				}
-
 			}
 		}
+
+		ScriptModel {
+			id: filtered
+			values: functions.values()
+		}
 	}
-	IpcHandler {
-		target: "launcher"
-		function toggle() {
-			launcher.visible = !launcher.visible;
-			if (launcher.visible) {
-				input.focus = true;
-				input.selectAll();
-			}
+
+	onVisibleChanged: {
+		if (visible) {
+			functions.focusInput()
 		}
 	}
 }

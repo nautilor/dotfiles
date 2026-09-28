@@ -1,386 +1,302 @@
-import Quickshell
-import Quickshell.Wayland
-import Quickshell.Hyprland
-import Quickshell.Io
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
-import "../shared" as Shared
+import Quickshell
+import Quickshell.Io
+import Quickshell.Widgets
+import qs.modules.colors
 
-Scope {
-	id: clipboardScope
+Item {
+	id: root
 
-	PanelWindow {
-		id: clipboardWindow
-		Shared.Theme { id: theme }
+	signal closeRequested()
 
-		property string scriptPath: "$HOME/.config/quickshell/bin/clipse-visual.sh"
-		property string query: ""
+	property var barWindow: null
+	property string scriptPath: "$HOME/.config/quickshell/bin/clipse-visual.sh"
+	property string query: ""
+	property var entries: []
+	property int selectedIndex: -1
+	property bool loading: false
 
-		readonly property color bgPrimary: theme.background
-		readonly property color bgSecondary: theme.surface
-		readonly property color bgHighlight: theme.surfaceVariant
-		readonly property color border: theme.outline
-		readonly property color textPrimary: theme.surfaceText
-		readonly property color textMuted: theme.surfaceVariantText
-		readonly property color accent: theme.primaryContainer
-		readonly property color accentBright: theme.primary
-		readonly property color success: theme.success
-		readonly property color danger: theme.error
+	Colors {
+		id: colors
+	}
 
-		implicitWidth: theme.floatingWindowWidth
-		implicitHeight: theme.floatingWindowHeight
-		visible: false
-		color: "transparent"
-		exclusionMode: ExclusionMode.Normal
-		focusable: true
+	readonly property color bgPrimary: colors.windowBackground
+	readonly property color bgSecondary: colors.quickToggleBackground
+	readonly property color textPrimary: colors.windowForeground
+	readonly property color textMuted: Qt.rgba(
+		colors.windowForeground.r,
+		colors.windowForeground.g,
+		colors.windowForeground.b,
+		0.65
+	)
+	readonly property color accent: colors.quickToggleActiveBackground
+	readonly property color accentForeground: colors.quickToggleActiveForeground
 
-		anchors {
-			top: true
-			left: true
-		}
+	anchors.fill: parent
 
-		margins {
-		}
+	Rectangle {
+		id: panel
+		anchors.fill: parent
+		anchors.margins: 12
+		color: root.bgPrimary
+		radius: 24
 
-		property var allItems: []
-		property var filteredItems: []
-
-		HyprlandFocusGrab {
-			id: focusGrab
-			windows: [clipboardWindow]
-			onCleared: clipboardWindow.closeMenu()
-		}
-
-		function closeMenu() {
-			clipboardWindow.visible = false;
-			focusGrab.active = false;
-			clipboardWindow.query = "";
-			searchField.text = "";
-		}
-
-		function updateSearch() {
-			const q = clipboardWindow.query.trim().toLowerCase();
-
-			if (q === "") {
-				clipboardWindow.filteredItems = clipboardWindow.allItems;
-			} else {
-				clipboardWindow.filteredItems = clipboardWindow.allItems.filter(item => {
-					const str = item.display.toLowerCase();
-					let i = 0;
-					let j = 0;
-
-					while (i < str.length && j < q.length) {
-						if (str[i] === q[j])
-						j++;
-						i++;
-					}
-
-					return j === q.length;
-				});
-			}
-
-			listView.currentIndex = clipboardWindow.filteredItems.length > 0 ? 0 : -1;
-		}
-
-		function copySelected() {
-			if (listView.currentItem)
-			listView.currentItem.select();
-		}
-
-		Process {
-			id: fetchHistory
-			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" list']
-			stdout: StdioCollector {
-				onStreamFinished: {
-					clipboardWindow.allItems = this.text.split("\n").filter(line => line.trim() !== "").map(line => {
-						const parts = line.split("\t");
-						const id = parts[0];
-						const display = parts[1] || "";
-						const imagePath = parts[2] || "";
-
-						return {
-							raw: id,
-							recorded: id,
-							display: display,
-							imagePath: imagePath
-						};
-					});
-
-					clipboardWindow.updateSearch();
-				}
-			}
-		}
-
-		Process {
-			id: copyToClipboard
-			property string selectedItem: ""
-			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" copy "$1"', "_", selectedItem]
-			onRunningChanged: {
-				if (!running && copyToClipboard.selectedItem !== "") {
-					clipboardWindow.closeMenu();
-					copyToClipboard.selectedItem = "";
-				}
-			}
-		}
-
-		Process {
-			id: deleteEntry
-			property string targetId: ""
-			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" delete "$1"', "_", targetId]
-			onRunningChanged: {
-				if (!running && targetId !== "") {
-					targetId = "";
-					fetchHistory.running = true;
-				}
-			}
-		}
-
-		Process {
-			id: clearHistory
-			command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/clipse-visual.sh" clear']
-			onRunningChanged: {
-				if (!running) {
-					clipboardWindow.allItems = [];
-					clipboardWindow.updateSearch();
-				}
-			}
-		}
-
-		Item {
+		ColumnLayout {
 			anchors.fill: parent
-
-			RectangularShadow {
-				anchors.fill: mainWindow
-				radius: theme.floatingWindowRadius
-				bottomRightRadius: theme.floatingWindowRadius
-				bottomLeftRadius: theme.floatingWindowRadius
-				blur: 5
-				spread: 0.2
-				offset: Qt.point(0, 4) 
-				color: Qt.darker(mainWindow.color, 1.6)
-			}
+			spacing: 12
 
 			Rectangle {
-				id: mainWindow
-				anchors.fill: parent
-				anchors.margins: theme.floatingWindowMargin
-				color: clipboardWindow.bgPrimary
-				radius: theme.floatingWindowRadius
-				bottomRightRadius: theme.floatingWindowRadius
-				bottomLeftRadius: theme.floatingWindowRadius
-				border.width: 0
-				border.color: clipboardWindow.border
-				clip: true
-				focus: true
+				Layout.fillWidth: true
+				Layout.preferredHeight: 50
+				radius: 50
+				color: root.bgSecondary
 
-				Keys.onPressed: event => {
-					const ctrl = event.modifiers & Qt.ControlModifier;
-
-					if (event.key === Qt.Key_Escape || event.key === Qt.Key_Q && ctrl) {
-						clipboardWindow.closeMenu();
-					} else if (event.key === Qt.Key_X && ctrl) {
-						if (listView.currentItem)
-						listView.currentItem.remove();
-					} else if (event.key === Qt.Key_Down || event.key === Qt.Key_J || event.key === Qt.Key_N && ctrl) {
-						listView.incrementCurrentIndex();
-					} else if (event.key === Qt.Key_Up || event.key === Qt.Key_K || event.key === Qt.Key_P && ctrl) {
-						listView.decrementCurrentIndex();
-					} else if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return || event.key === Qt.Key_L) {
-						clipboardWindow.copySelected();
-					} else if (event.key === Qt.Key_Slash) {
-						searchField.forceActiveFocus();
-						event.accepted = true;
-					} else if (event.key === Qt.Key_C && ctrl) {
-						clipboardWindow.closeMenu();
-					}
-
-					event.accepted = true;
-				}
-
-				ColumnLayout {
+				RowLayout {
 					anchors.fill: parent
-					anchors.margins: theme.floatingContentPadding
-					spacing: theme.largeGap
+					anchors.leftMargin: 14
+					anchors.rightMargin: 14
+					spacing: 10
 
-					Item {
-						Layout.fillWidth: true
-						Layout.fillHeight: true
-
-						ScrollView {
-							anchors.fill: parent
-							clip: true
-							ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-							ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-
-							ListView {
-								id: listView
-								model: clipboardWindow.filteredItems
-								currentIndex: clipboardWindow.filteredItems.length > 0 ? 0 : -1
-								spacing: theme.listGap
-								orientation: ListView.Vertical
-								keyNavigationWraps: false
-								preferredHighlightBegin: 0
-								preferredHighlightEnd: height
-								highlightRangeMode: ListView.ApplyRange
-								highlightMoveDuration: 150
-								highlightMoveVelocity: -1
-
-								highlight: Rectangle {
-									radius: theme.listItemRadius
-									color: clipboardWindow.accent
-									opacity: 0.75
-
-									Behavior on y {
-										NumberAnimation {
-											duration: 150
-											easing.type: Easing.OutCubic
-										}
-									}
-								}
-
-								delegate: ClipboardDelegate {}
-								Keys.onReturnPressed: clipboardWindow.copySelected()
-							}
-						}
-
-						Text {
-							anchors.centerIn: parent
-							visible: clipboardWindow.filteredItems.length === 0
-							text: clipboardWindow.allItems.length === 0 ? "Clipboard empty" : "No results found"
-							color: clipboardWindow.textMuted
-							opacity: 0.8
-							font.pixelSize: 16
-							font.weight: Font.Medium
-						}
+					Text {
+						text: "󰅌"
+						color: root.textMuted
+						font.pixelSize: 20
+						font.weight: Font.Medium
 					}
 
-					Rectangle {
+					TextField {
+						id: input
 						Layout.fillWidth: true
-						height: theme.searchFieldHeight
-						color: clipboardWindow.bgSecondary
-						radius: theme.searchFieldRadius
-						border.width: 0
-						border.color: clipboardWindow.accent
+						placeholderText: "Search clipboard..."
+						font.pixelSize: 16
+						color: root.textPrimary
+						selectionColor: root.accent
+						selectedTextColor: root.bgPrimary
+						placeholderTextColor: root.textMuted
+						focus: true
 
-						RowLayout {
-							anchors.fill: parent
-							anchors.margins: theme.searchFieldInset
-							anchors.leftMargin: theme.searchFieldLeftPadding
-							anchors.rightMargin: theme.searchFieldCompactRightPadding
-							spacing: theme.mediumGap
+						background: Rectangle {
+							color: "transparent"
+							border.width: 0
+						}
 
-							Text {
-								text: "󰍉"
-								font.pixelSize: 22
-								color: clipboardWindow.textMuted
-							}
+						onTextChanged: {
+							root.query = text
+							root.selectedIndex = filteredEntries.length > 0 ? 0 : -1
+						}
 
-							TextField {
-								id: searchField
-								Layout.fillWidth: true
-								placeholderText: "Search clipboard..."
-								font.pixelSize: 16
-								color: clipboardWindow.textPrimary
-								selectionColor: clipboardWindow.accent
-								selectedTextColor: clipboardWindow.bgPrimary
-								focus: true
-								leftPadding: theme.textFieldLeftPadding
-								rightPadding: 0
-								topPadding: 0
-								bottomPadding: 0
-								placeholderTextColor: clipboardWindow.textMuted
-								background: Rectangle {
-									color: "transparent"
-									border.width: 0
-								}
+						Keys.onEscapePressed: root.closeRequested()
 
-								onTextChanged: {
-									clipboardWindow.query = text;
-									clipboardWindow.updateSearch();
-								}
-
-								Keys.onEscapePressed: clipboardWindow.closeMenu()
-								Keys.onPressed: event => {
-									const ctrl = event.modifiers & Qt.ControlModifier;
-
-									if (event.key === Qt.Key_Up || event.key === Qt.Key_P && ctrl) {
-										event.accepted = true;
-										if (listView.currentIndex > 0)
-										listView.currentIndex--;
-									} else if (event.key === Qt.Key_Down || event.key === Qt.Key_N && ctrl) {
-										event.accepted = true;
-										if (listView.currentIndex < listView.count - 1)
-										listView.currentIndex++;
-									} else if ([Qt.Key_Return, Qt.Key_Enter].includes(event.key)) {
-										event.accepted = true;
-										clipboardWindow.copySelected();
-									} else if (event.key === Qt.Key_C && ctrl) {
-										event.accepted = true;
-										clipboardWindow.closeMenu();
-									}
-								}
-							}
-
-							Rectangle {
-								id: clearButton
-								visible: clipboardWindow.allItems.length > 0
-								width: clearText.implicitWidth + 24
-								height: 36
-								radius: theme.listItemRadius
-								color: clearHover.hovered ? clipboardWindow.danger : theme.floatingBgHighlight
-								border.width: 0
-								border.color: clearHover.hovered ? clipboardWindow.danger : clipboardWindow.border
-								scale: clearTap.pressed ? 0.96 : 1.0
-
-								Behavior on scale {
-									NumberAnimation {
-										duration: 150
-										easing.type: Easing.OutBack
-									}
-								}
-
-								Text {
-									id: clearText
-									anchors.centerIn: parent
-									text: "Clear"
-									color: clearHover.hovered ? clipboardWindow.bgPrimary : clipboardWindow.textMuted
-									font.pixelSize: 13
-									font.weight: Font.Medium
-								}
-
-								HoverHandler {
-									id: clearHover
-									cursorShape: Qt.PointingHandCursor
-								}
-
-								TapHandler {
-									id: clearTap
-									onTapped: clearHistory.running = true
-								}
+						Keys.onPressed: event => {
+							const ctrl = event.modifiers & Qt.ControlModifier
+							if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && ctrl)) {
+								event.accepted = true
+								if (listView.currentIndex > 0)
+									listView.currentIndex--
+							} else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && ctrl)) {
+								event.accepted = true
+								if (listView.currentIndex < listView.count - 1)
+									listView.currentIndex++
+							} else if ([Qt.Key_Return, Qt.Key_Enter].includes(event.key)) {
+								event.accepted = true
+								root.copySelected()
+							} else if (event.key === Qt.Key_Delete && (event.modifiers & Qt.ShiftModifier)) {
+								event.accepted = true
+								root.removeSelected()
+							} else if (event.key === Qt.Key_C && ctrl) {
+								event.accepted = true
+								root.closeRequested()
 							}
 						}
 					}
+				}
+			}
+
+			ScrollView {
+				Layout.fillWidth: true
+				Layout.fillHeight: true
+				clip: true
+				ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+				ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+
+				ListView {
+					id: listView
+					model: filteredEntries
+					currentIndex: root.selectedIndex
+					spacing: 8
+					keyNavigationWraps: false
+					preferredHighlightBegin: 0
+					preferredHighlightEnd: height
+					highlightRangeMode: ListView.ApplyRange
+					highlightMoveDuration: 150
+
+					highlight: Rectangle {
+						radius: 18
+						color: root.accent
+						opacity: 0.75
+					}
+
+					delegate: ClipboardDelegate {
+						clipboard: root
+					}
+
+					onCurrentIndexChanged: root.selectedIndex = currentIndex
+					Keys.onReturnPressed: root.copySelected()
 				}
 			}
 		}
 	}
 
-	IpcHandler {
-		target: "clipMenu"
+	function refreshClipboard() {
+		loading = true
+		listProc.running = true
+	}
 
-		function toggle() {
-			if (clipboardWindow.visible) {
-				clipboardWindow.closeMenu();
-			} else {
-				clipboardWindow.visible = true;
-				fetchHistory.running = true;
-				searchField.text = "";
-				clipboardWindow.query = "";
-				focusGrab.active = true;
-				searchField.forceActiveFocus();
+	function focusInput() {
+		input.forceActiveFocus()
+		input.selectAll()
+	}
+
+	function closeClipboard() {
+		root.query = ""
+		root.selectedIndex = -1
+		input.text = ""
+		root.closeRequested()
+	}
+
+	function copySelected() {
+		const entry = filteredEntries[root.selectedIndex]
+		if (!entry)
+			return
+
+		copyEntry(entry)
+	}
+
+	function removeSelected() {
+		const entry = filteredEntries[root.selectedIndex]
+		if (!entry)
+			return
+
+		removeEntry(entry)
+	}
+
+	function copyEntry(entry) {
+		copyProc.command = [
+			"bash",
+			"-lc",
+			`bash "${scriptPath}" copy "$1"`,
+			"_",
+			entry.raw
+		]
+		copyProc.running = true
+		closeClipboard()
+	}
+
+	function removeEntry(entry) {
+		removeProc.command = [
+			"bash",
+			"-lc",
+			`bash "${scriptPath}" delete "$1"`,
+			"_",
+			entry.raw
+		]
+		removeProc.running = true
+	}
+
+	readonly property var filteredEntries: {
+		const raw = Array.isArray(entries) ? entries : []
+		const qv = query.trim().toLowerCase()
+		if (!qv)
+			return raw
+
+		return raw.filter(entry => {
+			if (!entry)
+				return false
+			const display = String(entry.display || "").toLowerCase()
+			const rawId = String(entry.raw || "").toLowerCase()
+			return display.includes(qv) || rawId.includes(qv)
+		})
+	}
+
+	onFilteredEntriesChanged: {
+		if (filteredEntries.length === 0) {
+			root.selectedIndex = -1
+		} else if (root.selectedIndex >= filteredEntries.length) {
+			root.selectedIndex = filteredEntries.length - 1
+		}
+	}
+
+	onVisibleChanged: {
+		if (visible) {
+			if (barWindow) {
+				barWindow.quickPanelOpen = false
+				barWindow.launcherPanelOpen = false
 			}
+			root.query = ""
+			input.text = ""
+			root.selectedIndex = -1
+			refreshClipboard()
+			focusInput()
+		}
+	}
+
+	Process {
+		id: listProc
+		running: false
+		command: ["bash", "-lc", `bash "${scriptPath}" list`]
+		stdout: StdioCollector {
+			onStreamFinished: {
+				const out = []
+				const lines = text.split("\n")
+				for (let i = 0; i < lines.length; i++) {
+					const line = lines[i]
+					if (!line)
+						continue
+
+					const tabIdx = line.indexOf("\t")
+					if (tabIdx < 0)
+						continue
+
+					const raw = line.substring(0, tabIdx)
+					const display = line.substring(tabIdx + 1)
+					const imagePathIdx = display.indexOf("\t")
+					const cleanDisplay = imagePathIdx >= 0 ? display.substring(0, imagePathIdx) : display
+					const imagePath = imagePathIdx >= 0 ? display.substring(imagePathIdx + 1) : ""
+
+					out.push({
+						raw: raw,
+						display: cleanDisplay,
+						imagePath: imagePath,
+						isImage: imagePath !== "",
+					})
+				}
+
+				entries = out
+				loading = false
+				selectedIndex = out.length > 0 ? 0 : -1
+			}
+		}
+
+		onRunningChanged: {
+			if (!running)
+				loading = false
+		}
+	}
+
+	Process {
+		id: copyProc
+		running: false
+	}
+
+	Process {
+		id: removeProc
+		running: false
+		onRunningChanged: {
+			if (!running)
+				refreshClipboard()
 		}
 	}
 }

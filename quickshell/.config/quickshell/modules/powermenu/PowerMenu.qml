@@ -6,14 +6,16 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Widgets
-import "../shared" as Shared
+import qs.modules.colors
 
 Scope {
 	id: powerMenuScope
 
 	PanelWindow {
 		id: powerMenu
-		Shared.Theme { id: theme }
+		Colors {
+			id: colors
+		}
 
 		visible: false
 		focusable: true
@@ -29,10 +31,10 @@ Scope {
 			right: -5 
 		}
 
-		readonly property color bgPrimary: theme.background
-		readonly property color border: theme.outline
-		readonly property color textPrimary: theme.surfaceText
-		readonly property color accentBright: theme.primaryContainer
+		readonly property color bgPrimary: colors.background
+		readonly property color border: colors.outline
+		readonly property color textPrimary: colors.primaryForeground
+		readonly property color accentBright: colors.primary
 
 		readonly property int pillWidth: 92
 		readonly property int pillPadding: 0
@@ -62,7 +64,6 @@ Scope {
 			powerMenu.visible = true;
 			powerMenu.currentIndex = 0;
 			focusGrab.active = true;
-			powerMenu.forceActiveFocus();
 		}
 
 		function closeMenu() {
@@ -204,7 +205,7 @@ Scope {
 							Text {
 								anchors.centerIn: parent
 								text: modelData.glyph
-								color: selected ? powerMenu.textPrimary : Qt.alpha(powerMenu.textPrimary, 0.5)
+								color: selected ? powerMenu.textPrimary : colors.foreground
 								font.family: "JetBrainsMono Nerd Font Propo"
 								font.pixelSize: 30
 								font.weight: Font.DemiBold

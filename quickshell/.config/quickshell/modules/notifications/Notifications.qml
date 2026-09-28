@@ -1,86 +1,100 @@
+import Quickshell
+import Quickshell.Services.Notifications
+import QtQuick.Effects
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-import Quickshell
-import QtQuick.Effects
-import Quickshell.Io
-import Quickshell.Services.Notifications
 import Quickshell.Widgets
-import "../shared" as Shared
+import qs.modules.colors
 
-Scope {
-id: notifScope
+Item {
+	id: notificationPanel
 
-NotificationServer {
-	id: server
-	actionsSupported: true
-	imageSupported: true
-	keepOnReload: true
+	property var barWindow: null
+	readonly property bool active: server.trackedNotifications.values.length > 0
 
-	onNotification: notif => {
-		notif.tracked = !notifWindow.doNotDisturb;
-	}
-}
-
-PanelWindow {
-	id: notifWindow
-	Shared.Theme { id: theme }
-	property bool doNotDisturb: false
-
-	visible: !notifWindow.doNotDisturb && server.trackedNotifications.values.length > 0
-	color: "transparent"
-	implicitWidth: theme.notificationWidth
-	implicitHeight: notifColumn.implicitHeight + (theme.smallGap * 2)
-	exclusionMode: ExclusionMode.Normal
-
-	readonly property color mdSurfaceContainerHigh: theme.surfaceContainerHigh
-	readonly property color mdSurfaceContainerHighCritical: theme.errorContainer
-	readonly property color mdOnSurface: theme.surfaceText
-	readonly property color mdOnSurfaceVariant: theme.surfaceVariantText
-	readonly property color mdPrimary: theme.primary
-	readonly property color mdSecondaryContainer: theme.primaryContainer
-	readonly property color mdOnSecondaryContainer: theme.primaryContainerText
-	readonly property color mdError: theme.error
-	readonly property color mdErrorContainer: theme.errorContainer
-	readonly property color mdOutlineVariant: theme.outline
-	anchors {
-		top: true
-		right: true
+	Colors {
+		id: colors
 	}
 
-	Process {
-		id: dndStatusReader
-		command: ["bash", "-lc", 'bash "$HOME/.config/quickshell/bin/control-center.sh" dnd-status']
-		stdout: StdioCollector {
-			onStreamFinished: notifWindow.doNotDisturb = this.text.trim() === "on"
+	readonly property color bgPrimary: colors.windowBackground
+	readonly property color bgSecondary: colors.quickToggleBackground
+	readonly property color textPrimary: colors.windowForeground
+	readonly property color textMuted: Qt.alpha(
+		colors.windowForeground,
+		0.65
+	)
+	readonly property color accent: colors.quickToggleActiveBackground
+	readonly property color accentForeground: colors.quickToggleActiveForeground
+	readonly property color critical: colors.critical
+
+	implicitWidth: {
+		var maxActions = 0
+		for (var i = 0; i < server.trackedNotifications.values.length; i++) {
+			var notif = server.trackedNotifications.values[i]
+			if (notif.actions.length > maxActions) {
+				maxActions = notif.actions.length
+			}
+		}
+		return Math.max(300, 160 * maxActions + 24)
+	}
+	implicitHeight: contentColumn.implicitHeight + 24
+
+	opacity: active ? 1 : 0
+	visible: active || opacity > 0
+
+
+	function trimText(text) {
+		var maxChars = Math.floor((implicitWidth - 100) / 8)
+		if (text.length > maxChars) {
+			return text.substring(0, maxChars) + "…"
+		}
+		if (text.length <= 20) {
+			return text
+		}
+		return text.substring(0, 20) + "…"
+	}
+
+	Behavior on opacity {
+		NumberAnimation {
+			duration: active ? 150 : 250
+			easing.type: active ? Easing.OutCubic : Easing.InCubic
 		}
 	}
 
-	Timer {
-		interval: 1500
-		running: true
-		repeat: true
-		triggeredOnStart: true
-		onTriggered: {
-			if (!dndStatusReader.running)
-				dndStatusReader.running = true;
+	NotificationServer {
+		id: server
+		actionsSupported: true
+		imageSupported: true
+		keepOnReload: true
+
+		onNotification: notif => {
+			notif.tracked = true
+
+			if (barWindow) {
+				barWindow.quickPanelOpen = false
+				barWindow.launcherPanelOpen = false
+				barWindow.focusable = false
+			}
 		}
 	}
 
-	Item {
+	Rectangle {
+		id: panel
 		anchors.fill: parent
+		color: "transparent"
+		radius: 24
+
+		MouseArea {
+			anchors.fill: parent
+			acceptedButtons: Qt.AllButtons
+			onClicked: mouse => mouse.accepted = true
+		}
 
 		ColumnLayout {
-			id: notifColumn
-			anchors {
-				top: parent.top
-				left: parent.left
-				right: parent.right
-				topMargin: theme.smallGap
-				leftMargin: theme.smallGap
-				rightMargin: theme.smallGap
-			}
-			spacing: theme.smallGap
+			id: contentColumn
+			anchors.fill: parent
+			anchors.margins: 12
+			spacing: 8
 
 			Repeater {
 				model: server.trackedNotifications.values
@@ -91,7 +105,7 @@ PanelWindow {
 					required property int index
 
 					Layout.fillWidth: true
-					implicitHeight: cardRect.implicitHeight
+					implicitHeight: tile.implicitHeight
 					opacity: 0
 
 					Component.onCompleted: enterAnim.start()
@@ -99,71 +113,54 @@ PanelWindow {
 					ParallelAnimation {
 						id: enterAnim
 						NumberAnimation {
-							target: card; property: "opacity"
-							from: 0; to: 1
-							duration: 300; easing.type: Easing.OutCubic
-						}
-						NumberAnimation {
-							target: slideOffset; property: "x"
-							from: 40; to: 0
-							duration: 300; easing.type: Easing.OutCubic
+							target: card
+							property: "opacity"
+							from: 0
+							to: 1
+							duration: 150
+							easing.type: Easing.OutCubic
 						}
 					}
 
 					SequentialAnimation {
 						id: exitAnim
-						ParallelAnimation {
-							NumberAnimation {
-								target: card; property: "opacity"
-								to: 0; duration: 220; easing.type: Easing.InCubic
-							}
-							NumberAnimation {
-								target: slideOffset; property: "x"
-								to: 40; duration: 220; easing.type: Easing.InCubic
-							}
+						NumberAnimation {
+							target: card
+							property: "opacity"
+							to: 0
+							duration: 250
+							easing.type: Easing.InCubic
 						}
 						ScriptAction { script: card.modelData.expire() }
 					}
-
-					transform: Translate { id: slideOffset; x: 40 }
 
 					Timer {
 						id: dismissTimer
 						readonly property real timeoutSecs: card.modelData.expireTimeout
 						interval: (timeoutSecs > 0 ? timeoutSecs : 3) * 1000
-						running: true; repeat: false
+						running: true
+						repeat: false
 						onTriggered: exitAnim.start()
 					}
 
 					Rectangle {
-						id: cardRect
-						property bool isUrgent: card.modelData.urgency === NotificationUrgency.Critical
+						id: tile
+						property bool isCritical: card.modelData.urgency === NotificationUrgency.Critical
 						width: parent.width
-						implicitHeight: cardInner.implicitHeight + 20
-						radius: theme.notificationCardRadius
-						color: isUrgent ? notifWindow.mdSurfaceContainerHighCritical : notifWindow.mdSurfaceContainerHigh
-						border.width: 1
-						border.color: Qt.alpha(notifWindow.mdOutlineVariant, 0.28)
+						implicitHeight: tileRow.implicitHeight + 18
+						radius: 18
+						color: "transparent"
 
-						RectangularShadow {
-							anchors.fill: cardRect
-							radius: cardRect.radius
-							blur: 6
-							spread: 0.2
-							color: Qt.darker(cardRect.color, 1.6)
-						}	
-
-						// State layer on hover
 						Rectangle {
 							anchors.fill: parent
 							radius: parent.radius
-							color: notifWindow.mdOnSurface
-							opacity: cardHover.containsMouse ? 0.05 : 0
-							Behavior on opacity { NumberAnimation { duration: 150 } }
+							color: textPrimary
+							opacity: tileHover.containsMouse ? 0.04 : 0
+							Behavior on opacity { NumberAnimation { duration: 120 } }
 						}
 
 						MouseArea {
-							id: cardHover
+							id: tileHover
 							anchors.fill: parent
 							hoverEnabled: true
 							propagateComposedEvents: true
@@ -172,94 +169,93 @@ PanelWindow {
 							onExited: dismissTimer.start()
 						}
 
-						ColumnLayout {
-							id: cardInner
-							anchors {
-								left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom
-								leftMargin: theme.notificationCardPadding; rightMargin: theme.notificationCardPadding; topMargin: theme.notificationCardPadding; bottomMargin: theme.notificationCardPadding
-							}
-							spacing: theme.tightGap
-							RowLayout {
-								Layout.fillWidth: true
-								Layout.topMargin: 4
-								Layout.bottomMargin: 8
-								spacing: theme.smallGap
-								// Icon of application
+						RowLayout {
+							id: tileRow
+							anchors.fill: parent
+							anchors.margins: 10
+							spacing: 10
+
+							Rectangle {
+								Layout.preferredWidth: 40
+								Layout.preferredHeight: 40
+								Layout.rightMargin: 10
+								radius: 12
+								color: "transparent"
+
 								IconImage {
-									Layout.alignment: Qt.AlignLeft
-									implicitSize: 48
+									anchors.centerIn: parent
+									implicitSize: 34
 									source: card.modelData.image
-									visible: true
 								}
-								ColumnLayout {
+							}
+
+							ColumnLayout {
+								Layout.fillWidth: true
+								spacing: 4
+
+								RowLayout {
 									Layout.fillWidth: true
-									spacing: theme.tightGap
+									spacing: 8
 
-									// Summary — M3 title/medium
-									RowLayout {
+									Text {
+										visible: card.modelData.summary !== ""
+										text: trimText(card.modelData.summary)
+										color: tile.isCritical ? critical : textPrimary
+										font.pixelSize: 14
+										font.weight: Font.Medium
 										Layout.fillWidth: true
-										spacing: 8
+										elide: Text.ElideRight
+										textFormat: Text.PlainText
+									}
+
+									Rectangle {
+										width: 30
+										height: 30
+										radius: 50
+										color: "transparent"
+										Behavior on color { ColorAnimation { duration: 120 } }
+
 										Text {
-											visible: card.modelData.summary !== ""
-											text: card.modelData.summary
-											color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
-											font.pixelSize: 16; font.weight: Font.Medium
-											Layout.fillWidth: true
-											Layout.topMargin: 4
-											wrapMode: Text.WordWrap
-											textFormat: Text.PlainText
+											anchors.centerIn: parent
+											text: "󰅙"
+											font.weight: Font.Bold
+											color: tile.isCritical ? (
+												closeBtnHover.containsMouse ? critical : Qt.alpha(critical, 0.8)
+											) : (
+												closeBtnHover.containsMouse ? accent : Qt.alpha(accent, 0.8)
+											)
+											font.pixelSize: 24
 										}
 
-										// Icon close button
-										Rectangle {
-											width: theme.notificationDismissSize; height: theme.notificationDismissSize; radius: theme.notificationDismissRadius
-											color: cardRect.isUrgent ? (closeBtnHover.containsMouse
-											? Qt.alpha(notifWindow.mdError, 0.08)
-											: "transparent") : (
-												closeBtnHover.containsMouse
-												? Qt.alpha(notifWindow.mdOnSurface, 0.08)
-												: "transparent")
-												Behavior on color { ColorAnimation { duration: 150 } }
-
-												Text {
-													anchors.centerIn: parent
-													text: ""
-													color: cardRect.isUrgent ? Qt.darker(notifWindow.mdError, 1.8) : notifWindow.mdOnSurfaceVariant
-													font.pixelSize: 15
-												}
-
-												MouseArea {
-													id: closeBtnHover
-													anchors.fill: parent
-													hoverEnabled: true
-													cursorShape: Qt.PointingHandCursor
-													onClicked: { enterAnim.stop(); exitAnim.start() }
-													onEntered: dismissTimer.stop()
-													onExited: dismissTimer.start()
-												}
+										MouseArea {
+											id: closeBtnHover
+											anchors.fill: parent
+											hoverEnabled: true
+											cursorShape: Qt.PointingHandCursor
+											onClicked: {
+												enterAnim.stop()
+												exitAnim.start()
 											}
-										}
-
-										// Body — M3 body/medium
-										Text {
-											Layout.bottomMargin: card.modelData.actions.length > 0 ? 0 : 14
-											visible: card.modelData.body !== ""
-											text: card.modelData.body
-											color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
-											font.pixelSize: 14
-											Layout.fillWidth: true
-											wrapMode: Text.WordWrap
-											textFormat: Text.PlainText
+											onEntered: dismissTimer.stop()
+											onExited: dismissTimer.start()
 										}
 									}
 								}
 
-								// Action buttons — M3 filled-tonal style
+								Text {
+									Layout.fillWidth: true
+									visible: card.modelData.body !== ""
+									text: trimText(card.modelData.body)
+									color: tile.isCritical ? critical : textMuted
+									font.pixelSize: 12
+									wrapMode: Text.WordWrap
+									textFormat: Text.PlainText
+								}
+
 								Flow {
 									visible: card.modelData.actions.length > 0
 									Layout.fillWidth: true
-									Layout.topMargin: 4
-									Layout.bottomMargin: 8
+									Layout.topMargin: 10
 									spacing: 8
 
 									Repeater {
@@ -268,41 +264,41 @@ PanelWindow {
 										delegate: Rectangle {
 											required property var modelData
 
-											height: theme.notificationActionHeight
-											implicitWidth: cardInner.width / card.modelData.actions.length - (2 * card.modelData.actions.length)
+											height: 30
+											implicitWidth: 116
 											radius: height / 2
-											color: cardRect.isUrgent ? Qt.alpha(notifWindow.mdError, 0.14) : notifWindow.mdSecondaryContainer
-											Behavior on color { ColorAnimation { duration: 150 } }
+											color: tile.isCritical ? Qt.alpha(critical, 0.14) : accent
+											Behavior on color { ColorAnimation { duration: 120 } }
 
-											// State layer
 											Rectangle {
-												anchors.fill: parent; radius: parent.radius
-												color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSurface
-												opacity: btnArea.containsMouse ? 0.08 : 0
-												Behavior on opacity { NumberAnimation { duration: 150 } }
+												anchors.fill: parent
+												radius: parent.radius
+												color: tile.isCritical ? critical : accentForeground
+												opacity: actionHover.containsMouse ? 0.08 : 0
+												Behavior on opacity { NumberAnimation { duration: 120 } }
 											}
 
 											Text {
-												id: btnLabel
 												anchors.centerIn: parent
 												text: modelData.text
-												color: cardRect.isUrgent ? notifWindow.mdError : notifWindow.mdOnSecondaryContainer
-												font.pixelSize: 13; font.weight: Font.Medium
-												font.letterSpacing: 0.1
+												color: bgPrimary
+												font.pixelSize: 12
+												font.weight: Font.Medium
+												elide: Text.ElideRight
 											}
 
 											MouseArea {
-												id: btnArea
+												id: actionHover
 												anchors.fill: parent
 												hoverEnabled: true
 												cursorShape: Qt.PointingHandCursor
 												onClicked: {
-													modelData.invoke();
+													modelData.invoke()
 													if (!card.modelData.resident) {
-														enterAnim.stop();
-														exitAnim.start();
+														enterAnim.stop()
+														exitAnim.start()
 													}
-												}					
+												}
 												onEntered: dismissTimer.stop()
 												onExited: dismissTimer.start()
 											}
