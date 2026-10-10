@@ -73,6 +73,7 @@ Item {
 			if (barWindow) {
 				barWindow.quickPanelOpen = false
 				barWindow.launcherPanelOpen = false
+				barWindow.clipboardPanelOpen = false
 				barWindow.focusable = false
 			}
 		}

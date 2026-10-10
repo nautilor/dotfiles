@@ -2,52 +2,88 @@ import Quickshell
 import QtQuick
 
 QtObject {
-	readonly property color background: "#080A0D"
-	readonly property color surface: "#0B0D10"
-	readonly property color surfaceContainerLow: "#101318"
-	readonly property color surfaceContainer: "#15191F"
-	readonly property color surfaceContainerHigh: "#1B2027"
-	readonly property color surfaceContainerHighest: "#222830"
-	readonly property color surfaceVariant: "#29313A"
+	// ─────────────────────────────────────────────
+	// Material You — Deep City / Night
+	// Designed for dark blue/cyan wallpapers
+	// ─────────────────────────────────────────────
 
-	// One Dark Pro blue
-	readonly property color primary: "#61AFEF"
-	readonly property color primaryForeground: "#071018"
-	readonly property color primaryContainer: "#18344A"
-	readonly property color primaryContainerForeground: "#B9DEFF"
+	readonly property color background: "#070D11"
+	readonly property color surface: "#0A1217"
+	readonly property color surfaceContainerLowest: "#050A0D"
+	readonly property color surfaceContainerLow: "#0D171D"
+	readonly property color surfaceContainer: "#111D24"
+	readonly property color surfaceContainerHigh: "#17252D"
+	readonly property color surfaceContainerHighest: "#1E2D36"
+	readonly property color surfaceVariant: "#263943"
 
-	// One Dark Pro cyan/blue
-	readonly property color secondary: "#56B6C2"
-	readonly property color secondaryForeground: "#071113"
-	readonly property color secondaryContainer: "#16363B"
-	readonly property color secondaryContainerForeground: "#B9F0F5"
+	// ─────────────────────────────────────────────
+	// Primary — atmospheric cyan / blue
+	// ─────────────────────────────────────────────
 
-	// One Dark Pro purple
-	readonly property color tertiary: "#C678DD"
-	readonly property color tertiaryForeground: "#170B1B"
-	readonly property color tertiaryContainer: "#382043"
-	readonly property color tertiaryContainerForeground: "#F0C9FA"
+	readonly property color primary: "#8CC8D9"
+	readonly property color primaryForeground: "#07313A"
+	readonly property color primaryContainer: "#16414C"
+	readonly property color primaryContainerForeground: "#B8E6F0"
 
+	// ─────────────────────────────────────────────
+	// Secondary — steel blue
+	// ─────────────────────────────────────────────
+
+	readonly property color secondary: "#A7C4CC"
+	readonly property color secondaryForeground: "#102B32"
+	readonly property color secondaryContainer: "#29434B"
+	readonly property color secondaryContainerForeground: "#C3E0E6"
+
+	// ─────────────────────────────────────────────
+	// Tertiary — muted city-light amber
+	// ─────────────────────────────────────────────
+
+	readonly property color tertiary: "#E1C18A"
+	readonly property color tertiaryForeground: "#352A13"
+	readonly property color tertiaryContainer: "#4A3A1D"
+	readonly property color tertiaryContainerForeground: "#F5DDAA"
+
+	// ─────────────────────────────────────────────
 	// Text
-	readonly property color surfaceForeground: "#ABB2BF"
-	readonly property color surfaceVariantForeground: "#7F8793"
-	readonly property color outline: "#4B5360"
-	readonly property color outlineVariant: "#303741"
+	// ─────────────────────────────────────────────
 
-	// One Dark Pro red
-	readonly property color error: "#E06C75"
-	readonly property color errorContainer: "#4A2025"
-	readonly property color errorContainerForeground: "#FFB7BD"
+	readonly property color surfaceForeground: "#D8E3E7"
+	readonly property color surfaceVariantForeground: "#9EAFB6"
 
-	// One Dark Pro yellow
-	readonly property color warning: "#E5C07B"
-	readonly property color warningContainer: "#40351D"
-	readonly property color warningContainerForeground: "#F8DFA8"
+	// ─────────────────────────────────────────────
+	// Outlines
+	// ─────────────────────────────────────────────
 
-	// One Dark Pro green
-	readonly property color success: "#98C379"
-	readonly property color successContainer: "#263A20"
-	readonly property color successContainerForeground: "#C8E9B3"
+	readonly property color outline: "#71858D"
+	readonly property color outlineVariant: "#35474F"
+
+	// ─────────────────────────────────────────────
+	// Error
+	// ─────────────────────────────────────────────
+
+	readonly property color error: "#FFB4AB"
+	readonly property color errorContainer: "#641D20"
+	readonly property color errorContainerForeground: "#FFDAD6"
+
+	// ─────────────────────────────────────────────
+	// Warning
+	// ─────────────────────────────────────────────
+
+	readonly property color warning: "#E4C275"
+	readonly property color warningContainer: "#463718"
+	readonly property color warningContainerForeground: "#F7DEA6"
+
+	// ─────────────────────────────────────────────
+	// Success — cool green, not neon
+	// ─────────────────────────────────────────────
+
+	readonly property color success: "#9CC9A5"
+	readonly property color successContainer: "#23432D"
+	readonly property color successContainerForeground: "#BFE8C5"
+
+	// ─────────────────────────────────────────────
+	// Shape
+	// ─────────────────────────────────────────────
 
 	readonly property int radiusNone: 0
 	readonly property int radiusExtraSmall: 4
@@ -59,11 +95,19 @@ QtObject {
 	readonly property int radiusHero: 48
 	readonly property int radiusFull: 999
 
+	// ─────────────────────────────────────────────
+	// Sizes
+	// ─────────────────────────────────────────────
+
 	readonly property int sizeXs: 32
 	readonly property int sizeSmall: 40
 	readonly property int sizeMedium: 48
 	readonly property int sizeLarge: 56
 	readonly property int sizeExtraLarge: 64
+
+	// ─────────────────────────────────────────────
+	// Typography
+	// ─────────────────────────────────────────────
 
 	readonly property int displaySmall: 36
 	readonly property int headlineSmall: 24
@@ -77,6 +121,10 @@ QtObject {
 	readonly property int labelMedium: 12
 	readonly property int labelSmall: 11
 
+	// ─────────────────────────────────────────────
+	// Spacing
+	// ─────────────────────────────────────────────
+
 	readonly property int spacing2: 2
 	readonly property int spacing4: 4
 	readonly property int spacing8: 8
@@ -86,20 +134,35 @@ QtObject {
 	readonly property int spacing24: 24
 	readonly property int spacing32: 32
 
+	// ─────────────────────────────────────────────
+	// Animation
+	// ─────────────────────────────────────────────
+
 	readonly property int effectsDuration: 180
 	readonly property int spatialDuration: 280
 
+	// ─────────────────────────────────────────────
+	// Compatibility aliases
+	// ─────────────────────────────────────────────
+
 	readonly property color windowBackground: background
 	readonly property color windowForeground: surfaceForeground
+
 	readonly property color foreground: surfaceForeground
 	readonly property color foregroundMuted: surfaceVariantForeground
+
 	readonly property color accentColor: primary
 	readonly property color critical: error
 
-readonly property color quickPanelBackground: background
-readonly property color quickToggleBackground: surfaceContainer
-readonly property color quickToggleForeground: surfaceForeground
-readonly property color quickToggleActiveBackground: primary
-readonly property color quickToggleActiveForeground: primaryForeground
+	// ─────────────────────────────────────────────
+	// QuickShell
+	// ─────────────────────────────────────────────
+
+	readonly property color quickPanelBackground: surface
+	readonly property color quickToggleBackground: surfaceContainer
+	readonly property color quickToggleForeground: surfaceForeground
+
+	readonly property color quickToggleActiveBackground: primary
+	readonly property color quickToggleActiveForeground: primaryForeground
 }
 
