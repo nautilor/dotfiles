@@ -1,5 +1,5 @@
 # ssh askpass
-export SSH_ASKPASS=/usr/bin/ssh_askpass
+export SSH_ASKPASS=$HOME/.local/cbin/askpass
 
 # Default editor
 export EDITOR=nvim
