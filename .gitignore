@@ -6,3 +6,4 @@ sqlit/.config/sqlit/queries
 sqlit/.config/sqlit/credentials.json
 .task.md
 quickshell/.config/quickshell/modules/shared/Matugen.qml
+quickshell/.config/quickshell/gcal/client.json

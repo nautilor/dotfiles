@@ -33,7 +33,7 @@ Item {
 			"8": "󰲮",
 			"9": "󰲰",
 		};
-		return workspaceIcons[workspace] || "󰧞";
+		return workspaceIcons[workspace] || "󰲞";
 	}
 
 	Indicator {

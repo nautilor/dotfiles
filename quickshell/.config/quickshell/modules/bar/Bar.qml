@@ -4,6 +4,7 @@ import QtQuick.Effects
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
+import qs.modules.calendar
 import qs.modules.clipboard
 import qs.modules.colors
 import qs.modules.launcher
@@ -15,13 +16,15 @@ import qs.modules.bar.components
 PanelWindow {
 	id: bar
 	focusable: false
-	WlrLayershell.keyboardFocus: bar.launcherPanelOpen || bar.clipboardPanelOpen
+	WlrLayershell.keyboardFocus: bar.launcherPanelOpen || bar.clipboardPanelOpen || calendarPanel.editing
 
 	property bool quickPanelOpen: false
 	property bool launcherPanelOpen: false
 	property bool clipboardPanelOpen: false
-	property bool somethingOpen: quickPanelOpen || launcherPanelOpen || clipboardPanelOpen || notificationPanel.opacity > 0 || volumeOsd.opacity > 0 || brightnessOsd.opacity > 0 || caffeineOsd.opacity > 0 || microphoneOsd.opacity > 0
-	property bool osdOpen: volumeOsd.opacity > 0 || brightnessOsd.opacity > 0 || caffeineOsd.opacity > 0 || microphoneOsd.opacity > 0
+	property bool calendarPanelOpen: false
+	property bool somethingOpen: quickPanelOpen || calendarPanelOpen || launcherPanelOpen || clipboardPanelOpen || notificationPanel.opacity > 0 || volumeOsd.opacity > 0 || brightnessOsd.opacity > 0 || caffeineOsd.opacity > 0 || microphoneOsd.opacity > 0
+	readonly property bool modalOpen: launcherPanelOpen || clipboardPanelOpen || calendarPanelOpen
+	property bool osdOpen: !modalOpen && (volumeOsd.opacity > 0 || brightnessOsd.opacity > 0 || caffeineOsd.opacity > 0 || microphoneOsd.opacity > 0)
 
 	readonly property int maxHeight: 700
 	readonly property int maxWidth: 700
@@ -36,6 +39,9 @@ PanelWindow {
 
 	readonly property int clipboardPanelHeight: 460
 	readonly property int clipboardPanelWidth: 590
+
+	readonly property int calendarPanelHeight: 430
+	readonly property int calendarPanelWidth: 590
 
 	readonly property int normalHeight: 45
 	readonly property int normalWidth: 100
@@ -65,16 +71,18 @@ PanelWindow {
 
 	function panelHeight() {
 		const osd = activeOsd()
-		if (osd) {
+		if (bar.clipboardPanelOpen) {
+			return bar.clipboardPanelHeight
+		} else if (bar.launcherPanelOpen) {
+			return bar.launcherPanelHeight
+		} else if (bar.calendarPanelOpen) {
+			return bar.calendarPanelHeight
+		} else if (osd) {
 			return osd.implicitHeight
 		} else if (notificationPanel.opacity > 0) {
 			return notificationPanel.implicitHeight
-		} else if (bar.clipboardPanelOpen) {
-			return bar.clipboardPanelHeight
 		} else if (bar.quickPanelOpen) {
 			return bar.quickPanelHeight
-		} else if (bar.launcherPanelOpen) {
-			return bar.launcherPanelHeight
 		} else {
 			return bar.normalHeight
 		}
@@ -82,19 +90,26 @@ PanelWindow {
 
 	function panelWidth() {
 		const osd = activeOsd()
-		if (osd) {
+		if (bar.clipboardPanelOpen) {
+			return bar.clipboardPanelWidth
+		} else if (bar.launcherPanelOpen) {
+			return bar.launcherPanelWidth
+		} else if (bar.calendarPanelOpen) {
+			return bar.calendarPanelWidth
+		} else if (osd) {
 			return osd.implicitWidth
 		} else if (notificationPanel.opacity > 0) {
 			return notificationPanel.implicitWidth
-		} else if (bar.clipboardPanelOpen) {
-			return bar.clipboardPanelWidth
 		} else if (bar.quickPanelOpen) {
 			return bar.quickPanelWidth
-		} else if (bar.launcherPanelOpen) {
-			return bar.launcherPanelWidth
 		} else {
 			return bar.normalWidth
 		}
+	}
+
+	function openCalendar() {
+		bar.quickPanelOpen = false
+		bar.calendarPanelOpen = true
 	}
 
 	function closeQuickPanel() {
@@ -142,7 +157,7 @@ PanelWindow {
 
 		MouseArea {
 			anchors.fill: parent
-			enabled: volumeOsd.opacity === 0 && brightnessOsd.opacity === 0 && caffeineOsd.opacity === 0 && microphoneOsd.opacity === 0
+			enabled: bar.modalOpen || (volumeOsd.opacity === 0 && brightnessOsd.opacity === 0 && caffeineOsd.opacity === 0 && microphoneOsd.opacity === 0)
 			onClicked: {
 				if (bar.launcherPanelOpen) {
 					bar.launcherPanelOpen = false
@@ -150,6 +165,8 @@ PanelWindow {
 				} else if (bar.clipboardPanelOpen) {
 					bar.clipboardPanelOpen = false
 					bar.focusable = false
+				} else if (bar.calendarPanelOpen) {
+					bar.calendarPanelOpen = false
 				} else {
 					bar.quickPanelOpen = !bar.quickPanelOpen
 				}
@@ -201,6 +218,24 @@ PanelWindow {
 			}
 		}
 
+		Calendar {
+			id: calendarPanel
+			barWindow: bar
+			opacity: bar.calendarPanelOpen ? 1 : 0
+			visible: bar.calendarPanelOpen || opacity > 0
+			anchors.fill: parent
+			onCloseRequested: bar.calendarPanelOpen = false
+
+			Behavior on opacity {
+				NumberAnimation {
+					duration: bar.calendarPanelOpen ? 150 : 250
+					easing.type: bar.calendarPanelOpen
+					? Easing.OutCubic
+					: Easing.InCubic
+				}
+			}
+		}
+
 		Launcher {
 			id: launcherPanel
 			barWindow: bar
@@ -229,6 +264,7 @@ PanelWindow {
 			visible: bar.quickPanelOpen || opacity > 0
 			anchors.fill: parent
 			onCloseRequested: bar.closeQuickPanel()
+			onCalendarRequested: bar.openCalendar()
 
 			Behavior on opacity {
 				NumberAnimation {
@@ -240,41 +276,46 @@ PanelWindow {
 			}
 		}
 
-		Notifications {
-			id: notificationPanel
-			barWindow: bar
-			opacity: notificationPanel.active ? 1 : 0
-			visible: notificationPanel.active || opacity > 0
+		Item {
 			anchors.fill: parent
+			visible: !bar.modalOpen
 
-			Behavior on opacity {
-				NumberAnimation {
-					duration: notificationPanel.active ? 150 : 250
-					easing.type: notificationPanel.active
-					? Easing.OutCubic
-					: Easing.InCubic
+			Notifications {
+				id: notificationPanel
+				barWindow: bar
+				opacity: notificationPanel.active ? 1 : 0
+				visible: notificationPanel.active || opacity > 0
+				anchors.fill: parent
+
+				Behavior on opacity {
+					NumberAnimation {
+						duration: notificationPanel.active ? 150 : 250
+						easing.type: notificationPanel.active
+						? Easing.OutCubic
+						: Easing.InCubic
+					}
 				}
 			}
-		}
 
-		OSD.Volume {
-			id: volumeOsd
-			anchors.fill: parent
-		}
+			OSD.Volume {
+				id: volumeOsd
+				anchors.fill: parent
+			}
 
-		OSD.Brightness {
-			id: brightnessOsd
-			anchors.fill: parent
-		}
+			OSD.Brightness {
+				id: brightnessOsd
+				anchors.fill: parent
+			}
 
-		OSD.Caffeine {
-			id: caffeineOsd
-			anchors.fill: parent
-		}
+			OSD.Caffeine {
+				id: caffeineOsd
+				anchors.fill: parent
+			}
 
-		OSD.Micprone {
-			id: microphoneOsd
-			anchors.fill: parent
+			OSD.Micprone {
+				id: microphoneOsd
+				anchors.fill: parent
+			}
 		}
 
 		Behavior on width {
@@ -303,6 +344,7 @@ PanelWindow {
 			bar.launcherPanelOpen = !bar.launcherPanelOpen
 			bar.quickPanelOpen = false
 			bar.clipboardPanelOpen = false
+			bar.calendarPanelOpen = false
 		}
 	}
 
@@ -311,6 +353,7 @@ PanelWindow {
 		function toggle() {
 			bar.focusable = !bar.clipboardPanelOpen
 			bar.clipboardPanelOpen = !bar.clipboardPanelOpen
+			bar.calendarPanelOpen = false
 		}
 	}
 
@@ -322,6 +365,7 @@ PanelWindow {
 				launcherPanelOpen = false
 				clipboardPanelOpen = false
 				quickPanelOpen = false
+				calendarPanelOpen = false
 				bar.focusable = false
 			}
 			volumeOsd.showVolume()
@@ -332,6 +376,7 @@ PanelWindow {
 				launcherPanelOpen = false
 				clipboardPanelOpen = false
 				quickPanelOpen = false
+				calendarPanelOpen = false
 				bar.focusable = false
 			}
 			brightnessOsd.refreshBrightness()
