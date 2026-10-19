@@ -36,7 +36,7 @@ stop() {
 		rm -f "$PIDFILE"
 	fi
 
-	qs_ipc osd caffeine
+	qs_ipc notch caffeine
 }
 
 state() {

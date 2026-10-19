@@ -1,14 +1,77 @@
-//@ pragma UseQApplication
-import qs.modules.bar
 import Quickshell
-import qs.modules.powermenu
+import Quickshell.Io
+import qs.modules.notch
 import qs.modules.corner
+import qs.services
+import qs.config
 
 ShellRoot {
-	Bar {
-		id: bar
+	// singletons are lazy: touch the ones that must react to system events from startup
+	readonly property var keepAlive: [Audio.armed, Brightness.armed, Mic.armed, Caffeine.active, Notifs.count, Clip.entries]
+
+	Variants {
+		model: Settings.screenCorners ? Quickshell.screens : []
+
+		ScreenCorners {}
 	}
 
-	Corner {}
-	PowerMenu {}
+	Variants {
+		model: Settings.allScreens ? Quickshell.screens : [Quickshell.screens.find(s => s.name === Settings.screenName) ?? Quickshell.screens[0]]
+
+		Notch {}
+	}
+
+	// Bind these in hyprland.conf, e.g.:  bind = SUPER, Space, exec, qs ipc -p ~/Sources/PERSONAL/quickshell-notch call notch launcher
+	IpcHandler {
+		target: "notch"
+
+		function toggle(): void {
+			NotchCtl.toggle();
+		}
+		function close(): void {
+			NotchCtl.close();
+		}
+		function open(tab: string): void {
+			NotchCtl.show(tab);
+		}
+		function launcher(): void {
+			NotchCtl.toggle("apps");
+		}
+		function clipboard(): void {
+			NotchCtl.toggle("clipboard");
+		}
+		function calendar(): void {
+			NotchCtl.toggle("calendar");
+		}
+		function notifications(): void {
+			NotchCtl.toggle("notifications");
+		}
+		function power(): void {
+			NotchCtl.toggle("power");
+		}
+		function caffeine(): void {
+			Caffeine.toggle();
+		}
+		function mic(): void {
+			Mic.toggle();
+		}
+		function volumeUp(): void {
+			Audio.step(0.05);
+		}
+		function volumeDown(): void {
+			Audio.step(-0.05);
+		}
+		function volumeMute(): void {
+			Audio.toggleMute();
+		}
+		function brightnessUp(): void {
+			Brightness.step(5);
+		}
+		function brightnessDown(): void {
+			Brightness.step(-5);
+		}
+		function dnd(): void {
+			Settings.dnd = !Settings.dnd;
+		}
+	}
 }

@@ -17,7 +17,7 @@ fi
 
 module="$1"
 
-if ! quickshell ipc call "$module" toggle; then
+if ! quickshell ipc call notch ${module}; then
 	notify-send -i "error" "Quickshell Error" "Failed to launch quickshell module ${module}."
 	exit 1
 fi

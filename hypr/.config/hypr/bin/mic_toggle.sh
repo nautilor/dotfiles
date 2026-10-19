@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-qs_ipc() {
-	qs ipc --any-display --newest call "$@" >/dev/null 2>&1 || true
-}
-
 sources() {
 	pactl list short sources 2>/dev/null | awk '!/monitor/ {print $1}'
 }
@@ -41,8 +37,6 @@ toggle() {
 		[[ -n "${id:-}" ]] || continue
 		pactl set-source-mute "$id" "$target"
 	done < <(sources)
-
-	qs_ipc osd mic
 }
 
 case "${1:-toggle}" in
