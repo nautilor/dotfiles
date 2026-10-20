@@ -44,10 +44,12 @@ case "$selected" in
 		;;
 	"WhatsApp")
 		kill_process "zapzap"
+		kill_process "zapfast"
 		;;
 	"All")
 		kill_process "steam" "steam -shutdown"
 		kill_process "Telegram"
 		kill_process "zapzap"
+		kill_process "zapfast"
 		;;
 esac
