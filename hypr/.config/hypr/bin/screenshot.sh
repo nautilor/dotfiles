@@ -11,8 +11,8 @@ filename="screenshot-$(date +%Y-%m-%d-%H-%M-%S).png"
 
 mkdir -p "$OUTPUT_DIR"
 
-hyprctl keyword animations:enabled false
-trap 'hyprctl keyword animations:enabled true' EXIT
+hyprctl eval 'hl.config({ animations = { enabled = false } })'
+trap "hyprctl eval 'hl.config({ animations = { enabled = true } })'" EXIT
 
 if ! DXVK_FILTER_DEVICE_NAME="NVIDIA" hyprshot --freeze -m region -f "$filename" -o "$OUTPUT_DIR" -s; then
 	notify-send -i "error" "Screenshot Failed" "hyprshot did not complete successfully."
