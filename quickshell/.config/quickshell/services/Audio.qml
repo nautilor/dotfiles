@@ -25,6 +25,13 @@ Singleton {
 		sink.audio.volume = Math.max(0, Math.min(1, volume + delta));
 	}
 
+	function setVolume(v) {
+		if (!available)
+			return;
+		sink.audio.muted = false;
+		sink.audio.volume = Math.max(0, Math.min(1, v));
+	}
+
 	function toggleMute() {
 		if (available)
 			sink.audio.muted = !sink.audio.muted;

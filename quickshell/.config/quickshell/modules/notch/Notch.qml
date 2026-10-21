@@ -32,7 +32,7 @@ PanelWindow {
 	// ---- state ----
 	readonly property string mode: isOpen ? "open" : (Notifs.peek ? "notif" : (Hud.active ? "hud" : "idle"))
 	readonly property var sizes: ({
-			"home": [800, 380],
+			"home": [HomeLayout.gridW + 76, HomeLayout.gridH + 76],
 			"apps": [640, 410],
 			"clipboard": [700, 430],
 			"calendar": [920, 580],

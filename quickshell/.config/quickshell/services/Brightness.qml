@@ -17,6 +17,11 @@ Singleton {
 		setProc.running = true;
 	}
 
+	function setPercent(p) {
+		setProc.command = ["brightnessctl", "-m", "set", Math.round(Math.max(1, Math.min(100, p))) + "%"];
+		setProc.running = true;
+	}
+
 	function parse(text) {
 		const f = text.trim().split("\n").pop().split(",");
 		if (f.length < 5)

@@ -10,28 +10,33 @@ import qs.components
 Item {
 	id: root
 
-	readonly property real gap: Settings.showClock ? Math.max(90, clock.implicitWidth + 28) : 90
-	implicitWidth: left.implicitWidth + right.implicitWidth + gap + 20
+	// both sides get the width of the wider one, so the centre text sits in the middle of a gap that never overlaps the icons
+	readonly property real side: Math.max(left.implicitWidth, right.implicitWidth)
+	readonly property bool showCenter: Settings.showClock || Settings.showDate
+	readonly property real gap: showCenter ? Math.max(90, center.implicitWidth + 36) : 90
+	implicitWidth: 2 * side + gap + 20
 	implicitHeight: 34
 
 	readonly property var workspace: Hyprland.focusedWorkspace
 	readonly property var player: Media.player
 
 	Txt {
-		id: clock
+		id: center
 		property date now: new Date()
-		visible: Settings.showClock
+		readonly property string dateText: Qt.formatDate(now, "ddd d MMM")
+		readonly property string timeText: Qt.formatTime(now, Settings.use24h ? "HH:mm" : "h:mm AP")
+		visible: root.showCenter
 		anchors.centerIn: parent
-		text: Qt.formatTime(now, Settings.use24h ? "HH:mm" : "h:mm AP")
+		text: Settings.showDate && Settings.showClock ? dateText + "  " + timeText : Settings.showDate ? dateText : timeText
 		font.pixelSize: 13
 		font.weight: Font.Medium
 		elide: Text.ElideNone
 		Timer {
 			interval: 5000
-			running: Settings.showClock && root.visible
+			running: root.showCenter && root.visible
 			repeat: true
 			triggeredOnStart: true
-			onTriggered: clock.now = new Date()
+			onTriggered: center.now = new Date()
 		}
 	}
 
@@ -153,7 +158,16 @@ Item {
 				name: Battery.icon
 				size: 18
 				fill: 1
-				color: Battery.percent <= 15 && !Battery.charging ? Theme.error : Theme.surfaceVariantFg
+				color: Battery.color
+				anchors.verticalCenter: parent.verticalCenter
+			}
+			Txt {
+				visible: Settings.showBattery
+				text: Battery.percent + "%"
+				font.pixelSize: 12
+				font.weight: Font.Medium
+				color: Battery.color
+				elide: Text.ElideNone
 				anchors.verticalCenter: parent.verticalCenter
 			}
 		}

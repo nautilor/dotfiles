@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
 import Quickshell.Networking
-import Quickshell.Services.UPower
 import qs.config
 import qs.services
 import qs.components
@@ -22,6 +21,9 @@ ColumnLayout {
 
 		Btn {
 			Layout.fillWidth: true
+			Layout.preferredWidth: 10
+			Layout.minimumWidth: 10
+			Layout.maximumWidth: 1000
 			Layout.fillHeight: true
 			vertical: true
 			toggleable: true
@@ -35,6 +37,9 @@ ColumnLayout {
 		}
 		Btn {
 			Layout.fillWidth: true
+			Layout.preferredWidth: 10
+			Layout.minimumWidth: 10
+			Layout.maximumWidth: 1000
 			Layout.fillHeight: true
 			vertical: true
 			toggleable: true
@@ -48,6 +53,9 @@ ColumnLayout {
 		}
 		Btn {
 			Layout.fillWidth: true
+			Layout.preferredWidth: 10
+			Layout.minimumWidth: 10
+			Layout.maximumWidth: 1000
 			Layout.fillHeight: true
 			vertical: true
 			toggleable: true
@@ -60,6 +68,9 @@ ColumnLayout {
 		}
 		Btn {
 			Layout.fillWidth: true
+			Layout.preferredWidth: 10
+			Layout.minimumWidth: 10
+			Layout.maximumWidth: 1000
 			Layout.fillHeight: true
 			vertical: true
 			toggleable: true
@@ -73,6 +84,9 @@ ColumnLayout {
 		}
 		Btn {
 			Layout.fillWidth: true
+			Layout.preferredWidth: 10
+			Layout.minimumWidth: 10
+			Layout.maximumWidth: 1000
 			Layout.fillHeight: true
 			vertical: true
 			toggleable: true
@@ -85,32 +99,7 @@ ColumnLayout {
 		}
 	}
 
-	// power-profiles-daemon, as a connected button group
-	RowLayout {
+	ProfileSwitch {
 		Layout.fillWidth: true
-		spacing: 3
-
-		Repeater {
-			model: [
-				{ p: PowerProfile.PowerSaver, icon: "eco", label: "Saver" },
-				{ p: PowerProfile.Balanced, icon: "balance", label: "Balanced" },
-				{ p: PowerProfile.Performance, icon: "bolt", label: "Boost" }
-			]
-
-			Btn {
-				required property var modelData
-				required property int index
-				visible: modelData.p !== PowerProfile.Performance || PowerProfiles.hasPerformanceProfile
-				Layout.fillWidth: true
-				implicitHeight: 44
-				toggleable: true
-				toggled: PowerProfiles.profile === modelData.p
-				toggledRadius: 22
-				icon: modelData.icon
-				label: modelData.label
-				iconSize: 20
-				onClicked: PowerProfiles.profile = modelData.p
-			}
-		}
 	}
 }

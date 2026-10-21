@@ -13,6 +13,7 @@ Singleton {
 	property alias hue: adapter.hue
 	property alias hoverOpen: adapter.hoverOpen
 	property alias dnd: adapter.dnd
+	property alias homeLayout: adapter.homeLayout
 	property alias homeOnHover: adapter.homeOnHover
 	property alias screenCorners: adapter.screenCorners
 	property alias cornerRadius: adapter.cornerRadius
@@ -23,6 +24,9 @@ Singleton {
 	property alias weekStartsMonday: adapter.weekStartsMonday
 	property alias use24h: adapter.use24h
 	property alias showClock: adapter.showClock
+	property alias showDate: adapter.showDate
+	property alias showBattery: adapter.showBattery
+	property alias showDateHome: adapter.showDateHome
 	property alias caffeineOnMessage: adapter.caffeineOnMessage
 	property alias caffeineOffMessage: adapter.caffeineOffMessage
 	property alias micOnMessage: adapter.micOnMessage
@@ -53,6 +57,8 @@ Singleton {
 			property real hue: 0.53
 			property bool hoverOpen: true
 			property bool dnd: false
+			// customised Home dashboard: {v: 1, items: [...]}; empty = built-in default
+			property var homeLayout: ({})
 			property bool homeOnHover: true
 			property bool screenCorners: true
 			property real cornerRadius: 20
@@ -63,6 +69,9 @@ Singleton {
 			property bool weekStartsMonday: true
 			property bool use24h: true
 			property bool showClock: false
+			property bool showDate: false
+			property bool showBattery: false
+			property bool showDateHome: false
 			property string caffeineOnMessage: "Caffeine on · staying awake"
 			property string caffeineOffMessage: "Caffeine off"
 			property string micOnMessage: "Microphone live"

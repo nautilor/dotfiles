@@ -19,7 +19,7 @@ Item {
 	readonly property int actionCount: last && last.actions ? last.actions.length : 0
 
 	implicitWidth: 440
-	implicitHeight: 60 + (actionCount > 0 ? 34 : 0)
+	implicitHeight: 60 + (actionCount > 0 ? 48 : 0)
 
 	HoverHandler {
 		onHoveredChanged: Notifs.hold = hovered
@@ -79,7 +79,7 @@ Item {
 		anchors.left: parent.left
 		anchors.leftMargin: 50
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: 4
+		anchors.bottomMargin: 12
 		spacing: 8
 		Repeater {
 			model: root.last ? root.last.actions : []

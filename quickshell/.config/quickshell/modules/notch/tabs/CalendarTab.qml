@@ -160,18 +160,6 @@ Item {
 				onClicked: Gcal.shiftWeek(1)
 			}
 			Btn {
-				icon: "add"
-				label: "New"
-				variant: 1
-				implicitHeight: 38
-				onClicked: {
-					const n = new Date();
-					n.setMinutes(0, 0, 0);
-					n.setHours(n.getHours() + 1);
-					editor.open(null, n);
-				}
-			}
-			Btn {
 				icon: "refresh"
 				variant: 2
 				implicitWidth: 38
@@ -448,14 +436,79 @@ Item {
 				}
 			}
 
+			// floating create button, bottom right like Google Calendar
+			Item {
+				id: fab
+				anchors.right: parent.right
+				anchors.bottom: parent.bottom
+				anchors.margins: 14
+				width: fabRow.implicitWidth + 32
+				height: 52
+				scale: fabArea.pressed ? 0.94 : 1
+				Behavior on scale {
+					SpringAnimation {
+						spring: 5
+						damping: 0.4
+						epsilon: 0.002
+					}
+				}
+				Rectangle {
+					anchors.fill: parent
+					radius: fabArea.pressed ? 12 : 18
+					color: Theme.primaryContainer
+					Behavior on radius {
+						NumberAnimation {
+							duration: Theme.durShort
+						}
+					}
+					Rectangle {
+						anchors.fill: parent
+						radius: parent.radius
+						color: Theme.primaryContainerFg
+						opacity: fabArea.containsMouse ? 0.1 : 0
+					}
+				}
+				Row {
+					id: fabRow
+					anchors.centerIn: parent
+					spacing: 8
+					Icon {
+						name: "add"
+						size: 24
+						color: Theme.primaryContainerFg
+						anchors.verticalCenter: parent.verticalCenter
+					}
+					Txt {
+						text: "Create"
+						font.weight: Font.Medium
+						elide: Text.ElideNone
+						color: Theme.primaryContainerFg
+						anchors.verticalCenter: parent.verticalCenter
+					}
+				}
+				MouseArea {
+					id: fabArea
+					anchors.fill: parent
+					hoverEnabled: true
+					cursorShape: Qt.PointingHandCursor
+					onClicked: {
+						const n = new Date();
+						n.setMinutes(0, 0, 0);
+						n.setHours(n.getHours() + 1);
+						editor.open(null, n);
+					}
+				}
+			}
+
 			// event details
 			Rectangle {
 				id: detail
 				visible: root.selectedEvent !== null
 				anchors.bottom: parent.bottom
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.bottomMargin: 10
-				width: Math.min(parent.width - 20, 460)
+				anchors.left: parent.left
+				anchors.leftMargin: 14
+				anchors.bottomMargin: 14
+				width: Math.min(parent.width - fab.width - 44, 460)
 				height: detailCol.implicitHeight + 24
 				radius: Theme.radiusMedium
 				color: Theme.surfaceContainerHighest

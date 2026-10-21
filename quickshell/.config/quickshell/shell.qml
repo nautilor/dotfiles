@@ -70,6 +70,11 @@ ShellRoot {
 		function brightnessDown(): void {
 			Brightness.step(-5);
 		}
+		function homeEdit(): void {
+			NotchCtl.show("home");
+			HomeLayout.editing = !HomeLayout.editing;
+			HomeLayout.panel = "";
+		}
 		function dnd(): void {
 			Settings.dnd = !Settings.dnd;
 		}

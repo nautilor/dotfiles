@@ -10,6 +10,7 @@ Item {
 	id: root
 
 	property bool active: false
+	property bool stickyBefore: false
 
 	readonly property var tabDefs: [
 		{ id: "home", icon: "home", label: "Home" },
@@ -121,7 +122,7 @@ Item {
 		spacing: 10
 
 		Icon {
-			visible: Caffeine.active
+			visible: Caffeine.active && !(NotchCtl.tab === "home" && HomeLayout.editing)
 			name: "coffee"
 			size: 18
 			fill: 1
@@ -129,7 +130,7 @@ Item {
 			anchors.verticalCenter: parent.verticalCenter
 		}
 		Icon {
-			visible: Mic.muted
+			visible: Mic.muted && !(NotchCtl.tab === "home" && HomeLayout.editing)
 			name: "mic_off"
 			size: 18
 			fill: 1
@@ -137,25 +138,32 @@ Item {
 			anchors.verticalCenter: parent.verticalCenter
 		}
 		Row {
-			visible: Battery.present
+			visible: Battery.present && !(NotchCtl.tab === "home" && HomeLayout.editing)
 			spacing: 2
 			anchors.verticalCenter: parent.verticalCenter
 			Icon {
 				name: Battery.icon
 				size: 18
 				fill: 1
-				color: Theme.surfaceVariantFg
+				color: Battery.color
 				anchors.verticalCenter: parent.verticalCenter
 			}
 			Txt {
 				text: Battery.percent + "%"
 				font.pixelSize: 12
-				color: Theme.surfaceVariantFg
+				color: Battery.color
 				anchors.verticalCenter: parent.verticalCenter
 			}
 		}
 		Txt {
+			visible: Settings.showDateHome && NotchCtl.tab === "home" && !HomeLayout.editing
+			text: Qt.formatDate(clock.now, "dddd d MMMM")
+			color: Theme.surfaceVariantFg
+			anchors.verticalCenter: parent.verticalCenter
+		}
+		Txt {
 			id: clock
+			visible: !(NotchCtl.tab === "home" && HomeLayout.editing)
 			property date now: new Date()
 			text: Qt.formatTime(now, Settings.use24h ? "HH:mm" : "h:mm AP")
 			font.weight: Font.Medium
@@ -167,6 +175,45 @@ Item {
 				repeat: true
 				triggeredOnStart: true
 				onTriggered: clock.now = new Date()
+			}
+		}
+		// Home dashboard editing
+		Btn {
+			visible: NotchCtl.tab === "home" && HomeLayout.editing
+			icon: "add"
+			label: "Add"
+			variant: 1
+			implicitHeight: 34
+			anchors.verticalCenter: parent.verticalCenter
+			onClicked: HomeLayout.panel = HomeLayout.panel === "add" ? "" : "add"
+		}
+		Btn {
+			visible: NotchCtl.tab === "home" && HomeLayout.editing
+			icon: "restart_alt"
+			label: "Reset"
+			implicitHeight: 34
+			anchors.verticalCenter: parent.verticalCenter
+			onClicked: HomeLayout.reset()
+		}
+		Btn {
+			visible: NotchCtl.tab === "home"
+			icon: HomeLayout.editing ? "check" : "edit"
+			label: HomeLayout.editing ? "Done" : ""
+			variant: HomeLayout.editing ? 1 : 2
+			iconSize: 18
+			implicitWidth: HomeLayout.editing ? 84 : 34
+			implicitHeight: 34
+			anchors.verticalCenter: parent.verticalCenter
+			onClicked: {
+				HomeLayout.editing = !HomeLayout.editing;
+				HomeLayout.panel = "";
+				// keep the notch open while editing, then go back to how it was opened
+				if (HomeLayout.editing) {
+					root.stickyBefore = NotchCtl.sticky;
+					NotchCtl.sticky = true;
+				} else {
+					NotchCtl.sticky = root.stickyBefore;
+				}
 			}
 		}
 		Btn {

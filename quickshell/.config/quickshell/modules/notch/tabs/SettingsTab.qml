@@ -24,31 +24,37 @@ Flickable {
 			subtitle: "Seed for the Material tonal palette"
 			Repeater {
 				model: [0.53, 0.6, 0.75, 0.92, 0.04, 0.12, 0.35]
-				Rectangle {
+				// fixed-size cell so the row never reflows while a swatch animates
+				Item {
+					id: cell
 					required property real modelData
 					readonly property bool current: Math.abs(Settings.hue - modelData) < 0.01
-					width: current ? 34 : 28
-					height: width
-					radius: current ? 11 : width / 2
-					color: Qt.hsla(modelData, 0.55, 0.62, 1)
-					border.width: current ? 3 : 0
-					border.color: Theme.surfaceFg
-					Behavior on width {
-						SpringAnimation {
-							spring: Theme.springBouncy
-							damping: Theme.dampBouncy
-							epsilon: 0.25
+					Layout.preferredWidth: 36
+					Layout.preferredHeight: 36
+					Rectangle {
+						anchors.centerIn: parent
+						width: cell.current ? 32 : 26
+						height: width
+						radius: cell.current ? 11 : width / 2
+						color: Qt.hsla(cell.modelData, 0.55, 0.62, 1)
+						border.width: cell.current ? 3 : 0
+						border.color: Theme.surfaceFg
+						Behavior on width {
+							NumberAnimation {
+								duration: Theme.durShort
+								easing.type: Easing.OutBack
+							}
 						}
-					}
-					Behavior on radius {
-						NumberAnimation {
-							duration: Theme.durShort
+						Behavior on radius {
+							NumberAnimation {
+								duration: Theme.durShort
+							}
 						}
 					}
 					MouseArea {
 						anchors.fill: parent
 						cursorShape: Qt.PointingHandCursor
-						onClicked: Settings.hue = parent.modelData
+						onClicked: Settings.hue = cell.modelData
 					}
 				}
 			}
@@ -95,6 +101,30 @@ Flickable {
 			Switch {
 				checked: Settings.allScreens
 				onToggled: v => Settings.allScreens = v
+			}
+		}
+		SettingRow {
+			title: "Date on closed notch"
+			subtitle: "Show the date in the middle while idle"
+			Switch {
+				checked: Settings.showDate
+				onToggled: v => Settings.showDate = v
+			}
+		}
+		SettingRow {
+			title: "Battery on closed notch"
+			subtitle: "Show the battery percentage while idle"
+			Switch {
+				checked: Settings.showBattery
+				onToggled: v => Settings.showBattery = v
+			}
+		}
+		SettingRow {
+			title: "Date on Home tab"
+			subtitle: "Show the date next to the clock in the header"
+			Switch {
+				checked: Settings.showDateHome
+				onToggled: v => Settings.showDateHome = v
 			}
 		}
 		SettingRow {
