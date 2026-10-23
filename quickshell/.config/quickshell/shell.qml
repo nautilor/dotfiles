@@ -2,12 +2,15 @@ import Quickshell
 import Quickshell.Io
 import qs.modules.notch
 import qs.modules.corner
+import qs.modules.lock
 import qs.services
 import qs.config
 
 ShellRoot {
 	// singletons are lazy: touch the ones that must react to system events from startup
 	readonly property var keepAlive: [Audio.armed, Brightness.armed, Mic.armed, Caffeine.active, Notifs.count, Clip.entries]
+
+	LockScreen {}
 
 	Variants {
 		model: Settings.screenCorners ? Quickshell.screens : []
@@ -74,6 +77,10 @@ ShellRoot {
 			NotchCtl.show("home");
 			HomeLayout.editing = !HomeLayout.editing;
 			HomeLayout.panel = "";
+		}
+		// lock the session (for hypridle's lock_cmd and keybinds)
+		function lock(): void {
+			LockCtl.lock();
 		}
 		function dnd(): void {
 			Settings.dnd = !Settings.dnd;

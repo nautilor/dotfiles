@@ -84,7 +84,7 @@ bind(CTRL .. " + BACKSPACE", dsp.window.move({ monitor = "+1" }))
 ---------------------------------------------------------------- programs
 bind(MOD .. " + RETURN", run("kitty"))
 bind(SHIFT .. " + D", run("rofi -show run -theme application"))
-bind(SHIFT .. " + M", run("hyprlock"))
+bind(SHIFT .. " + M", run("qs ipc call notch lock"))
 bind(MOD .. " + D", function() apps.notch("launcher") end)
 bind(SHIFT .. " + X", function() apps.notch("power") end)
 bind(CTRL .. " + X", function() apps.notch("power") end)

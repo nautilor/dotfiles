@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import qs.config
 
 Singleton {
 	function poweroff() {
@@ -17,6 +18,9 @@ Singleton {
 		Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
 	}
 	function lock() {
-		Quickshell.execDetached(["sh", "-c", "pidof hyprlock || hyprlock"]);
+		if (Settings.builtinLock)
+			LockCtl.lock();
+		else
+			Quickshell.execDetached(["sh", "-c", "pidof hyprlock || hyprlock"]);
 	}
 }

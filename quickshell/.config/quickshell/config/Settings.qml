@@ -11,6 +11,11 @@ Singleton {
 	readonly property string configDir: Quickshell.env("HOME") + "/.config/quickshell-notch"
 
 	property alias hue: adapter.hue
+	property alias builtinLock: adapter.builtinLock
+	property alias lockPam: adapter.lockPam
+	property alias lockPamDir: adapter.lockPamDir
+	property alias lockWallpaper: adapter.lockWallpaper
+	property alias lockAvatar: adapter.lockAvatar
 	property alias hoverOpen: adapter.hoverOpen
 	property alias dnd: adapter.dnd
 	property alias homeLayout: adapter.homeLayout
@@ -55,6 +60,14 @@ Singleton {
 			id: adapter
 
 			property real hue: 0.53
+			// built-in lock screen: used by the Power tab and `notch lock`
+			property bool builtinLock: true
+			// PAM service used to check the password (must exist in /etc/pam.d)
+			property string lockPam: "hyprlock"
+			// folder holding the PAM service file; empty = /etc/pam.d
+			property string lockPamDir: ""
+			property string lockWallpaper: ""
+			property string lockAvatar: ""
 			property bool hoverOpen: true
 			property bool dnd: false
 			// customised Home dashboard: {v: 1, items: [...]}; empty = built-in default

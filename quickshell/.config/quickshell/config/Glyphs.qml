@@ -90,6 +90,7 @@ Singleton {
 		"skip_next": 0xf04ad,
 		"skip_previous": 0xf04ae,
 		"sync": 0xf04e6,
+		"arrow_forward": 0xf0054,
 		"tune": 0xf062e,
 		"volume_down": 0xf0580,
 		"volume_up": 0xf057e,

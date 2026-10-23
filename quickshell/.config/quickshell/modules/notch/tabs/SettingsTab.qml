@@ -72,6 +72,14 @@ Flickable {
 			}
 		}
 		SettingRow {
+			title: "Built-in lock screen"
+			subtitle: "Lock button uses this instead of hyprlock"
+			Switch {
+				checked: Settings.builtinLock
+				onToggled: v => Settings.builtinLock = v
+			}
+		}
+		SettingRow {
 			title: "Clock on closed notch"
 			subtitle: "Show the time in the middle while idle"
 			Switch {
