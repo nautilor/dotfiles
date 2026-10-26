@@ -1,0 +1,9 @@
+{
+	"name": "Solarized Dark",
+	"background": "#00212b",
+	"foreground": "#93a1a1",
+	"primary": "#268bd2",
+	"secondary": "#2aa198",
+	"tertiary": "#d33682",
+	"error": "#dc322f"
+}

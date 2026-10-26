@@ -1,0 +1,9 @@
+{
+	"name": "Tokyo Night",
+	"background": "#16161e",
+	"foreground": "#c0caf5",
+	"primary": "#7aa2f7",
+	"secondary": "#7dcfff",
+	"tertiary": "#bb9af7",
+	"error": "#f7768e"
+}

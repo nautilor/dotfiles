@@ -1,0 +1,9 @@
+{
+	"name": "Rosé Pine",
+	"background": "#191724",
+	"foreground": "#e0def4",
+	"primary": "#c4a7e7",
+	"secondary": "#9ccfd8",
+	"tertiary": "#ebbcba",
+	"error": "#eb6f92"
+}

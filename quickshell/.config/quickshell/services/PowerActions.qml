@@ -15,7 +15,8 @@ Singleton {
 		Quickshell.execDetached(["systemctl", "suspend"]);
 	}
 	function logout() {
-		Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
+		// Lua config (Hyprland 0.55+) wants hl.dsp.exit(); the classic config wants the plain dispatcher
+		Quickshell.execDetached(["sh", "-c", "case \"$(hyprctl dispatch 'hl.dsp.exit()' 2>&1)\" in ok*) ;; *) hyprctl dispatch exit ;; esac"]);
 	}
 	function lock() {
 		if (Settings.builtinLock)

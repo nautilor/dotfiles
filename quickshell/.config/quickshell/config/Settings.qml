@@ -11,6 +11,7 @@ Singleton {
 	readonly property string configDir: Quickshell.env("HOME") + "/.config/quickshell-notch"
 
 	property alias hue: adapter.hue
+	property alias colorscheme: adapter.colorscheme
 	property alias builtinLock: adapter.builtinLock
 	property alias lockPam: adapter.lockPam
 	property alias lockPamDir: adapter.lockPamDir
@@ -60,6 +61,8 @@ Singleton {
 			id: adapter
 
 			property real hue: 0.53
+			// id (file name without .json) of a colour scheme; empty = tonal palette from hue
+			property string colorscheme: ""
 			// built-in lock screen: used by the Power tab and `notch lock`
 			property bool builtinLock: true
 			// PAM service used to check the password (must exist in /etc/pam.d)

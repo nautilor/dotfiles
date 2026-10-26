@@ -10,6 +10,7 @@ Flickable {
 	contentHeight: col.implicitHeight + 8
 	clip: true
 	boundsBehavior: Flickable.StopAtBounds
+	Component.onCompleted: Colorschemes.reload()
 
 	ColumnLayout {
 		id: col
@@ -19,42 +20,155 @@ Flickable {
 		SectionLabel {
 			text: "APPEARANCE"
 		}
-		SettingRow {
-			title: "Accent colour"
-			subtitle: "Seed for the Material tonal palette"
-			Repeater {
-				model: [0.53, 0.6, 0.75, 0.92, 0.04, 0.12, 0.35]
-				// fixed-size cell so the row never reflows while a swatch animates
-				Item {
-					id: cell
-					required property real modelData
-					readonly property bool current: Math.abs(Settings.hue - modelData) < 0.01
-					Layout.preferredWidth: 36
-					Layout.preferredHeight: 36
-					Rectangle {
-						anchors.centerIn: parent
-						width: cell.current ? 32 : 26
-						height: width
-						radius: cell.current ? 11 : width / 2
-						color: Qt.hsla(cell.modelData, 0.55, 0.62, 1)
-						border.width: cell.current ? 3 : 0
-						border.color: Theme.surfaceFg
-						Behavior on width {
-							NumberAnimation {
-								duration: Theme.durShort
-								easing.type: Easing.OutBack
+		// collapses (height, fade, slight slide) when a colour scheme replaces the accent
+		Item {
+			id: accentWrap
+			readonly property bool shown: Settings.colorscheme === ""
+			property real amount: shown ? 1 : 0
+			Behavior on amount {
+				NumberAnimation {
+					duration: Theme.durMedium
+					easing.type: Easing.OutCubic
+				}
+			}
+			Layout.fillWidth: true
+			Layout.preferredHeight: accentRow.implicitHeight * amount
+			Layout.bottomMargin: -col.spacing * (1 - amount)
+			visible: amount > 0
+			clip: true
+			opacity: amount
+			SettingRow {
+				id: accentRow
+				width: parent.width
+				y: -8 * (1 - accentWrap.amount)
+				title: "Accent colour"
+				subtitle: "Seed for the Material tonal palette"
+				Repeater {
+					model: [0.53, 0.6, 0.75, 0.92, 0.04, 0.12, 0.35]
+					// fixed-size cell so the row never reflows while a swatch animates
+					Item {
+						id: cell
+						required property real modelData
+						readonly property bool current: Math.abs(Settings.hue - modelData) < 0.01
+						Layout.preferredWidth: 36
+						Layout.preferredHeight: 36
+						Rectangle {
+							anchors.centerIn: parent
+							width: cell.current ? 32 : 26
+							height: width
+							radius: cell.current ? 11 : width / 2
+							color: Qt.hsla(cell.modelData, 0.55, 0.62, 1)
+							border.width: cell.current ? 3 : 0
+							border.color: Theme.surfaceFg
+							Behavior on width {
+								NumberAnimation {
+									duration: Theme.durShort
+									easing.type: Easing.OutBack
+								}
+							}
+							Behavior on radius {
+								NumberAnimation {
+									duration: Theme.durShort
+								}
 							}
 						}
+						MouseArea {
+							anchors.fill: parent
+							cursorShape: Qt.PointingHandCursor
+							onClicked: Settings.hue = cell.modelData
+						}
+					}
+				}
+			}
+		}
+
+		SettingRow {
+			title: "Colour scheme"
+			subtitle: (Colorschemes.current ? Colorschemes.current.name : "Accent") + " · your own .json files go in ~/.config/quickshell-notch/colorschemes/"
+			Btn {
+				icon: "chevron_right"
+				implicitWidth: 40
+				implicitHeight: 40
+				rotation: schemeWrap.expanded ? 270 : 90
+				Behavior on rotation {
+					NumberAnimation {
+						duration: Theme.durMedium
+						easing.type: Easing.OutCubic
+					}
+				}
+				onClicked: schemeWrap.expanded = !schemeWrap.expanded
+			}
+		}
+		// one row of chips when collapsed, all of them when expanded
+		Item {
+			id: schemeWrap
+			property bool expanded: false
+			Layout.fillWidth: true
+			Layout.preferredHeight: expanded ? schemeFlow.implicitHeight : 54
+			clip: true
+			Behavior on Layout.preferredHeight {
+				NumberAnimation {
+					duration: Theme.durMedium
+					easing.type: Easing.OutCubic
+				}
+			}
+			Flow {
+				id: schemeFlow
+				width: parent.width
+				spacing: 8
+				Repeater {
+					model: [{
+							id: "",
+							name: "Accent",
+							preview: [Theme.tone(0.18, 0.15), Qt.hsla(Settings.hue, 0.55, 0.76, 1), Qt.hsla((Settings.hue + 0.02) % 1, 0.35, 0.88, 1), Qt.hsla((Settings.hue + 0.16) % 1, 0.5, 0.79, 1)]
+						}].concat(Colorschemes.schemes)
+					Rectangle {
+						id: chip
+						required property var modelData
+						readonly property bool current: Settings.colorscheme === modelData.id
+						width: 150
+						height: 54
+						radius: current ? Theme.radiusSmall : Theme.radiusMedium
+						color: current ? Theme.primaryContainer : Theme.surfaceContainerHigh
 						Behavior on radius {
 							NumberAnimation {
 								duration: Theme.durShort
 							}
 						}
-					}
-					MouseArea {
-						anchors.fill: parent
-						cursorShape: Qt.PointingHandCursor
-						onClicked: Settings.hue = cell.modelData
+						Row {
+							anchors.left: parent.left
+							anchors.leftMargin: 12
+							anchors.top: parent.top
+							anchors.topMargin: 10
+							spacing: 4
+							Repeater {
+								model: chip.modelData.preview
+								Rectangle {
+									required property color modelData
+									width: 14
+									height: 14
+									radius: 7
+									color: modelData
+									border.width: 1
+									border.color: Theme.outlineVariant
+								}
+							}
+						}
+						Txt {
+							anchors.left: parent.left
+							anchors.right: parent.right
+							anchors.bottom: parent.bottom
+							anchors.margins: 12
+							anchors.bottomMargin: 8
+							text: chip.modelData.name
+							font.pixelSize: 12
+							color: chip.current ? Theme.primaryContainerFg : Theme.surfaceVariantFg
+						}
+						MouseArea {
+							anchors.fill: parent
+							cursorShape: Qt.PointingHandCursor
+							onClicked: Settings.colorscheme = chip.modelData.id
+						}
 					}
 				}
 			}

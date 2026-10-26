@@ -1,0 +1,9 @@
+{
+	"name": "Dracula",
+	"background": "#1e1f29",
+	"foreground": "#f8f8f2",
+	"primary": "#bd93f9",
+	"secondary": "#8be9fd",
+	"tertiary": "#ff79c6",
+	"error": "#ff5555"
+}

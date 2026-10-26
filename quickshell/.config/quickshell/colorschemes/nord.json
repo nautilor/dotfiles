@@ -1,0 +1,9 @@
+{
+	"name": "Nord",
+	"background": "#242933",
+	"foreground": "#eceff4",
+	"primary": "#88c0d0",
+	"secondary": "#81a1c1",
+	"tertiary": "#b48ead",
+	"error": "#bf616a"
+}

@@ -1,0 +1,9 @@
+{
+	"name": "My scheme",
+	"background": "#101014",
+	"foreground": "#e6e6ea",
+	"primary": "#8ab4f8",
+	"secondary": "#81c995",
+	"tertiary": "#f28b82",
+	"error": "#f2b8b5"
+}

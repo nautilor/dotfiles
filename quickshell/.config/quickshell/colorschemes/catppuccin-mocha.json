@@ -1,0 +1,9 @@
+{
+	"name": "Catppuccin Mocha",
+	"background": "#11111b",
+	"foreground": "#cdd6f4",
+	"primary": "#cba6f7",
+	"secondary": "#89b4fa",
+	"tertiary": "#f5c2e7",
+	"error": "#f38ba8"
+}

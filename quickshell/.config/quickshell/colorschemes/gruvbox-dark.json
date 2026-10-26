@@ -1,0 +1,9 @@
+{
+	"name": "Gruvbox Dark",
+	"background": "#1d2021",
+	"foreground": "#ebdbb2",
+	"primary": "#fabd2f",
+	"secondary": "#83a598",
+	"tertiary": "#d3869b",
+	"error": "#fb4934"
+}

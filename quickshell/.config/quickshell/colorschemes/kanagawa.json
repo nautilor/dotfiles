@@ -1,0 +1,9 @@
+{
+	"name": "Kanagawa",
+	"background": "#16161d",
+	"foreground": "#dcd7ba",
+	"primary": "#7e9cd8",
+	"secondary": "#7fb4ca",
+	"tertiary": "#957fb8",
+	"error": "#e82424"
+}

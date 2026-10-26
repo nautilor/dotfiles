@@ -2,45 +2,48 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import qs.services
 
-// Material 3 Expressive tokens. Tonal roles are derived from one seed hue (Settings.hue).
+// Material 3 Expressive tokens. Tonal roles are derived from one seed hue (Settings.hue),
+// unless a colour scheme is selected (Settings.colorscheme), which supplies the colours instead.
 Singleton {
 	id: root
 
 	readonly property real h: Settings.hue
+	readonly property var pal: Colorschemes.palette
 	function tone(s, l, hueShift) {
 		return Qt.hsla((h + (hueShift || 0) + 1) % 1, s, l, 1);
 	}
 
 	// surfaces (the notch itself stays near-black so it merges with the screen edge)
-	readonly property color notch: tone(0.12, 0.035)
-	readonly property color surfaceContainerLow: tone(0.16, 0.08)
-	readonly property color surfaceContainer: tone(0.17, 0.115)
-	readonly property color surfaceContainerHigh: tone(0.18, 0.15)
-	readonly property color surfaceContainerHighest: tone(0.18, 0.19)
+	readonly property color notch: pal ? pal.notch : tone(0.12, 0.035)
+	readonly property color surfaceContainerLow: pal ? pal.surfaceContainerLow : tone(0.16, 0.08)
+	readonly property color surfaceContainer: pal ? pal.surfaceContainer : tone(0.17, 0.115)
+	readonly property color surfaceContainerHigh: pal ? pal.surfaceContainerHigh : tone(0.18, 0.15)
+	readonly property color surfaceContainerHighest: pal ? pal.surfaceContainerHighest : tone(0.18, 0.19)
 
-	readonly property color primary: tone(0.55, 0.76)
-	readonly property color primaryFg: tone(0.65, 0.14)
-	readonly property color primaryContainer: tone(0.45, 0.26)
-	readonly property color primaryContainerFg: tone(0.65, 0.88)
+	readonly property color primary: pal ? pal.primary : tone(0.55, 0.76)
+	readonly property color primaryFg: pal ? pal.primaryFg : tone(0.65, 0.14)
+	readonly property color primaryContainer: pal ? pal.primaryContainer : tone(0.45, 0.26)
+	readonly property color primaryContainerFg: pal ? pal.primaryContainerFg : tone(0.65, 0.88)
 
-	readonly property color secondaryContainer: tone(0.22, 0.28, 0.02)
-	readonly property color secondaryContainerFg: tone(0.35, 0.88, 0.02)
+	readonly property color secondaryContainer: pal ? pal.secondaryContainer : tone(0.22, 0.28, 0.02)
+	readonly property color secondaryContainerFg: pal ? pal.secondaryContainerFg : tone(0.35, 0.88, 0.02)
 
-	readonly property color tertiary: tone(0.5, 0.79, 0.16)
-	readonly property color tertiaryFg: tone(0.6, 0.15, 0.16)
-	readonly property color tertiaryContainer: tone(0.38, 0.28, 0.16)
-	readonly property color tertiaryContainerFg: tone(0.6, 0.9, 0.16)
+	readonly property color tertiary: pal ? pal.tertiary : tone(0.5, 0.79, 0.16)
+	readonly property color tertiaryFg: pal ? pal.tertiaryFg : tone(0.6, 0.15, 0.16)
+	readonly property color tertiaryContainer: pal ? pal.tertiaryContainer : tone(0.38, 0.28, 0.16)
+	readonly property color tertiaryContainerFg: pal ? pal.tertiaryContainerFg : tone(0.6, 0.9, 0.16)
 
-	readonly property color error: "#f2b8b5"
-	readonly property color errorFg: "#601410"
-	readonly property color errorContainer: "#8c1d18"
-	readonly property color errorContainerFg: "#f9dedc"
+	readonly property color error: pal ? pal.error : "#f2b8b5"
+	readonly property color errorFg: pal ? pal.errorFg : "#601410"
+	readonly property color errorContainer: pal ? pal.errorContainer : "#8c1d18"
+	readonly property color errorContainerFg: pal ? pal.errorContainerFg : "#f9dedc"
 
-	readonly property color surfaceFg: tone(0.1, 0.92)
-	readonly property color surfaceVariantFg: tone(0.1, 0.74)
-	readonly property color outline: tone(0.08, 0.48)
-	readonly property color outlineVariant: tone(0.1, 0.25)
+	readonly property color surfaceFg: pal ? pal.surfaceFg : tone(0.1, 0.92)
+	readonly property color surfaceVariantFg: pal ? pal.surfaceVariantFg : tone(0.1, 0.74)
+	readonly property color outline: pal ? pal.outline : tone(0.08, 0.48)
+	readonly property color outlineVariant: pal ? pal.outlineVariant : tone(0.1, 0.25)
 
 	// type
 	// JetBrainsMono Nerd Font (proportional variant) for text and for the Material Design Icons glyphs
