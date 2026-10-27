@@ -26,3 +26,6 @@ require("shadow.core.plugins.task").setup()
 vim.api.nvim_create_user_command("Task", function()
 	require("shadow.core.plugins.task").open_task_file()
 end, {})
+
+local noting = require("shadow.core.plugins.noting")
+noting.setup(vim.g.noting_config or {})
