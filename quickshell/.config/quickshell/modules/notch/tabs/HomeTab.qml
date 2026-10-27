@@ -59,8 +59,16 @@ Item {
 		}
 	}
 
+	// the fixed layouts have nothing to edit; they replace the grid
+	Loader {
+		anchors.fill: parent
+		active: !HomeStyles.isGrid
+		source: HomeStyles.current.source
+	}
+
 	Item {
 		id: grid
+		visible: HomeStyles.isGrid
 		width: HomeLayout.gridW
 		height: HomeLayout.gridH
 		anchors.horizontalCenter: parent.horizontalCenter

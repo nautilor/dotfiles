@@ -7,6 +7,9 @@ import qs.config
 Row {
 	id: root
 
+	// size of one icon button
+	property real cell: 34
+
 	signal menuRequested(var trayItem)
 
 	spacing: 4
@@ -18,9 +21,9 @@ Row {
 			id: cell
 			required property var modelData
 
-			width: 34
-			height: 34
-			radius: mouse.pressed ? 8 : 17
+			width: root.cell
+			height: root.cell
+			radius: mouse.pressed ? 8 : root.cell / 2
 			color: mouse.containsMouse ? Theme.surfaceContainerHigh : "transparent"
 			Behavior on radius {
 				NumberAnimation {
@@ -30,9 +33,9 @@ Row {
 
 			Image {
 				anchors.centerIn: parent
-				width: 20
-				height: 20
-				sourceSize: Qt.size(40, 40)
+				width: Math.round(root.cell * 0.6)
+				height: width
+				sourceSize: Qt.size(64, 64)
 				source: cell.modelData.icon
 				fillMode: Image.PreserveAspectFit
 			}

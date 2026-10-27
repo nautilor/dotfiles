@@ -122,7 +122,7 @@ Item {
 		spacing: 10
 
 		Icon {
-			visible: Caffeine.active && !(NotchCtl.tab === "home" && HomeLayout.editing)
+			visible: Caffeine.active && !(NotchCtl.tab === "home" && HomeStyles.isGrid && HomeLayout.editing)
 			name: "coffee"
 			size: 18
 			fill: 1
@@ -130,7 +130,7 @@ Item {
 			anchors.verticalCenter: parent.verticalCenter
 		}
 		Icon {
-			visible: Mic.muted && !(NotchCtl.tab === "home" && HomeLayout.editing)
+			visible: Mic.muted && !(NotchCtl.tab === "home" && HomeStyles.isGrid && HomeLayout.editing)
 			name: "mic_off"
 			size: 18
 			fill: 1
@@ -138,7 +138,7 @@ Item {
 			anchors.verticalCenter: parent.verticalCenter
 		}
 		Row {
-			visible: Battery.present && !(NotchCtl.tab === "home" && HomeLayout.editing)
+			visible: Battery.present && !(NotchCtl.tab === "home" && HomeStyles.isGrid && HomeLayout.editing)
 			spacing: 2
 			anchors.verticalCenter: parent.verticalCenter
 			Icon {
@@ -163,7 +163,7 @@ Item {
 		}
 		Txt {
 			id: clock
-			visible: !(NotchCtl.tab === "home" && HomeLayout.editing)
+			visible: !(NotchCtl.tab === "home" && HomeStyles.isGrid && HomeLayout.editing)
 			property date now: new Date()
 			text: Qt.formatTime(now, Settings.use24h ? "HH:mm" : "h:mm AP")
 			font.weight: Font.Medium
@@ -179,7 +179,7 @@ Item {
 		}
 		// Home dashboard editing
 		Btn {
-			visible: NotchCtl.tab === "home" && HomeLayout.editing
+			visible: NotchCtl.tab === "home" && HomeStyles.isGrid && HomeLayout.editing
 			icon: "add"
 			label: "Add"
 			variant: 1
@@ -188,7 +188,7 @@ Item {
 			onClicked: HomeLayout.panel = HomeLayout.panel === "add" ? "" : "add"
 		}
 		Btn {
-			visible: NotchCtl.tab === "home" && HomeLayout.editing
+			visible: NotchCtl.tab === "home" && HomeStyles.isGrid && HomeLayout.editing
 			icon: "restart_alt"
 			label: "Reset"
 			implicitHeight: 34
@@ -196,7 +196,7 @@ Item {
 			onClicked: HomeLayout.reset()
 		}
 		Btn {
-			visible: NotchCtl.tab === "home"
+			visible: NotchCtl.tab === "home" && HomeStyles.isGrid
 			icon: HomeLayout.editing ? "check" : "edit"
 			label: HomeLayout.editing ? "Done" : ""
 			variant: HomeLayout.editing ? 1 : 2

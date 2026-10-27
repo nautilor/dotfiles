@@ -174,6 +174,57 @@ Flickable {
 			}
 		}
 
+		SettingRow {
+			title: "Home layout"
+			subtitle: "Grid is editable; the others are fixed. All keep Wi-Fi, Bluetooth, power profile, tray and next event"
+		}
+		Flow {
+			Layout.fillWidth: true
+			spacing: 8
+			Repeater {
+				model: HomeStyles.list
+				Rectangle {
+					id: styleChip
+					required property var modelData
+					readonly property bool current: Settings.homeStyle === modelData.id
+					width: 150
+					height: 54
+					radius: current ? Theme.radiusSmall : Theme.radiusMedium
+					color: current ? Theme.primaryContainer : Theme.surfaceContainerHigh
+					Behavior on radius {
+						NumberAnimation {
+							duration: Theme.durShort
+						}
+					}
+					Row {
+						anchors.centerIn: parent
+						spacing: 8
+						Icon {
+							name: styleChip.modelData.icon
+							size: 20
+							anchors.verticalCenter: parent.verticalCenter
+							color: styleChip.current ? Theme.primaryContainerFg : Theme.surfaceVariantFg
+						}
+						Txt {
+							text: styleChip.modelData.name
+							anchors.verticalCenter: parent.verticalCenter
+							elide: Text.ElideNone
+							font.pixelSize: 12
+							color: styleChip.current ? Theme.primaryContainerFg : Theme.surfaceVariantFg
+						}
+					}
+					MouseArea {
+						anchors.fill: parent
+						cursorShape: Qt.PointingHandCursor
+						onClicked: {
+							HomeLayout.editing = false;
+							Settings.homeStyle = styleChip.modelData.id;
+						}
+					}
+				}
+			}
+		}
+
 		SectionLabel {
 			text: "BEHAVIOUR"
 		}

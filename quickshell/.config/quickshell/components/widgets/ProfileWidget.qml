@@ -6,10 +6,7 @@ Item {
 	property bool editing: false
 
 	ProfileSwitch {
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.verticalCenter: parent.verticalCenter
-		height: Math.min(parent.height, 48)
+		anchors.fill: parent
 		enabled: !parent.editing
 	}
 }

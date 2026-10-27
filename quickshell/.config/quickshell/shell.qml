@@ -75,6 +75,8 @@ ShellRoot {
 		}
 		function homeEdit(): void {
 			NotchCtl.show("home");
+			if (!HomeStyles.isGrid)
+				return;
 			HomeLayout.editing = !HomeLayout.editing;
 			HomeLayout.panel = "";
 		}

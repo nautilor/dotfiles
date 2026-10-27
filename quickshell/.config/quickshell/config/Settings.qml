@@ -20,6 +20,7 @@ Singleton {
 	property alias hoverOpen: adapter.hoverOpen
 	property alias dnd: adapter.dnd
 	property alias homeLayout: adapter.homeLayout
+	property alias homeStyle: adapter.homeStyle
 	property alias homeOnHover: adapter.homeOnHover
 	property alias screenCorners: adapter.screenCorners
 	property alias cornerRadius: adapter.cornerRadius
@@ -75,6 +76,8 @@ Singleton {
 			property bool dnd: false
 			// customised Home dashboard: {v: 1, items: [...]}; empty = built-in default
 			property var homeLayout: ({})
+			// Home layout: "grid" (editable widgets), "control" (Control Center tiles) or "strip" (one wide row)
+			property string homeStyle: "grid"
 			property bool homeOnHover: true
 			property bool screenCorners: true
 			property real cornerRadius: 20
