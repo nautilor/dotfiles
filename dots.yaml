@@ -1,2 +1,4 @@
 quickshell:
   remote: github:nautilor/quickshell-notch
+nvim:
+  remote: github:nautilor/nvim
