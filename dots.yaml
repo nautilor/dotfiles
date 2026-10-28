@@ -9,3 +9,13 @@ ideavim:
 direnv:
   source: ./direnv/
   destination: ~/.config/direnv
+zsh:
+  .zshrc:
+    source: ./zsh/.zshrc
+    destination: ~/.zshrc
+  .p10k.zsh:
+    source: ./zsh/.p10k.zsh
+    destination: ~/.p10k.zsh
+  .zsh:
+    source: ./zsh/.zsh/
+    destination: ~/.zsh
