@@ -6,7 +6,7 @@
 "nvim":
     remote: "github:nautilor/nvim"
     url: "https://github.com/nautilor/nvim.git"
-    commit: "7f4aaff5f5cb61caf9dbf878e10ade35a21e73df"
+    commit: "4c3a1f5714185fc98cd4fd226731953ce495bfed"
 "zathura":
     remote: "github:nautilor/zathurarc"
     url: "https://github.com/nautilor/zathurarc.git"
