@@ -7,6 +7,7 @@ DATA_DIR=${DOTS_DATA:-${XDG_DATA_HOME:-$HOME/.local/share}/dots}
 CONFIG=${DOTS_CONFIG:-./dots.yaml}
 MAX_DEPTH=8
 US=$'\x1f'
+RS=$'\x1e'
 
 MODE=link
 DRY=0
@@ -55,6 +56,9 @@ post_update is a shell command set next to `remote:` in your dots.yaml. It runs
 inside the clone, only when an update changed the commit, with DOTS_NAME,
 DOTS_DIR, DOTS_OLD_COMMIT and DOTS_COMMIT in its environment.
 
+An entry may use `content:` (text, usually a "|" block) instead of `source:`. It
+is written to $DOTS_DATA/.content/<entry> and linked like a source.
+
 Remotes are cloned into $DOTS_DATA (default ~/.local/share/dots).
 dots.lock is written next to the main dots.yaml.
 Exit status is 1 if any warning or error was reported.
@@ -62,24 +66,28 @@ EOF
 }
 
 # ---------------------------------------------------------------- yaml parser
-# Minimal parser for the nested "key: value" subset dots.yaml uses.
-# Prints one line per scalar: key US parent-path US value
+# Minimal parser for the nested "key: value" subset dots.yaml uses, plus
+# "|" and ">" block scalars. Prints one line per scalar:
+#   key US parent-path US value
+# Newlines inside a value are encoded as RS so every scalar stays on one line.
 yaml_parse() {
-    local file=$1 line rest key val parent k indent n=0
-    local -a ind=() keys=()
+    local file=$1 line rest key val parent k indent i total
+    local style chomp bl bind lind trail first text l prev explicit
+    local -a ind=() keys=() lines=() blk=()
     local re_line='^([[:space:]]*)([^[:space:]].*)$'
     local re_key="^(\"[^\"]*\"|'[^']*'|[^:#[:space:]][^:#]*):([[:space:]]+(.*))?\$"
-    local re_dq='^"([^"]*)"' re_sq="^'([^']*)'"
+    local re_dq='^"(([^"\\]|\\.)*)"' re_sq="^'([^']*)'" re_block='^([|>])([-+]?)$'
 
-    while IFS= read -r line || [[ -n $line ]]; do
-        n=$((n + 1))
-        line=${line%$'\r'}
+    mapfile -t lines <"$file"
+    total=${#lines[@]}
+    for ((i = 0; i < total; i++)); do
+        line=${lines[i]%$'\r'}
         [[ $line =~ ^[[:space:]]*(#.*)?$ ]] && continue
         [[ $line =~ $re_line ]]
         indent=${#BASH_REMATCH[1]}
         rest=${BASH_REMATCH[2]}
         if ! [[ $rest =~ $re_key ]]; then
-            printf 'dots.sh: %s:%d: unsupported yaml: %s\n' "$file" "$n" "$rest" >&2
+            printf 'dots.sh: %s:%d: unsupported yaml: %s\n' "$file" "$((i + 1))" "$rest" >&2
             continue
         fi
         key=${BASH_REMATCH[1]}
@@ -87,15 +95,64 @@ yaml_parse() {
         key=${key%"${key##*[![:space:]]}"}
         if [[ $key == \"*\" || $key == \'*\' ]]; then key=${key:1:${#key}-2}; fi
 
+        explicit=0
         if [[ $val == \#* ]]; then
             val=
         elif [[ $val =~ $re_dq ]]; then
+            explicit=1
             val=${BASH_REMATCH[1]}
+            val=${val//\\\\/$'\x01'}
+            val=${val//\\\"/\"}
+            val=${val//\\n/$'\n'}
+            val=${val//\\t/$'\t'}
+            val=${val//$'\x01'/\\}
         elif [[ $val =~ $re_sq ]]; then
+            explicit=1
             val=${BASH_REMATCH[1]}
         else
             val=${val%%[[:space:]]#*}
             val=${val%"${val##*[![:space:]]}"}
+            if [[ $val =~ $re_block ]]; then
+                explicit=1
+                style=${BASH_REMATCH[1]} chomp=${BASH_REMATCH[2]}
+                blk=() bind= trail=0
+                while ((i + 1 < total)); do
+                    bl=${lines[i + 1]%$'\r'}
+                    if [[ $bl =~ ^[[:space:]]*$ ]]; then
+                        blk+=("")
+                    else
+                        [[ $bl =~ $re_line ]]
+                        lind=${#BASH_REMATCH[1]}
+                        ((lind > indent)) || break
+                        [[ -n $bind ]] || bind=$lind
+                        ((lind >= bind)) || break
+                        blk+=("${bl:bind}")
+                    fi
+                    i=$((i + 1))
+                done
+                while ((${#blk[@]} && ${#blk[-1]} == 0)); do
+                    unset 'blk[-1]'
+                    trail=$((trail + 1))
+                done
+                text= first=1 prev=1
+                for l in "${blk[@]}"; do
+                    if [[ $style == '>' ]]; then
+                        if [[ -z $l ]]; then text+=$'\n'; prev=1
+                        else
+                            ((prev)) || text+=' '
+                            text+=$l prev=0
+                        fi
+                    else
+                        ((first)) || text+=$'\n'
+                        text+=$l first=0
+                    fi
+                done
+                case $chomp in
+                    -) val=$text ;;
+                    +) val=$text$'\n'; for ((k = 0; k < trail; k++)); do val+=$'\n'; done ;;
+                    *) val=${text:+$text$'\n'} ;;
+                esac
+            fi
         fi
 
         while ((${#ind[@]} && ind[-1] >= indent)); do
@@ -106,8 +163,10 @@ yaml_parse() {
         ind+=("$indent")
         keys+=("$key")
 
-        [[ -n $val ]] && printf '%s%s%s%s%s\n' "$key" "$US" "${parent:-.}" "$US" "$val"
-    done <"$file"
+        if [[ -n $val ]] || { ((explicit)) && [[ $key == content ]]; }; then
+            printf '%s%s%s%s%s\n' "$key" "$US" "${parent:-.}" "$US" "${val//$'\n'/$RS}"
+        fi
+    done
 }
 
 # ------------------------------------------------------------------- helpers
@@ -297,7 +356,7 @@ remote_one() {
 
 # ---------------------------------------------------------------------- links
 link_one() {
-    local label=$1 s=$2 d=$3 base=$4 state
+    local label=$1 s=$2 d=$3 base=$4 virtual=${5:-0} state
     if [[ $MODE == unlink ]]; then
         want_name "$label" || return 0
         N_MATCH=$((N_MATCH + 1))
@@ -329,7 +388,10 @@ link_one() {
         status:*) ;;
         *:ok)           N_OK=$((N_OK + 1)) ;;
         *:missing)
-            if [[ ! -e $s && ! -L $s ]]; then err "$label: source not found: $s"; return; fi
+            if ((! (DRY && virtual))) && [[ ! -e $s && ! -L $s ]]; then
+                err "$label: source not found: $s"
+                return
+            fi
             if ((DRY)); then
                 info "would link $d -> $s"
             else
@@ -340,10 +402,35 @@ link_one() {
     esac
 }
 
+# Write inline content to $DATA_DIR/.content/<label>, then link it like a source.
+link_content() {
+    local label=$1 content=$2 d=$3 base=$4 f cur
+    if [[ $label == . || /$label/ == */../* ]]; then
+        err "$label: content needs a plain entry name"
+        return
+    fi
+    f=$DATA_DIR/.content/$label
+
+    if [[ $MODE == link || $MODE == update ]]; then
+        cur=
+        [[ -f $f ]] && cur=$(cat -- "$f"; printf x)
+        if [[ ! -f $f || ${cur%x} != "$content" ]]; then
+            if ((DRY)); then
+                info "would write content for $label ($f)"
+            else
+                mkdir -p -- "$(dirname -- "$f")" && printf '%s' "$content" >"$f" ||
+                    { err "$label: cannot write $f"; return; }
+                info "$label: wrote $f"
+            fi
+        fi
+    fi
+    link_one "$label" "$f" "$d" "$base" 1
+}
+
 # ---------------------------------------------------------------- dots.yaml
 process_file() {
     local file=$1 prefix=$2 depth=$3 base key parent val p label
-    local -A src=() dst=() rem=() ref=() post=() seen=()
+    local -A src=() dst=() rem=() ref=() post=() cont=() seen=()
     local -a order=()
 
     if ((depth > MAX_DEPTH)); then err "$file: remotes nested too deep"; return; fi
@@ -355,6 +442,7 @@ process_file() {
             destination) dst["$parent"]=$val ;;
             remote)      rem["$parent"]=$val ;;
             ref)         ref["$parent"]=$val ;;
+            content)     cont["$parent"]=${val//$RS/$'\n'} ;;
             post_update | post-update) post["$parent"]=$val ;;
             *) continue ;;
         esac
@@ -367,9 +455,18 @@ process_file() {
         if [[ -n ${rem["$p"]:-} ]]; then
             remote_one "$label" "${rem["$p"]}" "${ref["$p"]:-}" "${post["$p"]:-}" "$depth"
         fi
-        if [[ -n ${src["$p"]:-} || -n ${dst["$p"]:-} ]]; then
+        if [[ -v cont["$p"] ]]; then
+            if [[ -n ${src["$p"]:-} && $MODE != unlink ]]; then
+                warn "$label: both source and content are set, using content"
+            fi
+            if [[ -z ${dst["$p"]:-} ]]; then
+                [[ $MODE == unlink ]] || err "$label: content needs a destination"
+            else
+                link_content "$label" "${cont["$p"]}" "${dst["$p"]}" "$base"
+            fi
+        elif [[ -n ${src["$p"]:-} || -n ${dst["$p"]:-} ]]; then
             if [[ -z ${src["$p"]:-} || -z ${dst["$p"]:-} ]]; then
-                err "$label: needs both source and destination"
+                [[ $MODE == unlink ]] || err "$label: needs both source and destination"
             else
                 link_one "$label" "${src["$p"]}" "${dst["$p"]}" "$base"
             fi
