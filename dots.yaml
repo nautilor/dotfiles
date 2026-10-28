@@ -19,3 +19,13 @@ zsh:
   .zsh:
     source: ./zsh/.zsh/
     destination: ~/.zsh
+bash:
+  .bashrc:
+    source: ./bash/.bashrc
+    destination: ~/.bashrc
+  .bash_profile:
+    source: ./bash/.bash_profile
+    destination: ~/.bash_profile
+  .bash:
+    source: ./bash/.bash/
+    destination: ~/.bash
