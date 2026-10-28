@@ -6,3 +6,6 @@ zathura:
   remote: github:nautilor/zathurarc
 ideavim:
   remote: github:nautilor/ideavim
+direnv:
+  source: ./direnv/
+  destination: ~/.config/direnv
