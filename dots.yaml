@@ -1,3 +1,4 @@
+# remote configs
 quickshell:
   remote: github:nautilor/quickshell-notch
 nvim:
@@ -6,6 +7,28 @@ zathura:
   remote: github:nautilor/zathurarc
 ideavim:
   remote: github:nautilor/ideavim
+# stow configs
+hypr:
+  stow: true
+cbin:
+  stow: true
+fd:
+  stow: true
+kitty:
+  stow: true
+lazygit:
+  stow: true
+rofi:
+  stow: true
+sqlit:
+  stow: true
+tmux:
+  stow: true
+utils:
+  stow: true
+yazi:
+  stow: true
+# custom configs
 direnv:
   source: ./direnv/
   destination: ~/.config/direnv
@@ -29,3 +52,4 @@ bash:
   .bash:
     source: ./bash/.bash/
     destination: ~/.bash
+

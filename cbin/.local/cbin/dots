@@ -56,6 +56,10 @@ post_update is a shell command set next to `remote:` in your dots.yaml. It runs
 inside the clone, only when an update changed the commit, with DOTS_NAME,
 DOTS_DIR, DOTS_OLD_COMMIT and DOTS_COMMIT in its environment.
 
+An entry with `stow: true` mirrors the folder tree at `source:` (default ./<name>)
+into `destination:` (default ~), linking files, and whole directories that do not
+exist yet, like GNU stow.
+
 An entry may use `content:` (text, usually a "|" block) instead of `source:`. It
 is written to $DOTS_DATA/.content/<entry> and linked like a source.
 
@@ -402,6 +406,48 @@ link_one() {
     esac
 }
 
+# Mirror the tree under a package folder into a target folder, stow style:
+# files are linked one by one, and a directory is linked as a whole ("folded")
+# when nothing exists at its destination yet. Top-level directories (.config,
+# .local, ...) are never folded, so they stay real directories.
+stow_walk() {
+    local label=$1 s=$2 d=$3 depth=$4 e name dd descend
+    local -a entries=()
+    mapfile -d '' -t entries < <(find "$s" -mindepth 1 -maxdepth 1 -print0 | sort -z)
+    for e in "${entries[@]}"; do
+        name=${e##*/}
+        dd=$d/$name
+        descend=0
+        if [[ -d $e && ! -L $e ]]; then
+            if [[ -d $dd && ! -L $dd ]]; then
+                descend=1
+            elif ((depth == 1)) && [[ ! -e $dd && ! -L $dd ]]; then
+                descend=1
+            fi
+        fi
+        if ((descend)); then
+            stow_walk "$label/$name" "$e" "$dd" $((depth + 1))
+        else
+            link_one "$label/$name" "$e" "$dd" "$d"
+        fi
+    done
+}
+
+stow_entry() {
+    local label=$1 s=$2 d=$3 base=$4
+    s=$(expand_path "$s")
+    d=$(expand_path "$d")
+    [[ $s == /* ]] || s=$base/$s
+    [[ $d == /* ]] || d=$base/$d
+    s=$(realpath -ms -- "$s")
+    d=$(realpath -ms -- "$d")
+    if [[ ! -d $s ]]; then
+        [[ $MODE == unlink ]] || err "$label: stow source is not a directory: $s"
+        return
+    fi
+    stow_walk "$label" "$s" "$d" 1
+}
+
 # Write inline content to $DATA_DIR/.content/<label>, then link it like a source.
 link_content() {
     local label=$1 content=$2 d=$3 base=$4 f cur
@@ -429,8 +475,8 @@ link_content() {
 
 # ---------------------------------------------------------------- dots.yaml
 process_file() {
-    local file=$1 prefix=$2 depth=$3 base key parent val p label
-    local -A src=() dst=() rem=() ref=() post=() cont=() seen=()
+    local file=$1 prefix=$2 depth=$3 base key parent val p label sdir sdst
+    local -A src=() dst=() rem=() ref=() post=() cont=() stow=() seen=()
     local -a order=()
 
     if ((depth > MAX_DEPTH)); then err "$file: remotes nested too deep"; return; fi
@@ -443,6 +489,12 @@ process_file() {
             remote)      rem["$parent"]=$val ;;
             ref)         ref["$parent"]=$val ;;
             content)     cont["$parent"]=${val//$RS/$'\n'} ;;
+            stow | use_stow)
+                case ${val,,} in
+                    true | yes | on) stow["$parent"]=1 ;;
+                    false | no | off) ;;
+                    *) err "$file: $key must be true or false, got '$val'" ;;
+                esac ;;
             post_update | post-update) post["$parent"]=$val ;;
             *) continue ;;
         esac
@@ -459,10 +511,21 @@ process_file() {
             if [[ -n ${src["$p"]:-} && $MODE != unlink ]]; then
                 warn "$label: both source and content are set, using content"
             fi
+            if [[ -n ${stow["$p"]:-} && $MODE != unlink ]]; then
+                warn "$label: both stow and content are set, using content"
+            fi
             if [[ -z ${dst["$p"]:-} ]]; then
                 [[ $MODE == unlink ]] || err "$label: content needs a destination"
             else
                 link_content "$label" "${cont["$p"]}" "${dst["$p"]}" "$base"
+            fi
+        elif [[ -n ${stow["$p"]:-} ]]; then
+            if [[ $p == . ]]; then
+                err "$label: stow needs a named entry"
+            else
+                sdir=${src["$p"]:-./${p##*/}} sdst=${dst["$p"]:-}
+                [[ -n $sdst ]] || sdst='~'
+                stow_entry "$label" "$sdir" "$sdst" "$base"
             fi
         elif [[ -n ${src["$p"]:-} || -n ${dst["$p"]:-} ]]; then
             if [[ -z ${src["$p"]:-} || -z ${dst["$p"]:-} ]]; then
