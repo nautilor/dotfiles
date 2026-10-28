@@ -1,5 +1,0 @@
-[config]
-
-[templates.quickshell]
-input_path = "~/.config/matugen/templates/quickshell/quickshell.qml"
-output_path = "~/.config/quickshell/modules/shared/Matugen.qml"
