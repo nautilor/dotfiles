@@ -4,3 +4,5 @@ nvim:
   remote: github:nautilor/nvim
 zathura:
   remote: github:nautilor/zathurarc
+ideavim:
+  remote: github:nautilor/ideavim

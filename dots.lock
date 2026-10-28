@@ -11,3 +11,7 @@
     remote: "github:nautilor/zathurarc"
     url: "https://github.com/nautilor/zathurarc.git"
     commit: "fd2513c4193c8ea62845f4880b3381438573013f"
+"ideavim":
+    remote: "github:nautilor/ideavim"
+    url: "https://github.com/nautilor/ideavim.git"
+    commit: "2a0e42c922d6a9c2ede84248c37ecd21ace2a1b0"
