@@ -2,3 +2,5 @@ quickshell:
   remote: github:nautilor/quickshell-notch
 nvim:
   remote: github:nautilor/nvim
+zathura:
+  remote: github:nautilor/zathurarc
