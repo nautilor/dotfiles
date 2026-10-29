@@ -15,7 +15,7 @@ alias lt="ls -lt"
 
 # Git
 alias lg=lazygit
-alias lt="nvim -c Task"
+alias note='mkdir -p ~/.notes && cd ~/.notes && nvim && cd -'
 
 # cd
 alias ..='cd ..'
