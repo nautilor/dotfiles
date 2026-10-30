@@ -310,7 +310,7 @@ run_post_update() {
 }
 
 remote_one() {
-    local label=$1 spec=$2 ref=$3 post=$4 depth=$5
+    local label=$1 spec=$2 ref=$3 post=$4 osrc=$5 odst=$6 depth=$7
     local cname=${label//\//-} url dir locked= commit old changed
     url=$(remote_url "$spec")
     dir=$DATA_DIR/$cname
@@ -325,7 +325,7 @@ remote_one() {
         link | update)
             sync_clone "$label" "$url" "$ref" "$dir" "$locked" || return
             old=$SYNC_OLD changed=$SYNC_CHANGED ;;
-        unlink) [[ -f $dir/dots.yaml ]] || return 0 ;;
+        unlink) [[ -d $dir/.git ]] || return 0 ;;
         *) [[ -d $dir/.git ]] || { warn "$label: remote not cloned (run: dots.sh link)"; return; } ;;
     esac
 
@@ -343,11 +343,18 @@ remote_one() {
         fi
     fi
 
-    if [[ ! -f $dir/dots.yaml ]]; then
-        err "$label: no dots.yaml in remote repository"
+    if [[ -n $osrc || -n $odst ]]; then
+        if [[ -z $osrc || -z $odst ]]; then
+            [[ $MODE == unlink ]] || err "$label: a remote override needs both source and destination"
+        else
+            link_one "$label" "$osrc" "$odst" "$dir"
+        fi
+    elif [[ -f $dir/dots.yaml ]]; then
+        process_file "$dir/dots.yaml" "$label" $((depth + 1))
+    elif [[ $MODE != unlink ]]; then
+        err "$label: no dots.yaml in remote repository (set source and destination to link without one)"
         return
     fi
-    process_file "$dir/dots.yaml" "$label" $((depth + 1))
 
     if [[ $MODE == update && -n $post ]] && want_name "$label"; then
         if ((DRY)); then
@@ -505,7 +512,10 @@ process_file() {
         if [[ $p == . ]]; then label=${prefix:-.}; else label=${prefix:+$prefix/}$p; fi
 
         if [[ -n ${rem["$p"]:-} ]]; then
-            remote_one "$label" "${rem["$p"]}" "${ref["$p"]:-}" "${post["$p"]:-}" "$depth"
+            remote_one "$label" "${rem["$p"]}" "${ref["$p"]:-}" "${post["$p"]:-}" \
+                "${src["$p"]:-}" "${dst["$p"]:-}" "$depth"
+            # source/destination next to a remote override its dots.yaml
+            if [[ -n ${src["$p"]:-} || -n ${dst["$p"]:-} ]]; then continue; fi
         fi
         if [[ -v cont["$p"] ]]; then
             if [[ -n ${src["$p"]:-} && $MODE != unlink ]]; then
