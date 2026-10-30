@@ -7,6 +7,8 @@ zathura:
   remote: github:nautilor/zathurarc
 ideavim:
   remote: github:nautilor/ideavim
+lazypass:
+  remote: github:nautilor/lazypass-onedark
 # stow configs
 hypr:
   stow: true

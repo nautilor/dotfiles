@@ -15,3 +15,7 @@
     remote: "github:nautilor/ideavim"
     url: "https://github.com/nautilor/ideavim.git"
     commit: "2a0e42c922d6a9c2ede84248c37ecd21ace2a1b0"
+"lazypass":
+    remote: "github:nautilor/lazypass-onedark"
+    url: "https://github.com/nautilor/lazypass-onedark.git"
+    commit: "d1b188814ad6f644cb61f0ba0c101d8d20e399d4"
