@@ -22,6 +22,9 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias cdr='cd $(git rev-parse --show-toplevel)'
 
+# Password manager
+alias lp='lazypass'
+
 # Tmux
 alias ta='tmux a'
 alias tmux='tmux'

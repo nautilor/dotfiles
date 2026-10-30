@@ -17,6 +17,9 @@ alias lt="ls -lt"
 alias lg=lazygit
 alias note='mkdir -p ~/.notes && cd ~/.notes && nvim && cd -'
 
+# Password manager
+alias lp='lazypass'
+
 # cd
 alias ..='cd ..'
 alias ...='cd ../..'
