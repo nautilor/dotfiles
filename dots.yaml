@@ -9,6 +9,8 @@ ideavim:
   remote: github:nautilor/ideavim
 lazypass:
   remote: github:nautilor/lazypass-onedark
+  source: ./themes/onedark.yml
+  destination: ~/.config/lazypass/themes/config.yml
 # stow configs
 hypr:
   stow: true
