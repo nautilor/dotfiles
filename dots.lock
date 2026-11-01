@@ -2,7 +2,7 @@
 "quickshell":
     remote: "github:nautilor/quickshell-notch"
     url: "https://github.com/nautilor/quickshell-notch.git"
-    commit: "a0ae20994d08d4b51e29f1924d6ca537b9e9b32b"
+    commit: "294cdbbee96a339fbf47d3c2264202003252f2a3"
 "nvim":
     remote: "github:nautilor/nvim"
     url: "https://github.com/nautilor/nvim.git"
@@ -16,6 +16,6 @@
     url: "https://github.com/nautilor/ideavim.git"
     commit: "2a0e42c922d6a9c2ede84248c37ecd21ace2a1b0"
 "lazypass":
-    remote: "github:nautilor/lazypass-onedark"
-    url: "https://github.com/nautilor/lazypass-onedark.git"
+    remote: "github:nautilor/lazypass-themes"
+    url: "https://github.com/nautilor/lazypass-themes.git"
     commit: "117683b62fd46c10551bdcb8eb9146271aabc21a"

@@ -8,7 +8,7 @@ zathura:
 ideavim:
   remote: github:nautilor/ideavim
 lazypass:
-  remote: github:nautilor/lazypass-onedark
+  remote: github:nautilor/lazypass-themes
   source: ./themes/onedark.yml
   destination: ~/.config/lazypass/themes/config.yml
 # stow configs
