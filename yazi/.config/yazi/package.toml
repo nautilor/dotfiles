@@ -1,0 +1,7 @@
+[[plugin.deps]]
+use = "terrakok/split-tabs"
+rev = "d0531f4"
+hash = "4298f0a23f6109a92334eef06fc7ffb9"
+
+[flavor]
+deps = []

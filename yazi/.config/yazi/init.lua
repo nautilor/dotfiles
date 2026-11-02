@@ -1,0 +1,1 @@
+-- ya.emit("plugin", { "split-tabs", "spl_activate" })
