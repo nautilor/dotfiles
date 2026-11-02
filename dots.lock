@@ -2,7 +2,7 @@
 "quickshell":
     remote: "github:nautilor/quickshell-notch"
     url: "https://github.com/nautilor/quickshell-notch.git"
-    commit: "294cdbbee96a339fbf47d3c2264202003252f2a3"
+    commit: "a6f338d300a53b08d6e4f5b7dd12038bee4cd5a5"
 "nvim":
     remote: "github:nautilor/nvim"
     url: "https://github.com/nautilor/nvim.git"
